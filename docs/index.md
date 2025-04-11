@@ -80,14 +80,6 @@ object CalculatorTool : SimpleTool<CalculatorTool.Args>() {
 }
 ```
 
-## Documentation
-
-For more detailed information, refer to:
-
-- [Features Documentation](FEATURES.md): Detailed guide on using and implementing custom features
-- [SimpleAPI Quickstart Guide](src/commonMain/kotlin/ai/grazie/code/agents/local/simpleApi/QuickstartGuide.md): Guide for using the SimpleAPI
-- [Code Examples](../code-agents-examples): Example implementations using Code Agents Local
-
 ## Best Practices
 
 1. **System Prompts**: Provide clear and concise system prompts to guide the agent's behavior.
