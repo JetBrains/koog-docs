@@ -2,7 +2,10 @@ site_name: Kotlin AI agents
 nav:
   - Home: index.md
   - Getting Started:
-      - Quickstart: quickstart.md
+      - Simple API Quickstart: quickstart.md
+  - Advanced Usage:
+      - Creating Custom Tools: customTool.md
+      - Handling Agent Events: eventHandler.md
 
 theme:
   name: mkdocs

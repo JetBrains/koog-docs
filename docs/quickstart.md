@@ -1,8 +1,19 @@
-# Quickstart Guide
+# Simple API Quickstart Guide
 
 ## Overview
 
-The SimpleAPI provides an easy way to create and run AI agents using the JetBrains AI API. It offers a simplified interface for creating chat agents and single-run agents with customizable tools and configurations.
+The SimpleAPI provides an easy way to create and run AI agents using the JetBrains AI API. It offers an
+interface for creating chat agents and single-run agents with customizable tools and configurations.
+
+The SimpleAPI uses two types of agents:
+
+1. **Chat Agent**:
+    - Maintains a conversation until the ExitTool is called
+    - Enforces tool usage instead of plain text responses
+
+2. **Single-Run Agent**
+    - Processes a single input and provides a response
+    - Can return either a message or a tool result (if the tool registry is passed to the agent)
 
 ## Prerequisites
 
@@ -35,9 +46,15 @@ fun main() = runBlocking {
         cs = this,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely."
     )
-   agent.run("Hello, how can you help me?")
+    agent.run("Hello, how can you help me?")
 }
 ```
+
+**NB:** `simpleChatAgent` uses `AskUser` and `Exit` built-in tools by default. This means, they are used even if no
+`toolRegistry` parameter is passed when creating the
+agent. If the custom tool registry is passed under the `toolRegistry` parameter, the mentioned built-in tools are
+used **in a combination** with the added tool registry. This means you can't create the `simpleChatAgent` without the
+`AskUser` and `Exit` built-in tools.
 
 ### Creating a Single-Run Agent
 
@@ -57,19 +74,8 @@ fun main() = runBlocking {
 }
 ```
 
-## Configuration Options
-
-Both `simpleChatAgent` and `simpleSingleRunAgent` accept the following parameters:
-
-- `apiToken` (required): Your JetBrains AI API token
-- `cs` (required): CoroutineScope for running the agent
-- `systemPrompt`: Initial system prompt for the agent (default: empty string)
-- `llmModel`: LLM model to use (default: JetBrainsAIModels.OpenAI.GPT4oMini)
-- `temperature`: Temperature for LLM generation (default: 1.0)
-- `eventHandler`: Custom event handler (default: empty handler)
-- `toolRegistry`: Custom tool registry (default: built-in tools for chat agent, empty for single-run agent)
-- `maxIterations`: Maximum number of agent iterations (default: 50)
-- `apiUrl`: JetBrains AI API URL (default: "https://api.jetbrains.ai")
+**NB:** `simpleSingleRunAgent` uses no tools by default. If no `toolRegistry` parameter with built-in or custom tools is
+passed when creating the agent, only plain text responses are received.
 
 ## Available Tools
 
@@ -78,96 +84,59 @@ Both `simpleChatAgent` and `simpleSingleRunAgent` accept the following parameter
 The SimpleAPI provides the following built-in tools:
 
 1. **SayToUser**: Allows the agent to output a message to the user
-   - Prints the agent's message to the console with "Agent says: " prefix
-   - Tool name: `__talk__`
+    - Prints the agent's message to the console with "Agent says: " prefix
+    - Tool name: `__say_to_user__`
 
 2. **AskUser**: Allows the agent to ask the user for input
-   - Prints the agent's message to the console
-   - Reads user input and returns it to the agent
-   - Tool name: `__talk__`
+    - Prints the agent's message to the console
+    - Reads user input and returns it to the agent
+    - Tool name: `__ask_user__`
 
 3. **ExitTool**: Allows the agent to end the conversation
-   - Used in chat agents to terminate the session
-   - Tool name: `__exit__`
+    - Used in chat agents to terminate the session
+    - Tool name: `__exit__`
 
 ### Custom Tools
 
-You can create custom tools by extending the `SimpleTool` class:
+You can create custom tools by extending the `SimpleTool` class and register them in a tool registry and pass it to the
+created agent. Please find more information on how to create the custom tools on
+the [corresponding page](customTool.md).
 
-```kotlin
-object CalculatorTool : SimpleTool<CalculatorTool.Args>() {
-    @Serializable
-    data class Args(val expression: String) : Tool.Args
+## Handling events during the agent's run
 
-    override val argsSerializer = Args.serializer()
+Simple agents support custom event handlers. While having an event handler is not required for creating an agent, it
+might be helpful for testing, debugging, or making hooks for chained agent interactions.
 
-    override val descriptor = ToolDescriptor(
-        name = "calculator",
-        description = "Evaluates a mathematical expression",
-        requiredParameters = listOf(
-            ToolParameterDescriptor(
-                name = "expression",
-                description = "Mathematical expression to evaluate",
-                type = ToolParameterType.String
-            )
-        )
-    )
+On the page [Handling Agent Events](eventHandler.md) you'll find more information on how to use the `EventHandler` class for monitoring your agent's
+interactions.
 
-    override suspend fun doExecute(args: Args): String {
-        // Implement expression evaluation
-        return "Result: ${evaluateExpression(args.expression)}"
-    }
+## Configuration Options
 
-    private fun evaluateExpression(expression: String): Double {
-        // Simple implementation for demonstration
-        return expression.toDoubleOrNull() ?: 0.0
-    }
-}
-```
+If your goal is to create a simple agent to experiment with, you can use any of the  `simpleChatAgent` and
+`simpleSingleRunAgent` with required parameters only: the API token from the JetBrains AI platform and the coroutine
+scope (`cs = this` if you don't have multiple coroutines).
 
-### Registering Custom Tools
+However, if you want more flexibility and customization, you can pass optional params as well to configure the agent
+your way.
 
-Register custom tools when creating an agent:
+Both `simpleChatAgent` and `simpleSingleRunAgent` accept the following parameters:
 
-```kotlin
-val toolRegistry = ToolRegistry {
-    stage {
-        tool(CalculatorTool)
-        // Add more tools as needed
-    }
-}
+**Required:**
 
-val agent = simpleChatAgent(
-    apiToken = apiToken,
-    cs = coroutineScope,
-    systemPrompt = "You are a helpful assistant with calculator capabilities.",
-    toolRegistry = toolRegistry
-)
-```
+- `apiToken`: Your JetBrains AI API token
+- `cs`: CoroutineScope for running the agent. Of you don't need to set up a complicated corutine interaction, you can
+  pass the current one into it: `cs = this`
 
-## Agent Graphs
+**Optional:**
 
-The SimpleAPI uses two types of agent graphs:
-
-1. **Chat Agent Graph**: Used by `simpleChatAgent`
-   - Maintains a conversation until the ExitTool is called
-   - Enforces tool usage instead of plain text responses
-
-2. **Single-Run Graph**: Used by `simpleSingleRunAgent`
-   - Processes a single input and provides a response
-   - Can return either a message or a tool result
-
-## Best Practices
-
-1. **System Prompts**: Provide clear and concise system prompts to guide the agent's behavior.
-
-2. **Error Handling**: Implement proper error handling in custom tools to prevent agent failures.
-
-3. **Tool Design**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
-
-4. **Resource Management**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource leaks.
-
-5. **API Token Security**: Never hardcode API tokens in your code. Use environment variables or secure configuration management.
+- `systemPrompt`: the system instruction to guide the agent's behavior (default: `empty string`)
+- `llmModel`: a specific LLM to use (default: `OpenAI GPT 4o Mini`)
+- `temperature`: temperature for LLM generation (default: `1.0`)
+- `eventHandler`: custom mechanism to manage the agent operations lifecycle (default: empty handler)
+- `toolRegistry`: the list of tools that you'd like your agent to be able to use (default: built-in tools for chat
+  agent, empty for single-run agent)
+- `maxIterations`: maximum number of the steps agent can take before it's forced to stop (default: `50`)
+- `apiUrl`: JetBrains AI API URL (default: `https://api.jetbrains.ai`)
 
 ## Example: Creating a Code Assistant
 
