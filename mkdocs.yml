@@ -12,7 +12,7 @@ nav:
       - Writing custom graphs: customGraphs.md
       - Creating Custom Tools: customTool.md
       - LLM Sessions and History: sessions.md
-
+      - Structured Data: structuredData.md
 theme:
   name: mkdocs
   favicon: images/favicon.ico
