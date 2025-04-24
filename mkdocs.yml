@@ -1,12 +1,13 @@
 site_name: Kotlin AI agents
 nav:
   - Home: index.md
-  - Getting Started:
-      - Simple API Quickstart: quickstart.md
+  - Quickstart: quickstart.md
+  - Basic Usage:
       - Handling Agent Events: eventHandler.md
       - Graph Nodes: nodes_library.md
       - Custom Graph Nodes: customNodes.md
       - Stages And History: stagesAndHistory.md
+      - Streaming API: streamingApi.md
   - Advanced Usage:
       - Writing custom graphs: customGraphs.md
       - Creating Custom Tools: customTool.md
