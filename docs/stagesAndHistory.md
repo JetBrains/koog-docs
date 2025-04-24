@@ -18,7 +18,6 @@ This guide provides detailed information about stages in the Kotlin AI platform 
    - [How History is Passed](#how-history-is-passed)
    - [Managing History Size](#managing-history-size)
 5. [Working with Stage Context](#working-with-stage-context)
-   - [Accessing Context Properties](#accessing-context-properties)
    - [LLM Sessions](#llm-sessions)
    - [Tool Execution in Context](#tool-execution-in-context)
 6. [Advanced Stage Techniques](#advanced-stage-techniques)

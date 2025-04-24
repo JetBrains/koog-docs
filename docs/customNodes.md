@@ -18,8 +18,6 @@ This guide provides detailed instructions on how to implement your own custom no
    - [Data Transformation Node](#data-transformation-node)
    - [LLM Interaction Node](#llm-interaction-node)
    - [Tool Execution Node](#tool-execution-node)
-8. [Debugging and Testing](#debugging-and-testing)
-9. [Common Pitfalls](#common-pitfalls)
 
 ## Introduction
 
