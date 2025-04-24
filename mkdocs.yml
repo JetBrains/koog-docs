@@ -4,6 +4,7 @@ nav:
   - Getting Started:
       - Simple API Quickstart: quickstart.md
       - Graph Nodes: nodes_library.md
+      - Custom Graph Nodes: customNodes.md
   - Advanced Usage:
       - Creating Custom Tools: customTool.md
       - Handling Agent Events: eventHandler.md
