@@ -1,0 +1,523 @@
+# Stages and History Passing Guide
+
+This guide provides detailed information about stages in the Kotlin AI platform and how history is passed between these stages. Understanding these concepts is crucial for creating complex agent workflows that maintain context across multiple processing steps.
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Understanding Stages](#understanding-stages)
+   - [What are Stages?](#what-are-stages)
+   - [Types of Stages](#types-of-stages)
+   - [Stage Context](#stage-context)
+3. [Creating and Configuring Stages](#creating-and-configuring-stages)
+   - [Basic Stage Creation](#basic-stage-creation)
+   - [Static vs. Dynamic Stages](#static-vs-dynamic-stages)
+   - [Configuring Stage Tools](#configuring-stage-tools)
+4. [History Passing Between Stages](#history-passing-between-stages)
+   - [LLM History Transition Policies](#llm-history-transition-policies)
+   - [How History is Passed](#how-history-is-passed)
+   - [Managing History Size](#managing-history-size)
+5. [Working with Stage Context](#working-with-stage-context)
+   - [Accessing Context Properties](#accessing-context-properties)
+   - [LLM Sessions](#llm-sessions)
+   - [Tool Execution in Context](#tool-execution-in-context)
+6. [Advanced Stage Techniques](#advanced-stage-techniques)
+   - [Multi-Stage Strategies](#multi-stage-strategies)
+   - [Intermediate Stages](#intermediate-stages)
+   - [Custom History Handling](#custom-history-handling)
+7. [Best Practices](#best-practices)
+8. [Troubleshooting](#troubleshooting)
+9. [Examples](#examples)
+
+## Introduction
+
+Stages are a fundamental concept in the Kotlin AI platform that allow you to break down complex agent workflows into manageable, sequential steps. Each stage represents a distinct phase of processing, with its own set of tools, context, and responsibilities.
+
+One of the key challenges in multi-stage workflows is maintaining context between stages, particularly the conversation history with the language model (LLM). The Kotlin AI platform provides several mechanisms for passing history between stages, allowing you to balance context preservation with token efficiency.
+
+## Understanding Stages
+
+### What are Stages?
+
+A stage is a self-contained unit of processing within an agent strategy. Each stage:
+
+- Has a unique name
+- Contains a graph of nodes connected by edges
+- Can have its own set of tools
+- Receives input from the previous stage (or the initial user input)
+- Produces output that is passed to the next stage
+
+Stages are executed sequentially within a strategy, with each stage building upon the results of the previous stages.
+
+### Types of Stages
+
+The Kotlin AI platform provides two types of stages:
+
+1. **Static Stages (`LocalAgentStaticStage`)**: Expect a predefined set of tools and validate that all required tools are available. This is useful when you know exactly which tools a stage needs.
+
+2. **Dynamic Stages (`LocalAgentDynamicStage`)**: Do not expect any predefined tools, relying on the tools defined in the graph. This provides more flexibility but less validation.
+
+### Stage Context
+
+Each stage executes within a context (`LocalAgentStageContext`) that provides access to:
+
+- The environment
+- The stage input (output from the previous stage)
+- The agent configuration
+- The LLM context (including the conversation history)
+- The state manager
+- The storage
+- Session, strategy, and stage identifiers
+
+The context is passed to each node within the stage and provides the necessary resources for the node to perform its operations.
+
+## Creating and Configuring Stages
+
+### Basic Stage Creation
+
+Stages are typically created using the `stage` function within a strategy:
+
+```kotlin
+strategy("my-strategy") {
+    stage(
+        name = "my-stage",
+        tools = listOf(myTool1, myTool2)
+    ) {
+        // Define nodes and edges for this stage
+        val sendInput by nodeLLMSendStageInput()
+        val executeToolCall by nodeExecuteTool()
+        val sendToolResult by nodeLLMSendToolResult()
+
+        edge(nodeStart forwardTo sendInput)
+        edge(sendInput forwardTo executeToolCall onToolCall { true })
+        edge(executeToolCall forwardTo sendToolResult)
+        edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
+    }
+}
+```
+
+### Static vs. Dynamic Stages
+
+When creating a stage, you can choose between static and dynamic stages:
+
+- **Static Stage**: Specify a list of tools that the stage requires.
+
+```kotlin
+stage(
+  name = "static-stage",
+  tools = listOf(myTool1, myTool2)
+) {
+  // Stage definition
+}
+```
+
+- **Dynamic Stage**: Don't specify any tools, allowing the stage to use whatever tools are available.
+```kotlin
+stage(
+  name = "dynamic-stage",
+  tools = null
+) {
+  // Stage definition
+}
+```
+
+### Configuring Stage Tools
+
+Tools can be configured for a stage in several ways:
+
+**Directly in the stage definition**:
+```kotlin
+stage(
+   name = "my-stage",
+   tools = listOf(myTool1, myTool2)
+) {
+   // Stage definition
+}
+```
+
+**From a tool registry**:
+```kotlin
+stage(
+   name = "my-stage",
+   tools = toolRegistry.stagesToolDescriptors.getValue("my-stage")
+) {
+   // Stage definition
+}
+```
+
+**Dynamically during execution**:
+```kotlin
+val context = context.copyWithTools(newTools)
+```
+
+## History Passing Between Stages
+
+### LLM History Transition Policies
+
+The Kotlin AI platform provides three policies for handling LLM conversation history between stages:
+
+1. **PERSIST_LLM_HISTORY**: Keeps the entire conversation history intact between stages. This is the default policy and is useful when context continuity is important and the history size is manageable.
+
+2. **COMPRESS_LLM_HISTORY**: Compresses the conversation history between stages to reduce token usage while preserving essential context. This is useful for long-running agents with large conversation histories.
+
+3. **CLEAR_LLM_HISTORY**: Completely clears the conversation history between stages. This is useful when stages are independent and previous context might confuse the next stage.
+
+These policies are specified when creating a strategy:
+
+```kotlin
+LocalAgentStrategy(
+    name = "my-strategy",
+    stages = listOf(stage1, stage2, stage3),
+    llmHistoryTransitionPolicy = ContextTransitionPolicy.COMPRESS_LLM_HISTORY
+)
+```
+
+### How History is Passed
+
+History is passed between stages through the LLM context:
+
+1. Each stage receives an LLM context that includes the prompt (conversation history).
+2. The stage executes its nodes, potentially modifying the prompt.
+3. After the stage completes, the updated prompt is extracted from the context:
+
+```kotlin
+currentPrompt = context.llm.readSession { prompt }
+```
+The updated prompt is passed to the next stage.
+
+If an intermediate stage is inserted based on the history transition policy, it will modify the prompt before it's passed to the next main stage.
+
+### Managing History Size
+
+For long-running conversations, the history can grow large and consume a lot of tokens. There are several ways to manage history size:
+
+**Using the COMPRESS_LLM_HISTORY policy**: This automatically inserts a compression stage between each main stage.
+
+**Using the nodeLLMCompressHistory node**: This allows you to compress history at specific points within a stage.
+```kotlin
+val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
+
+edge(
+   (someNode forwardTo compressHistory)
+       onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
+)
+```
+
+**Using custom compression logic**: You can implement custom logic to compress or filter the history.
+```kotlin
+val customCompression by node<Unit, Unit> {
+   llm.writeSession {
+       // Custom compression logic
+   }
+}
+```
+
+## Working with Stage Context
+
+### LLM Sessions
+
+The LLM context provides two types of sessions:
+
+**Write Session**: For modifying the prompt and tools.
+```kotlin
+llm.writeSession {
+   updatePrompt {
+       user("New user message")
+   }
+
+   val response = requestLLM()
+   // The response is automatically added to the prompt
+}
+```
+
+**Read Session**: For reading the prompt and tools without modifying them.
+```kotlin
+llm.readSession {
+   val messageCount = prompt.messages.size
+   val availableTools = tools.map { it.name }
+}
+```
+
+### Tool Execution in Context
+
+Tools can be executed within a write session:
+
+```kotlin
+llm.writeSession {
+    // Call a tool by reference
+    val result = callTool(myTool, myArgs)
+
+    // Call a tool by name
+    val result2 = callTool("myToolName", myArgs)
+
+    // Call a tool by class
+    val result3 = callTool(MyTool::class, myArgs)
+
+    // Execute multiple tools in parallel
+    parseDataToArgs(data).toParallelToolCalls(MyTool::class).collect { result ->
+        // Process each result
+    }
+}
+```
+
+## Advanced Stage Techniques
+
+### Multi-Stage Strategies
+
+Complex workflows can be broken down into multiple stages, each handling a specific part of the process:
+
+```kotlin
+strategy("complex-workflow") {
+    stage("input-processing") {
+        // Process the initial input
+    }
+
+    stage("reasoning") {
+        // Perform reasoning based on the processed input
+    }
+
+    stage("tool-execution") {
+        // Execute tools based on the reasoning
+    }
+
+    stage("response-generation") {
+        // Generate a response based on the tool results
+    }
+}
+```
+
+### Intermediate Stages
+
+You can insert intermediate stages between main stages for specific purposes:
+
+```kotlin
+val stages = listOf(stage1, stage2, stage3)
+val intermediateStage = createLoggingStage()
+val stagesWithLogging = insertIntermediateStage(stages, intermediateStage)
+// Result: [stage1, intermediateStage, stage2, intermediateStage, stage3]
+```
+
+The `insertIntermediateStage` function is provided by the `LocalAgentStrategy.Companion` object.
+
+### Custom History Handling
+
+For advanced history management, you can create custom stages that handle history in specific ways:
+
+```kotlin
+val customHistoryStage = with(LocalAgentStageBuilder("custom-history", tools = null)) {
+    val processHistory by node<Unit, Unit> {
+        llm.writeSession {
+            // Custom history processing logic
+            val messages = prompt.messages
+            val filteredMessages = messages.filter { /* custom filtering logic */ }
+            prompt = prompt.copy(messages = filteredMessages)
+        }
+    }
+
+    edge(nodeStart forwardTo processHistory)
+    edge(processHistory forwardTo nodeFinish transformed { stageInput })
+
+    build()
+}
+```
+
+## Best Practices
+
+When working with stages and history passing, follow these best practices:
+
+1. **Use appropriate history transition policies**: Choose the policy that best balances context preservation with token efficiency for your use case.
+
+2. **Break complex workflows into stages**: Each stage should have a clear, focused responsibility.
+
+3. **Monitor history size**: For long-running conversations, monitor the history size and compress when necessary.
+
+4. **Use static stages when possible**: Static stages provide better validation of required tools.
+
+5. **Pass only necessary context**: Only pass the information that subsequent stages need to function correctly.
+
+6. **Document stage dependencies**: Clearly document what each stage expects from previous stages and what it provides to subsequent stages.
+
+7. **Test stages in isolation**: Ensure each stage works correctly with various inputs before integrating them into a strategy.
+
+8. **Consider token usage**: Be mindful of token usage, especially when passing large histories between stages.
+
+## Troubleshooting
+
+### History Not Being Passed Correctly
+
+If history is not being passed correctly between stages:
+
+- Check that you're using the correct history transition policy.
+- Verify that the prompt is being correctly extracted from the context after each stage.
+- Ensure that intermediate stages are not inadvertently clearing or corrupting the history.
+
+### Stage Tools Not Available
+
+If tools are not available in a stage:
+
+- For static stages, ensure that all required tools are provided in the stage definition.
+- Check that the tools are correctly registered in the tool registry.
+- Verify that the context has access to the tools.
+
+### History Too Large
+
+If the history becomes too large:
+
+- Use the COMPRESS_LLM_HISTORY policy or add explicit compression nodes.
+- Consider using more aggressive compression strategies.
+- Break the workflow into more stages with clear history boundaries.
+
+### Stages Not Executing in Expected Order
+
+If stages are not executing in the expected order:
+
+- Check the strategy definition to ensure stages are listed in the correct order.
+- Verify that each stage is correctly passing its output to the next stage.
+- Ensure that no stage is short-circuiting the execution flow.
+
+### Context Properties Not Available
+
+If context properties are not available:
+
+- Ensure that the context is being correctly passed to each node.
+- Check that you're accessing properties with the correct names.
+- Verify that the properties are being initialized correctly in the context.
+- Make sure you're not trying to access properties that are only available in certain contexts.
+
+## Examples
+
+Here are some examples of how stages and history passing are used in real-world scenarios:
+
+### Multi-Stage Processing with History Compression
+
+This example shows a strategy with multiple stages and history compression between stages:
+
+```kotlin
+fun complexProcessingStrategy(): LocalAgentStrategy {
+    val stage1 = with(LocalAgentStageBuilder("input-processing", tools = listOf(inputTool))) {
+        val processInput by nodeLLMSendStageInput()
+        val executeInputTool by nodeExecuteTool()
+        val sendToolResult by nodeLLMSendToolResult()
+
+        edge(nodeStart forwardTo processInput)
+        edge(processInput forwardTo executeInputTool onToolCall { true })
+        edge(executeInputTool forwardTo sendToolResult)
+        edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
+
+        build()
+    }
+
+    val stage2 = with(LocalAgentStageBuilder("reasoning", tools = listOf(reasoningTool))) {
+        val processReasoning by nodeLLMSendStageInput()
+        val executeReasoningTool by nodeExecuteTool()
+        val sendToolResult by nodeLLMSendToolResult()
+
+        edge(nodeStart forwardTo processReasoning)
+        edge(processReasoning forwardTo executeReasoningTool onToolCall { true })
+        edge(executeReasoningTool forwardTo sendToolResult)
+        edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
+
+        build()
+    }
+
+    val stage3 = with(LocalAgentStageBuilder("output-generation", tools = listOf(outputTool))) {
+        val generateOutput by nodeLLMSendStageInput()
+        val executeOutputTool by nodeExecuteTool()
+        val sendToolResult by nodeLLMSendToolResult()
+
+        edge(nodeStart forwardTo generateOutput)
+        edge(generateOutput forwardTo executeOutputTool onToolCall { true })
+        edge(executeOutputTool forwardTo sendToolResult)
+        edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
+
+        build()
+    }
+
+    return LocalAgentStrategy(
+        name = "complex-processing",
+        stages = listOf(stage1, stage2, stage3),
+        llmHistoryTransitionPolicy = ContextTransitionPolicy.COMPRESS_LLM_HISTORY
+    )
+}
+```
+
+### Custom History Handling Between Stages
+
+This example shows a strategy with custom history handling between stages:
+
+```kotlin
+fun customHistoryStrategy(): LocalAgentStrategy {
+    val stage1 = with(LocalAgentStageBuilder("first-stage", tools = listOf(firstTool))) {
+        // First stage definition
+        build()
+    }
+
+    val historyProcessingStage = with(LocalAgentStageBuilder("history-processing", tools = null)) {
+        val processHistory by node<Unit, Unit> {
+            llm.writeSession {
+                // Extract important information from history
+                val messages = prompt.messages
+                val importantMessages = messages.filter { message ->
+                    message is Message.User || 
+                    (message is Message.Assistant && message.content.contains("important"))
+                }
+
+                // Create a new prompt with only important messages
+                prompt = prompt.copy(messages = prompt.messages.take(1) + importantMessages)
+            }
+        }
+
+        edge(nodeStart forwardTo processHistory)
+        edge(processHistory forwardTo nodeFinish transformed { stageInput })
+
+        build()
+    }
+
+    val stage2 = with(LocalAgentStageBuilder("second-stage", tools = listOf(secondTool))) {
+        // Second stage definition
+        build()
+    }
+
+    return LocalAgentStrategy(
+        name = "custom-history",
+        stages = listOf(stage1, historyProcessingStage, stage2),
+        llmHistoryTransitionPolicy = ContextTransitionPolicy.PERSIST_LLM_HISTORY
+    )
+}
+```
+
+### Conditional History Compression Within a Stage
+
+This example shows how to conditionally compress history within a stage based on the history size:
+
+```kotlin
+fun conditionalCompressionStrategy(): LocalAgentStrategy = strategy("conditional-compression") {
+    stage("main-stage", tools = listOf(myTool1, myTool2)) {
+        val sendInput by nodeLLMSendStageInput()
+        val executeToolCall by nodeExecuteTool()
+        val sendToolResult by nodeLLMSendToolResult()
+        val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
+
+        edge(nodeStart forwardTo sendInput)
+        edge(sendInput forwardTo executeToolCall onToolCall { true })
+
+        // If history is too large, compress it before sending tool result
+        edge(
+            (executeToolCall forwardTo compressHistory)
+                onCondition { _ -> llm.readSession { prompt.messages.size > 50 } }
+        )
+        edge(compressHistory forwardTo sendToolResult)
+
+        // Otherwise, send tool result directly
+        edge(
+            (executeToolCall forwardTo sendToolResult)
+                onCondition { _ -> llm.readSession { prompt.messages.size <= 50 } }
+        )
+
+        edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
+        edge(sendToolResult forwardTo executeToolCall onToolCall { true })
+    }
+}
+```
+
+These examples demonstrate different approaches to managing stages and history passing in the Kotlin AI platform. By understanding these concepts and techniques, you can create complex agent workflows that maintain context across multiple processing steps while efficiently managing token usage.

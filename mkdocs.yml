@@ -5,7 +5,9 @@ nav:
       - Simple API Quickstart: quickstart.md
       - Graph Nodes: nodes_library.md
       - Custom Graph Nodes: customNodes.md
+      - Stages And History: stagesAndHistory.md
   - Advanced Usage:
+      - Writing custom graphs: customGraphs.md
       - Creating Custom Tools: customTool.md
       - Handling Agent Events: eventHandler.md
 
