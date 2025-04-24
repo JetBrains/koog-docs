@@ -3,6 +3,7 @@ nav:
   - Home: index.md
   - Getting Started:
       - Simple API Quickstart: quickstart.md
+      - Graph Nodes: nodes_library.md
   - Advanced Usage:
       - Creating Custom Tools: customTool.md
       - Handling Agent Events: eventHandler.md
