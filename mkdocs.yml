@@ -3,6 +3,7 @@ nav:
   - Home: index.md
   - Quickstart: quickstart.md
   - Basic Usage:
+      - Creating Custom Tools: customTool.md
       - Handling Agent Events: eventHandler.md
       - Graph Nodes: nodes_library.md
       - Custom Graph Nodes: customNodes.md
@@ -10,7 +11,6 @@ nav:
       - Streaming API: streamingApi.md
   - Advanced Usage:
       - Writing custom graphs: customGraphs.md
-      - Creating Custom Tools: customTool.md
       - LLM Sessions and History: sessions.md
       - Structured Data: structuredData.md
 theme:
