@@ -59,9 +59,9 @@ install(TraceFeature) {
 
 **Methods**:
 
-| Name | Parameters | Return Type | Description |
-|------|------------|-------------|-------------|
-| addMessageProcessor | processor: FeatureMessageProcessor | Unit | Adds a message processor to the feature |
+| Name                | Parameters                         | Return Type | Description                             |
+|---------------------|------------------------------------|-------------|-----------------------------------------|
+| addMessageProcessor | processor: FeatureMessageProcessor | Unit        | Adds a message processor to the feature |
 
 **Usage**:
 ```kotlin
