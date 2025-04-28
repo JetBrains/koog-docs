@@ -19,7 +19,10 @@ This document provides detailed information about the node functions available i
    - [nodeLLMSendToolResult](#nodellmsendtoolresult)
    - [nodeExecuteMultipleTools](#nodeexecutemultipletools)
    - [nodeLLMSendMultipleToolResults](#nodellmsendmultipletoolresults)
-5. [Usage Examples](#usage-examples)
+5. [Subgraph Components](#subgraph-components)
+   - [subgraphWithTask](#subgraphwithtask)
+   - [subgraphWithVerification](#subgraphwithverification)
+6. [Usage Examples](#usage-examples)
 
 ## Introduction
 
@@ -60,8 +63,8 @@ edge(passthrough forwardTo anotherNode)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeUpdatePrompt(
-    name: String? = null,
-    body: PromptBuilder.() -> Unit
+   name: String? = null,
+   body: PromptBuilder.() -> Unit
 ): LocalAgentNodeDelegate<Unit, Unit>
 ```
 
@@ -83,8 +86,8 @@ A delegate that represents the created node, which takes no input and produces n
 **Example:**
 ```kotlin
 val setupContext by nodeUpdatePrompt("setupContext") {
-    system("You are a helpful assistant specialized in Kotlin programming.")
-    user("I need help with Kotlin coroutines.")
+   system("You are a helpful assistant specialized in Kotlin programming.")
+   user("I need help with Kotlin coroutines.")
 }
 ```
 
@@ -92,7 +95,7 @@ val setupContext by nodeUpdatePrompt("setupContext") {
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendStageInput(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<Unit, Message.Response>
 ```
 
@@ -120,7 +123,7 @@ edge(nodeStart forwardTo sendInput)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendStageInputMultiple(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<Unit, List<Message.Response>>
 ```
 
@@ -148,8 +151,8 @@ edge(nodeStart forwardTo generateAlternatives)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMRequest(
-    name: String? = null,
-    allowToolCalls: Boolean = true
+   name: String? = null,
+   allowToolCalls: Boolean = true
 ): LocalAgentNodeDelegate<String, Message.Response>
 ```
 
@@ -178,7 +181,7 @@ edge(someNode forwardTo processQuery)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMRequestMultiple(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<String, List<Message.Response>>
 ```
 
@@ -206,9 +209,9 @@ edge(someNode forwardTo processComplexQuery)
 
 ```kotlin
 fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeLLMCompressHistory(
-    name: String? = null,
-    strategy: HistoryCompressionStrategy = HistoryCompressionStrategy.WholeHistory,
-    preserveMemory: Boolean = true
+   name: String? = null,
+   strategy: HistoryCompressionStrategy = HistoryCompressionStrategy.WholeHistory,
+   preserveMemory: Boolean = true
 ): LocalAgentNodeDelegate<T, T>
 ```
 
@@ -236,9 +239,9 @@ A delegate representing the defined node, which takes an input of type T and ret
 **Example:**
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<String>(
-    "compressHistory",
-    strategy = HistoryCompressionStrategy.FromLastNMessages(10),
-    preserveMemory = true
+   "compressHistory",
+   strategy = HistoryCompressionStrategy.FromLastNMessages(10),
+   preserveMemory = true
 )
 edge(someNode forwardTo compressHistory)
 ```
@@ -249,7 +252,7 @@ edge(someNode forwardTo compressHistory)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
 ```
 
@@ -277,7 +280,7 @@ edge(llmNode forwardTo executeToolCall onToolCall { true })
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
 ```
 
@@ -305,7 +308,7 @@ edge(executeToolCall forwardTo processToolResult)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
 ```
 
@@ -333,7 +336,7 @@ edge(llmNode forwardTo executeMultipleTools)
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
-    name: String? = null
+   name: String? = null
 ): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
 ```
 
@@ -357,6 +360,130 @@ val processMultipleToolResults by nodeLLMSendMultipleToolResults("processMultipl
 edge(executeMultipleTools forwardTo processMultipleToolResults)
 ```
 
+## Subgraph Components
+
+Subgraph components are higher-level abstractions that automatically create predefined graph structures for common task patterns. They simplify the creation of complex agent workflows by handling the underlying node and edge creation automatically.
+
+### subgraphWithTask
+
+```kotlin
+fun <ProvidedResult : SubgraphResult, Input> LocalAgentSubgraphBuilderBase<*, *>.subgraphWithTask(
+   toolSelectionStrategy: ToolSelectionStrategy,
+   finishTool: ProvideSubgraphResult<ProvidedResult>,
+   model: LLModel? = null,
+   params: LLMParams? = null,
+   shouldTLDRHistory: Boolean = true,
+   defineTask: suspend LocalAgentStageContext.(input: Input) -> String
+): LocalAgentSubgraphDelegate<Input, ProvidedResult>
+```
+
+**Description:**  
+Creates a subgraph that performs a specific task defined by `defineTask`, using the tools defined by `toolSelectionStrategy`. When the LLM believes the task is finished, it calls `finishTool`, generating a structured result. This function automatically creates all the necessary graph structure to perform the task without having to manually define nodes and edges.
+
+**Parameters:**
+- `toolSelectionStrategy`: Strategy to select tools available to the LLM during this task
+- `finishTool`: The tool which LLM must call to complete the task
+- `model` (optional): LLM used for this task. If not provided, uses the default model
+- `params` (optional): Specific LLM parameters for this task. If not provided, uses default parameters
+- `shouldTLDRHistory` (optional): Whether to compress the history when starting to execute this task. Defaults to `true`
+- `defineTask`: A block which defines the task. It may just return a system prompt for the task, but may also alter agent context, prompt, storage, etc.
+
+**Return Value:**  
+A delegate representing the defined subgraph, which takes an input of type `Input` and produces a result of type `ProvidedResult`.
+
+**Use Cases:**
+- Creating task-focused agent workflows without manually defining complex graph structures
+- Implementing structured task execution with specific tools
+- Generating structured results from LLM task execution
+
+**Example:**
+```kotlin
+val generateCode by subgraphWithTask<Unit>(
+   tools = listOf(readFileTool, writeFileTool, listDirectoryTool),
+   model = JetBrainsAIModels.OpenAI.GPT4o,
+) { _ ->
+   """
+    You are a code generation assistant.
+    Your task is to create a simple "Hello, World!" program in Java.
+    Create the necessary files and directories.
+    """.trimIndent()
+}
+```
+
+**Simplified Variants:**
+
+There are several simplified variants of `subgraphWithTask` for common use cases:
+
+1. With string result (using `StringSubgraphResult`):
+```kotlin
+fun <Input> LocalAgentSubgraphBuilderBase<*, *>.subgraphWithTask(
+   // tools or toolSelectionStrategy
+   model: LLModel? = null,
+   params: LLMParams? = null,
+   shouldTLDRHistory: Boolean = true,
+   defineTask: suspend LocalAgentStageContext.(input: Input) -> String
+): LocalAgentSubgraphDelegate<Input, StringSubgraphResult>
+```
+
+Note: You can provide either a list of tools or a toolSelectionStrategy to specify which tools are available to the LLM during task execution.
+
+### subgraphWithVerification
+
+```kotlin
+fun <Input> LocalAgentSubgraphBuilderBase<*, *>.subgraphWithVerification(
+   // tools or toolSelectionStrategy
+   model: LLModel? = null,
+   params: LLMParams? = null,
+   shouldTLDRHistory: Boolean = true,
+   defineTask: suspend LocalAgentStageContext.(input: Input) -> String
+): LocalAgentSubgraphDelegate<Input, VerifiedSubgraphResult>
+```
+
+**Description:**  
+A specialized version of `subgraphWithTask` that produces a `VerifiedSubgraphResult`, indicating whether a task was completed successfully and providing detailed feedback. This eliminates the need to manually implement verification logic in your graph.
+
+**Parameters:**
+- `tools` or `toolSelectionStrategy`: Specify which tools are available to the LLM during this task
+- `model` (optional): LLM used for this task. If not provided, uses the default model
+- `params` (optional): Specific LLM parameters for this task. If not provided, uses default parameters
+- `shouldTLDRHistory` (optional): Whether to compress the history when starting to execute this task. Defaults to `true`
+- `defineTask`: A block which defines the task. It may just return a system prompt for the task, but may also alter agent context, prompt, storage, etc.
+
+**Return Value:**  
+A delegate representing the defined subgraph, which takes an input of type `Input` and produces a `VerifiedSubgraphResult` containing a boolean indicating success and a message with details.
+
+**Use Cases:**
+- Implementing verification workflows that check if a task was completed correctly
+- Creating quality assurance processes in agent workflows
+- Generating structured verification results with success/failure status and detailed feedback
+
+**Example:**
+```kotlin
+val verifyProject by subgraphWithVerification(
+   tools = listOf(runTestsTool, checkBuildTool, listFilesTool),
+   model = JetBrainsAIModels.OpenAI.GPT4o,
+) { _ ->
+   """
+    You are a project verification assistant.
+    Your task is to verify that the project builds correctly and all tests pass.
+    Run the necessary commands to check the project's status.
+    """.trimIndent()
+}
+```
+
+**Simplified Variant:**
+
+With a list of tools instead of a tool selection strategy:
+```kotlin
+fun <Input> LocalAgentSubgraphBuilderBase<*, *>.subgraphWithVerification(
+    tools: List<Tool<*, *>>,
+    model: LLModel? = null,
+    params: LLMParams? = null,
+    shouldTLDRHistory: Boolean = true,
+    defineTask: suspend LocalAgentStageContext.(input: Input) -> String
+): LocalAgentSubgraphDelegate<Input, VerifiedSubgraphResult>
+```
+
 ## Usage Examples
 
 ### Chat Agent Strategy
@@ -365,30 +492,30 @@ The following example shows how to use nodes to create a chat agent strategy:
 
 ```kotlin
 fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
+   val sendInput by nodeLLMSendStageInput("sendInput")
+   val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
+   val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
 
-    val giveFeedbackToCallTools by node<String, Message.Response> { input ->
-        llm.writeSession {
-            updatePrompt {
-                user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
-            }
+   val giveFeedbackToCallTools by node<String, Message.Response> { input ->
+      llm.writeSession {
+         updatePrompt {
+            user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
+         }
 
-            requestLLM()
-        }
-    }
+         requestLLM()
+      }
+   }
 
-    edge(nodeStart forwardTo sendInput)
+   edge(nodeStart forwardTo sendInput)
 
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo giveFeedbackToCallTools onAssistantMessage { true })
-    edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
-    edge(giveFeedbackToCallTools forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeExecuteTool forwardTo nodeSendToolResult)
-    edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeExecuteTool forwardTo nodeFinish onToolCall { tc -> tc.tool == "__exit__" } transformed { "Chat finished" })
+   edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
+   edge(sendInput forwardTo giveFeedbackToCallTools onAssistantMessage { true })
+   edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
+   edge(giveFeedbackToCallTools forwardTo nodeExecuteTool onToolCall { true })
+   edge(nodeExecuteTool forwardTo nodeSendToolResult)
+   edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
+   edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
+   edge(nodeExecuteTool forwardTo nodeFinish onToolCall { tc -> tc.tool == "__exit__" } transformed { "Chat finished" })
 }
 ```
 
@@ -398,16 +525,16 @@ The following example shows how to use nodes to create a single run (one-shot) s
 
 ```kotlin
 fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
+   val sendInput by nodeLLMSendStageInput("sendInput")
+   val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
+   val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
 
-    edge(nodeStart forwardTo sendInput)
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeExecuteTool forwardTo nodeSendToolResult)
-    edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
+   edge(nodeStart forwardTo sendInput)
+   edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
+   edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
+   edge(nodeExecuteTool forwardTo nodeSendToolResult)
+   edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
+   edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
 }
 ```
 
