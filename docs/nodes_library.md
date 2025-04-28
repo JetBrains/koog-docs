@@ -427,6 +427,24 @@ fun <Input> LocalAgentSubgraphBuilderBase<*, *>.subgraphWithTask(
 
 Note: You can provide either a list of tools or a toolSelectionStrategy to specify which tools are available to the LLM during task execution.
 
+**StringSubgraphResult:**
+```kotlin
+@JvmInline
+@Serializable
+value class StringSubgraphResult(val result: String) : SubgraphResult
+```
+
+**Description:**  
+A simple result type that contains a string value. This is the default result type for `subgraphWithTask` when no specific result type is specified.
+
+**Properties:**
+- `result`: A string containing the output of the task execution.
+
+**Use Cases:**
+- When you need a simple text output from your task
+- For tasks that generate descriptions, summaries, or other text-based results
+- When a structured result is not necessary
+
 ### subgraphWithVerification
 
 ```kotlin
@@ -471,18 +489,28 @@ val verifyProject by subgraphWithVerification(
 }
 ```
 
-**Simplified Variant:**
+Note: You can provide either a list of tools or a toolSelectionStrategy to specify which tools are available to the LLM during task execution.
 
-With a list of tools instead of a tool selection strategy:
+**VerifiedSubgraphResult:**
 ```kotlin
-fun <Input> LocalAgentSubgraphBuilderBase<*, *>.subgraphWithVerification(
-    tools: List<Tool<*, *>>,
-    model: LLModel? = null,
-    params: LLMParams? = null,
-    shouldTLDRHistory: Boolean = true,
-    defineTask: suspend LocalAgentStageContext.(input: Input) -> String
-): LocalAgentSubgraphDelegate<Input, VerifiedSubgraphResult>
+@Serializable
+data class VerifiedSubgraphResult(
+    val correct: Boolean,
+    val message: String,
+) : SubgraphResult
 ```
+
+**Description:**  
+A structured result type that indicates whether a task was completed successfully and provides detailed feedback. This is the result type returned by `subgraphWithVerification`.
+
+**Properties:**
+- `correct`: A boolean indicating whether the task was completed successfully (`true`) or not (`false`).
+- `message`: A string containing detailed feedback about the task execution, including any problems encountered if the task failed.
+
+**Use Cases:**
+- When you need to verify if a task was completed correctly
+- For implementing quality assurance processes in agent workflows
+- When you need detailed feedback about task execution
 
 ## Usage Examples
 
