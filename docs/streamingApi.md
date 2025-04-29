@@ -2,11 +2,14 @@
 
 ## Introduction
 
-The Streaming API in the Kotlin AI Library allows you to process structured data from Large Language Models (LLMs) as it arrives, rather than waiting for the entire response. This guide explains how to use the Streaming API to efficiently handle structured data in markdown format.
+The Streaming API in the Kotlin AI Library allows you to process structured data from Large Language Models (LLMs) as it
+arrives, rather than waiting for the entire response.
+This guide explains how to use the Streaming API to efficiently handle structured data in markdown format.
 
 ## What is the Streaming API?
 
-The Streaming API enables real-time processing of structured data from LLM responses. Instead of waiting for the complete response, you can:
+The Streaming API enables real-time processing of structured data from LLM responses. Instead of waiting for the
+complete response, you can:
 
 - Process data as it arrives in chunks
 - Parse structured information on-the-fly
@@ -14,35 +17,61 @@ The Streaming API enables real-time processing of structured data from LLM respo
 - Handle these objects immediately (collect them or pass to tools)
 
 This approach is particularly useful for:
+
 - Improving responsiveness in user interfaces
 - Processing large responses efficiently
 - Implementing real-time data processing pipelines
 
-## Core Components
-
-The Streaming API consists of several key components:
-
-1. **MarkdownStructuredDataDefinition**: Defines the schema and examples for structured data in markdown format.
-2. **markdownStreamingParser**: Creates a parser that processes a stream of markdown chunks and emits events.
-3. **Flow-based processing**: Uses Kotlin's Flow API to handle asynchronous streams of data.
+The Streaming API allows parsing the output as **a structured data** from the .md format or as a set of **plain text**
+chunks.
 
 ## Working with Raw String Stream
 
-It's important to note that you can also parse the output without using the markdown parser, by working directly with the raw string stream. This approach gives you more flexibility and control over the parsing process:
+It's important to note that you can parse the output by working directly with the raw string stream. This approach gives
+you more flexibility and control over the parsing process.
+
+Raw String Stream with the Markdown definition of the output structure:
 
 ```kotlin
+fun markdownBookDefinition(): MarkdownStructuredDataDefinition {
+    return MarkdownStructuredDataDefinition("name", schema = { /*...*/ })
+}
+
+val mdDefinition = markdownBookDefinition()
+
 llm.writeSession {
     val stream = requestLLMStreaming(mdDefinition)
-
     // Access the raw string chunks directly
     stream.collect { chunk ->
         // Process each chunk of text as it arrives
-        println("Received chunk: $chunk")
+        println("Received chunk: $chunk") // the chunks together will be structured as a text following the mdDefinition scheme
+    }
+}
+```
+
+Or without the definition:
+
+```kotlin
+llm.writeSession {
+    val stream = requestLLMStreaming()
+    // Access the raw string chunks directly
+    stream.collect { chunk ->
+        // Process each chunk of text as it arrives
+        println("Received chunk: $chunk") // the chunks together won't be structured in a specific way
     }
 }
 ```
 
 ## Working with Structured Data
+
+Although it's possible to work with the raw string stream, it's often more convenient to work with structured data.
+
+The structured data approach includes of the following key components:
+
+1. **MarkdownStructuredDataDefinition**: a class to help you define the schema and examples for structured data in
+   Markdown format.
+2. **markdownStreamingParser**: a function to create a parser that processes a stream of Markdown chunks and emits
+   events.
 
 ### 1. Define Your Data Structure
 
@@ -59,7 +88,8 @@ data class Book(
 
 ### 2. Define the Markdown Structure
 
-Create a definition that specifies how your data should be structured in markdown:
+Create a definition that specifies how your data should be structured in Markdown with
+`MarkdownStructuredDataDefinition` class:
 
 ```kotlin
 fun markdownBookDefinition(): MarkdownStructuredDataDefinition {
@@ -85,7 +115,40 @@ fun markdownBookDefinition(): MarkdownStructuredDataDefinition {
 
 ### 3. Create a Parser for Your Data Structure
 
-Implement a function that parses the markdown stream and emits your data objects:
+The `markdownStreamingParser` provides several handlers for different Markdown elements:
+
+```kotlin
+markdownStreamingParser {
+    // Handle headers of level 1
+    // The header level can be from 1 to 6
+    onHeader(1) { headerText ->
+        // Process header text
+    }
+
+    // Handle bullet points
+    onBullet { bulletText ->
+        // Process bullet text
+    }
+
+    // Handle code blocks
+    onCodeBlock { codeBlockContent ->
+        // Process code block content
+    }
+
+    // Handle lines matching a regex pattern
+    onLineMatching(Regex("pattern")) { line ->
+        // Process matching line
+    }
+
+    // Handle the end of the stream
+    onFinishStream { remainingText ->
+        // Process any remaining text or perform cleanup
+    }
+}
+```
+
+Using them, you can implement a function that parses the Markdown stream and emits your data objects with `markdownStreamingParser`
+function.
 
 ```kotlin
 fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
@@ -94,6 +157,7 @@ fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
             var currentBookName = ""
             val bulletPoints = mutableListOf<String>()
 
+            // handle the event of receiving the Markdown header in the response stream
             onHeader(1) { headerText ->
                 // if we had a previous book, emit it
                 if (currentBookName.isNotEmpty() && bulletPoints.isNotEmpty()) {
@@ -106,10 +170,12 @@ fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
                 bulletPoints.clear()
             }
 
+            // handle the event of receiving the Markdown bullets list in the response stream
             onBullet { bulletText ->
                 bulletPoints.add(bulletText)
             }
 
+            // handle the end of the response stream
             onFinishStream {
                 // Emit the last book if it exists
                 if (currentBookName.isNotEmpty() && bulletPoints.isNotEmpty()) {
@@ -127,21 +193,26 @@ fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
 
 ```kotlin
 val agentStrategy = simpleStrategy("library-assistant") {
+    // describe the node containing the output stream parsing 
     val getMdOutput by node<Unit, String> { _ ->
         val books = mutableListOf<Book>()
         val mdDefinition = markdownBookDefinition()
 
         llm.writeSession {
+            // initiate the response stream in a form of the definition `mdDefinition`
             val markdownStream = requestLLMStreaming(mdDefinition)
+            // call the parser with the result of the response stream and make actions with the result
             parseMarkdownStreamToBooks(markdownStream).collect { book ->
                 books.add(book)
                 println("Parsed Book: ${book.bookName} by ${book.author}")
             }
         }
 
+        // a custom function for output formatting
         formatOutput(books)
     }
 
+    // describe the agent's graph making sure the node is accessible
     edge(nodeStart forwardTo getMdOutput)
     edge(getMdOutput forwardTo nodeFinish)
 }
@@ -149,12 +220,12 @@ val agentStrategy = simpleStrategy("library-assistant") {
 
 ## Advanced Usage: Streaming with Tools
 
-You can also use the Streaming API with tools to process data as it arrives:
+You can also use the Streaming API with tools to process data as it arrives.
 
 ### 1. Define a Tool for Your Data Structure
 
 ```kotlin
-class BookTool(): SimpleTool<Book>() {
+class BookTool() : SimpleTool<Book>() {
     companion object {
         const val NAME = "book"
     }
@@ -220,46 +291,6 @@ val runner = KotlinAIAgent(
     cs = this,
 )
 ```
-
-## Customizing the Markdown Parser
-
-The `markdownStreamingParser` provides several handlers for different markdown elements:
-
-```kotlin
-markdownStreamingParser {
-    // Handle headers of level 1
-    onHeader(1) { headerText ->
-        // Process header text
-    }
-
-    // Handle bullet points
-    onBullet { bulletText ->
-        // Process bullet text
-    }
-
-    // Handle code blocks
-    onCodeBlock { codeBlockContent ->
-        // Process code block content
-    }
-
-    // Handle lines matching a regex pattern
-    onLineMatching(Regex("pattern")) { line ->
-        // Process matching line
-    }
-
-    // Handle the end of the stream
-    onFinishStream { remainingText ->
-        // Process any remaining text or perform cleanup
-    }
-}
-```
-
-
-This approach is useful when:
-- You need custom parsing logic not supported by the built-in parser
-- You want to implement your own optimized parser for specific use cases
-- You're working with a format other than markdown
-- You need to pre-process the text before structured parsing
 
 ## Best Practices
 

@@ -1,7 +1,8 @@
 site_name: Kotlin AI agents
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
+  - Simple API Quickstart: quickstart_simple_api.md
+  - Kotlin AI Agent Quickstart: quickstart_kotlin_agent.md
   - Basic Usage:
       - Creating Custom Tools: customTool.md
       - Handling Agent Events: eventHandler.md
