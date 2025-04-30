@@ -52,7 +52,7 @@ fun main() = runBlocking {
 ## Best Practices
 
 1. **System Prompts**: Provide clear and concise system prompts to guide the agent's behavior.
-2. **Error Handling**: Implement proper error handling in custom tools to prevent agent failures.
+2. **[Error Handling](eventHandler.md)**: Implement proper error handling in custom tools to prevent agent failures.
 3. **[Tool Design](customTool.md)**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
 4. **Resource Management**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource
    leaks.

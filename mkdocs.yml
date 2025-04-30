@@ -4,16 +4,16 @@ nav:
   - Simple API Quickstart: quickstart_simple_api.md
   - Kotlin AI Agent Quickstart: quickstart_kotlin_agent.md
   - Basic Usage:
-      - Creating Custom Tools: customTool.md
-      - Handling Agent Events: eventHandler.md
-      - Graph Nodes: nodes_library.md
-      - Custom Graph Nodes: customNodes.md
       - Stages And History: stagesAndHistory.md
       - Streaming API: streamingApi.md
+      - Graph Nodes: nodes_library.md
+      - Custom Graph Nodes: customNodes.md
+      - Creating Custom Tools: customTool.md
+      - Handling Agent Events: eventHandler.md
   - Advanced Usage:
-      - Writing custom graphs: customGraphs.md
-      - LLM Sessions and History: sessions.md
       - Structured Data: structuredData.md
+      - LLM Sessions and History: sessions.md
+      - Writing custom graphs: customGraphs.md
       - Tracing: tracingFeature.md
       - Memory: memoryFeature.md
   - Testing:

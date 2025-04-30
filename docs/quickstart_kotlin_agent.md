@@ -22,6 +22,43 @@ implementation("ai.jetbrains.code.agents:code-agents-tools-registry")
 implementation("ai.jetbrains.code.agents:code-agents-local")
 ```
 
+## Understanding Nodes and Edges
+
+When creating a KotlinAIAgent, you define the workflow using nodes and edges.
+
+Nodes represent processing steps in your agent's workflow:
+
+```kotlin
+val processNode by node<InputType, OutputType> { input ->
+    // Process the input and return an output
+    // You can use llm.writeSession to interact with the LLM
+    // You can call tools using callTool, callToolRaw, etc.
+    transformedOutput
+}
+```
+
+Edges define the connections between nodes:
+
+```kotlin
+// Basic edge
+edge(sourceNode forwardTo targetNode)
+
+// Edge with condition
+edge(sourceNode forwardTo targetNode onCondition { output ->
+    // Return true to follow this edge, false to skip it
+    output.contains("specific text")
+})
+
+// Edge with transformation
+edge(sourceNode forwardTo targetNode transformed { output ->
+    // Transform the output before passing it to the target node
+    "Modified: $output"
+})
+
+// Combined condition and transformation
+edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
+```
+
 ## Creating a KotlinAIAgent
 
 Unlike the `SimpleAPI` agents, `KotlinAIAgent` requires explicit configuration:
@@ -36,7 +73,7 @@ val agent = KotlinAIAgent(
 )
 ```
 
-### 1. Creating a Custom Prompt Executor
+### 1. Create a Custom Prompt Executor
 
 Create a custom CodePromptExecutor:
 
@@ -61,7 +98,7 @@ fun createPromptExecutor(
 }
 ```
 
-### 2. Creating a Multi-Stage Strategy
+### 2. Create a Strategy
 
 The strategy defines the workflow of your agent. Use the `strategy` function to create a custom multi-stage strategy:
 
@@ -108,42 +145,7 @@ val agentStrategy = strategy(
 The `strategy` function allows you to define multiple stages, each with its own set of nodes and edges. This is more
 powerful than using simplified strategy builders.
 
-### 3. Understanding Nodes and Edges
-
-Nodes represent processing steps in your agent's workflow:
-
-```kotlin
-val processNode by node<InputType, OutputType> { input ->
-    // Process the input and return an output
-    // You can use llm.writeSession to interact with the LLM
-    // You can call tools using callTool, callToolRaw, etc.
-    transformedOutput
-}
-```
-
-Edges define the connections between nodes:
-
-```kotlin
-// Basic edge
-edge(sourceNode forwardTo targetNode)
-
-// Edge with condition
-edge(sourceNode forwardTo targetNode onCondition { output ->
-    // Return true to follow this edge, false to skip it
-    output.contains("specific text")
-})
-
-// Edge with transformation
-edge(sourceNode forwardTo targetNode transformed { output ->
-    // Transform the output before passing it to the target node
-    "Modified: $output"
-})
-
-// Combined condition and transformation
-edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
-```
-
-### 4. Setting Up the Tool Registry
+### 3. Set Up the Tool Registry
 
 Tools allow your agent to perform specific actions:
 
@@ -174,7 +176,7 @@ val toolRegistry = multiStageToolRegistry {
 }
 ```
 
-### 5. Configuring the Agent
+### 4. Configure the Agent
 
 Define the agent's behavior with a configuration:
 
@@ -206,7 +208,7 @@ val agentConfig = LocalAgentConfig(
 )
 ```
 
-### 6. Running the Agent
+### 5. Run the Agent
 
 Execute the agent with an input:
 
