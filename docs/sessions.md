@@ -9,9 +9,6 @@ LLM sessions are a fundamental concept in the Code Engine platform that provide 
 language models (LLMs). They manage the conversation history, handle requests to the LLM, and provide a consistent
 interface for executing tools and processing responses.
 
-Understanding how LLM sessions work is crucial for creating effective agent workflows that maintain context, manage
-history efficiently, and interact with LLMs in a controlled manner.
-
 ## Understanding LLM Sessions
 
 ### What are LLM Sessions?
