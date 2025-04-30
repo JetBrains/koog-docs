@@ -6,9 +6,9 @@ tools, handle complex workflows, and communicate with users.
 
 The module offers two main approaches:
 
-1. **[Simple API](quickstart_simple_api)**: A high-level, user-friendly interface for quickly creating chat agents and
+1. **[Simple API](quickstartSimpleApi)**: A high-level, user-friendly interface for quickly creating chat agents and
    single-run agents with minimal configuration.
-2. **[Kotlin AI Agent](quickstart_kotlin_agent)**: A more flexible, feature-rich framework for building custom agents with advanced capabilities.
+2. **[Kotlin AI Agent](quickstartKotlinAgent)**: A more flexible, feature-rich framework for building custom agents with advanced capabilities.
 
 ## Key Features
 
@@ -31,7 +31,7 @@ dependencies {
 
 ## Quick Start With a Simple API
 
-The [SimpleAPI](quickstart_simple_api) provides the easiest way to get started with AI agents:
+The [SimpleAPI](quickstartSimpleApi) provides the easiest way to get started with AI agents:
 
 #### Chat Agent Example
 
