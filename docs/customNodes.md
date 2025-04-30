@@ -2,23 +2,6 @@
 
 This guide provides detailed instructions on how to implement your own custom nodes in the Kotlin AI platform. Custom nodes allow you to extend the functionality of agent workflows by creating reusable components that perform specific operations.
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Node Architecture Overview](#node-architecture-overview)
-3. [Implementing a Custom Node](#implementing-a-custom-node)
-   - [Basic Node Implementation](#basic-node-implementation)
-   - [Parameterized Nodes](#parameterized-nodes)
-   - [Stateful Nodes](#stateful-nodes)
-4. [Node Input and Output Types](#node-input-and-output-types)
-5. [Best Practices](#best-practices)
-6. [Common Patterns](#common-patterns)
-7. [Examples](#examples)
-   - [Simple Pass-Through Node](#simple-pass-through-node)
-   - [Data Transformation Node](#data-transformation-node)
-   - [LLM Interaction Node](#llm-interaction-node)
-   - [Tool Execution Node](#tool-execution-node)
-
 ## Introduction
 
 Nodes are the fundamental building blocks of agent workflows in the Kotlin AI platform. Each node represents a specific operation or transformation in the workflow, and they can be connected using edges to define the flow of execution.

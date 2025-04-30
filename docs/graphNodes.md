@@ -2,25 +2,6 @@
 
 This document provides detailed information about the node functions available in Kotlin AI agent system. These nodes are the building blocks for creating agent workflows by connecting them in a graph structure.
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Utility Nodes](#utility-nodes)
-   - [nodeDoNothing](#nodedonothing)
-3. [LLM Nodes](#llm-nodes)
-   - [nodeUpdatePrompt](#nodeupdateprompt)
-   - [nodeLLMSendStageInput](#nodellmsendstageinput)
-   - [nodeLLMSendStageInputMultiple](#nodellmsendstageinputmultiple)
-   - [nodeLLMRequest](#nodellmrequest)
-   - [nodeLLMRequestMultiple](#nodellmrequestmultiple)
-   - [nodeLLMCompressHistory](#nodellmcompresshistory)
-4. [Tool Nodes](#tool-nodes)
-   - [nodeExecuteTool](#nodeexecutetool)
-   - [nodeLLMSendToolResult](#nodellmsendtoolresult)
-   - [nodeExecuteMultipleTools](#nodeexecutemultipletools)
-   - [nodeLLMSendMultipleToolResults](#nodellmsendmultipletoolresults)
-5. [Usage Examples](#usage-examples)
-
 ## Introduction
 
 LocalAgentNodes are fundamental components used to build agent workflows in the Kotlin AI platform. Each node represents a specific operation or transformation in the workflow, and they can be connected using edges to define the flow of execution.

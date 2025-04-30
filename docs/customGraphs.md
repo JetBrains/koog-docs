@@ -2,31 +2,6 @@
 
 This guide provides detailed instructions on how to create custom strategy graphs in the Kotlin AI platform. Strategy graphs define the flow of execution in an agent, connecting nodes that perform specific operations to create complex workflows.
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Strategy Graph Architecture](#strategy-graph-architecture)
-3. [Creating a Basic Strategy Graph](#creating-a-basic-strategy-graph)
-4. [Components of a Strategy Graph](#components-of-a-strategy-graph)
-   - [Nodes](#nodes)
-   - [Edges](#edges)
-   - [Conditions](#conditions)
-   - [Stages](#stages)
-5. [Common Strategy Patterns](#common-strategy-patterns)
-   - [Chat Strategy](#chat-strategy)
-   - [Single Run Strategy](#single-run-strategy)
-   - [Tool-Based Strategy](#tool-based-strategy)
-   - [Streaming Data Strategy](#streaming-data-strategy)
-6. [Advanced Strategy Techniques](#advanced-strategy-techniques)
-   - [History Compression](#history-compression)
-   - [Parallel Tool Execution](#parallel-tool-execution)
-   - [Conditional Branching](#conditional-branching)
-7. [Best Practices](#best-practices)
-8. [Examples from the Codebase](#examples-from-the-codebase)
-   - [Tone Analysis Strategy](#tone-analysis-strategy)
-   - [Markdown Streaming Strategy](#markdown-streaming-strategy)
-9. [Troubleshooting](#troubleshooting)
-
 ## Introduction
 
 Strategy graphs are the backbone of agent workflows in the Kotlin AI platform. They define how an agent processes input, interacts with tools, and generates output. A strategy graph consists of nodes connected by edges, with conditions determining the flow of execution.
