@@ -22,7 +22,7 @@ This approach is particularly useful for:
 - Processing large responses efficiently
 - Implementing real-time data processing pipelines
 
-The Streaming API allows parsing the output as **a structured data** from the .md format or as a set of **plain text**
+The Streaming API allows parsing the output as **structured data** from the .md format or as a set of **plain text**
 chunks.
 
 ## Working with Raw String Stream
