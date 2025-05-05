@@ -195,8 +195,9 @@ history size:
 val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
 
 edge(
-    (someNode forwardTo compressHistory)
-            onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
+    nodeStart forwardTo nodeLLMSendInput onCondition { _ ->
+        llm.readSession { prompt.messages.size > 100 }
+    }
 )
 ```
 
