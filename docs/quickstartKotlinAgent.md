@@ -8,6 +8,9 @@ control for complex AI workflows.
 - JetBrains AI API token
 - Kotlin project with coroutine support
 
+**Tip**: Never hardcode API tokens in your code. Use environment variables or secure configuration
+management.
+
 ## Setting Up Dependencies
 
 Add the following dependencies to your project:
@@ -72,6 +75,9 @@ val agent = KotlinAIAgent(
     cs = coroutineScope
 )
 ```
+
+**Tip**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource
+leaks.
 
 ### 1. Create a Custom Prompt Executor
 
