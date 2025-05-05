@@ -1,4 +1,4 @@
-# TraceFeature Documentation
+# Trace Feature Documentation
 
 Agent features provide a way to extend and enhance the functionality of AI agents. Features can:
 
@@ -7,11 +7,11 @@ Agent features provide a way to extend and enhance the functionality of AI agent
 - Provide access to external systems and resources;
 - Log and monitor agent execution.
 
-In this section, we'll cover the TraceFeature, which provides comprehensive tracing capabilities for AI agents.
+In this section, we'll cover the Trace Feature, which provides comprehensive tracing capabilities for AI agents.
 
 ## Feature Overview
 
-The TraceFeature is a powerful monitoring and debugging tool that capture detailed information about agent execution,
+The Trace Feature is a powerful monitoring and debugging tool that capture detailed information about agent execution,
 including:
 
 - Agent creation and initialization;
@@ -26,7 +26,7 @@ filesystem, enabling developers to gain insights into agent behavior and trouble
 
 ### Event Flow
 
-1. The TraceFeature intercepts events in the agent pipeline
+1. The Trace Feature intercepts events in the agent pipeline
 2. Events are filtered based on the configured message filter
 3. Filtered events are passed to registered message processors
 4. Message processors format and output the events to their respective destinations
@@ -35,10 +35,10 @@ filesystem, enabling developers to gain insights into agent behavior and trouble
 
 ### Basic Setup
 
-To use the `TraceFeature`, you need to:
+To use the Trace Feature, you need to:
 
 1. Have one or more message processors (you can use the existing ones or create your own)
-2. Install the TraceFeature in your agent
+2. Install the `TraceFeature` in your agent
 3. Configure the message filter (optional)
 4. Add the message processors to the feature
 
@@ -99,7 +99,7 @@ messageFilter = { message ->
 
 ### Architecture
 
-The TraceFeature follows a modular architecture with these key components:
+The Trace Feature follows a modular architecture with these key components:
 
 1. **TraceFeature**: The main feature class that intercepts events in the agent pipeline
 2. **TraceFeatureConfig**: Configuration class for customizing feature behavior
@@ -109,7 +109,7 @@ The TraceFeature follows a modular architecture with these key components:
 
 ### TraceFeature
 
-**Description**: Main feature class that intercepts events in the agent pipeline and forwards them to message
+Main feature class that intercepts events in the agent pipeline and forwards them to message
 processors.
 
 **Usage**:
@@ -125,7 +125,7 @@ val agent = KotlinAIAgent(/*...*/) {
 
 ### TraceFeatureConfig
 
-**Description**: Configuration class for the TraceFeature.
+Configuration class for the Trace Feature.
 
 **Properties**:
 
@@ -161,7 +161,7 @@ val agent = KotlinAIAgent(/*...*/) {
 
 ### TraceFeatureMessageLogWriter
 
-**Description**: Writes trace events to a logger.
+Writes trace events to a logger.
 
 **Constructor Parameters**:
 
@@ -188,7 +188,7 @@ val agent = KotlinAIAgent(/*...*/) {
 
 ### TraceFeatureMessageFileWriter
 
-**Description**: Writes trace events to a file.
+Writes trace events to a file.
 
 **Constructor Parameters**:
 
@@ -217,7 +217,7 @@ install(TraceFeature) {
 
 ### Event Types
 
-The TraceFeature works with the following event types:
+The Trace Feature works with the following event types:
 
 | Event Type                 | When Triggered                |
 |----------------------------|-------------------------------|
@@ -252,7 +252,7 @@ get() = "${this.eventId} (stage: ${this.stageName}, node: ${this.nodeName}, inpu
 
 ### No Message Processors
 
-If no message processors are added to the TraceFeature, a warning will be logged:
+If no message processors are added to the Trace Feature, a warning will be logged:
 
 ```
 Tracing Feature. No feature out stream providers are defined. Trace streaming has no target.
@@ -289,7 +289,7 @@ For agents with complex strategies or long-running executions, the volume of tra
 
 ## Dependency Graph
 
-The TraceFeature has the following dependencies:
+The Trace Feature has the following dependencies:
 
 ```
 TraceFeature
