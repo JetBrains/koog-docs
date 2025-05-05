@@ -1,11 +1,11 @@
 # LLM Sessions and History Guide
 
-This guide provides detailed information about LLM sessions in the Code Engine platform, including how to work with read
+This guide provides detailed information about LLM sessions, including how to work with read
 and write sessions, manage conversation history, and make requests to language models.
 
 ## Introduction
 
-LLM sessions are a fundamental concept in the Code Engine platform that provide a structured way to interact with
+LLM sessions are a fundamental concept that provides a structured way to interact with
 language models (LLMs). They manage the conversation history, handle requests to the LLM, and provide a consistent
 interface for executing tools and processing responses.
 

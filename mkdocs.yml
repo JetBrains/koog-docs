@@ -5,15 +5,15 @@ nav:
   - Kotlin AI Agent Quickstart: quickstartKotlinAgent.md
   - Basic Usage:
       - Stages And History: stagesAndHistory.md
-      - Streaming API: streamingApi.md
       - Graph Nodes: graphNodes.md
-      - Custom Graph Nodes: customNodes.md
-      - Creating Custom Tools: customTool.md
+      - Creating Tools: customTool.md
       - Handling Agent Events: eventHandler.md
+      - Streaming API: streamingApi.md
   - Advanced Usage:
       - Structured Data: structuredData.md
+      - Custom Nodes: customNodes.md
+      - Custom Strategy Graphs: customGraphs.md
       - LLM Sessions and History: sessions.md
-      - Writing custom graphs: customGraphs.md
       - Features:
           - Tracing: tracingFeature.md
           - Memory: memoryFeature.md
