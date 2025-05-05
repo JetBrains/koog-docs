@@ -1,4 +1,4 @@
-# Creating Custom Tools
+# Creating Tools
 
 You can extend agent capabilities by creating custom tools. These tools can be used as with the agents created via the
 `Simple API`, as for more sophisticated agents created with the `KotlinAIAgent`.
@@ -15,33 +15,35 @@ Example of a custom tool:
 
 ```kotlin
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
-  @Serializable
-  data class Args(val expression: String, val comment: String) : Tool.Args
+    @Serializable
+    data class Args(val expression: String, val comment: String) : Tool.Args
 
-  override val argsSerializer = Args.serializer()
+    override val argsSerializer = Args.serializer()
 
-  override val descriptor = ToolDescriptor(
-    name = "cast to double",
-    description = "casts the passed expression to double or returns 0.0 if the expression is not castable",
-    requiredParameters = listOf(
-      ToolParameterDescriptor(
-        name = "expression", description = "An expression to case to double", type = ToolParameterType.String
-      )
-    ),
-    optionalParameters = listOf(
-      ToolParameterDescriptor(
-        name = "comment", description = "A comment on how to process the expression", type = ToolParameterType.String
-      )
+    override val descriptor = ToolDescriptor(
+        name = "cast to double",
+        description = "casts the passed expression to double or returns 0.0 if the expression is not castable",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "expression", description = "An expression to case to double", type = ToolParameterType.String
+            )
+        ),
+        optionalParameters = listOf(
+            ToolParameterDescriptor(
+                name = "comment",
+                description = "A comment on how to process the expression",
+                type = ToolParameterType.String
+            )
+        )
     )
-  )
 
-  override suspend fun doExecute(args: Args): String {
-    return "Result: ${castToDouble(args.expression)}, " + "the comment was: ${args.comment}"
-  }
+    override suspend fun doExecute(args: Args): String {
+        return "Result: ${castToDouble(args.expression)}, " + "the comment was: ${args.comment}"
+    }
 
-  private fun castToDouble(expression: String): Double {
-    return expression.toDoubleOrNull() ?: 0.0
-  }
+    private fun castToDouble(expression: String): Double {
+        return expression.toDoubleOrNull() ?: 0.0
+    }
 }
 ```
 
@@ -70,40 +72,46 @@ val agent = simpleChatAgent(
 
 ## Calling Tools
 
-There are several ways to call tools within your agent's code. The recommended approach is to use the provided methods in the agent context rather than calling tools directly, as this ensures proper handling of tool execution within the agent environment.
+There are several ways to call tools within your agent's code. The recommended approach is to use the provided methods
+in the agent context rather than calling tools directly, as this ensures proper handling of tool execution within the
+agent environment.
 
 ### Using callTool Methods
 
 The `LocalAgentStageContext` provides several overloaded `callTool` methods from `writeSession` for executing tools:
 
 **Call by tool name and args**:
+
 ```kotlin
 suspend inline fun <reified TArgs : Tool.Args> callTool(
-   toolName: String,
-   args: TArgs
+    toolName: String,
+    args: TArgs
 ): Tool.Result
 ```
 
 **Call by tool class and args**:
+
 ```kotlin
 suspend inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> callTool(
-   toolClass: KClass<out Tool<TArgs, TResult>>,
-   args: TArgs
+    toolClass: KClass<out Tool<TArgs, TResult>>,
+    args: TArgs
 ): TResult
 ```
 
 **Call by reified type parameter**:
+
 ```kotlin
 suspend inline fun <reified ToolT : Tool<*, *>> callTool(
-   args: Tool.Args
+    args: Tool.Args
 ): Tool.Result
 ```
 
 **Call with raw string result**:
+
 ```kotlin
 suspend inline fun <reified TArgs : Tool.Args> callToolRaw(
-   toolName: String,
-   args: TArgs
+    toolName: String,
+    args: TArgs
 ): String
 ```
 
@@ -118,6 +126,7 @@ llm.writeSession {
 ```
 
 Alternatively, you can use the following methods to call the tool:
+
 ```kotlin
 // Call by name
 callTool(BookTool.NAME, bookArgs)
@@ -147,15 +156,16 @@ inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> Flow<TArgs
 ```
 
 Example:
+
 ```kotlin
 @Serializable
 data class Book(
     val bookName: String,
     val author: String,
     val description: String
-): Tool.Args
+) : Tool.Args
 
-...
+/*...*/
 
 val myNode by node<Unit, Unit> { _ ->
     llm.writeSession {
@@ -166,36 +176,39 @@ val myNode by node<Unit, Unit> { _ ->
 }
 ```
 
-
 ## Calling Tools from Nodes
 
 When building agent workflows with nodes, you can use specialized nodes for tool execution:
 
 **nodeExecuteTool**: Executes a single tool call and returns its result
+
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
-   name: String? = null
+    name: String? = null
 ): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
 ```
 
 **nodeExecuteMultipleTools**: Executes multiple tool calls and returns their results
+
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
-   name: String? = null
+    name: String? = null
 ): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
 ```
 
 **nodeLLMSendToolResult**: Sends a tool result to the LLM and gets a response
+
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
-   name: String? = null
+    name: String? = null
 ): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
 ```
 
 **nodeLLMSendMultipleToolResults**: Sends multiple tool results to the LLM
+
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
-   name: String? = null
+    name: String? = null
 ): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
 ```
 
@@ -214,4 +227,5 @@ edge(nodeStart forwardTo processData)
 edge(processData forwardTo nodeFinish)
 ```
 
-Remember that tools should always be called through the agent environment context to ensure proper handling of events, feature pipelines, and testing capabilities.
+Remember that tools should always be called through the agent environment context to ensure proper handling of events,
+feature pipelines, and testing capabilities.

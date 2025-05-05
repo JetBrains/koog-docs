@@ -1,37 +1,16 @@
 # Custom Strategy Graph Implementation Guide
 
-This guide provides detailed instructions on how to create custom strategy graphs in the Kotlin AI platform. Strategy graphs define the flow of execution in an agent, connecting nodes that perform specific operations to create complex workflows.
-
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Strategy Graph Architecture](#strategy-graph-architecture)
-3. [Creating a Basic Strategy Graph](#creating-a-basic-strategy-graph)
-4. [Components of a Strategy Graph](#components-of-a-strategy-graph)
-   - [Nodes](#nodes)
-   - [Edges](#edges)
-   - [Conditions](#conditions)
-   - [Stages](#stages)
-5. [Common Strategy Patterns](#common-strategy-patterns)
-   - [Chat Strategy](#chat-strategy)
-   - [Single Run Strategy](#single-run-strategy)
-   - [Tool-Based Strategy](#tool-based-strategy)
-   - [Streaming Data Strategy](#streaming-data-strategy)
-6. [Advanced Strategy Techniques](#advanced-strategy-techniques)
-   - [History Compression](#history-compression)
-   - [Parallel Tool Execution](#parallel-tool-execution)
-   - [Conditional Branching](#conditional-branching)
-7. [Best Practices](#best-practices)
-8. [Examples from the Codebase](#examples-from-the-codebase)
-   - [Tone Analysis Strategy](#tone-analysis-strategy)
-   - [Markdown Streaming Strategy](#markdown-streaming-strategy)
-9. [Troubleshooting](#troubleshooting)
+Strategy graphs define the flow of execution in an agent, connecting nodes that perform specific operations to create
+complex workflows.
 
 ## Introduction
 
-Strategy graphs are the backbone of agent workflows in the Kotlin AI platform. They define how an agent processes input, interacts with tools, and generates output. A strategy graph consists of nodes connected by edges, with conditions determining the flow of execution.
+Strategy graphs are the backbone of agent workflows in the Kotlin AI platform. They define how an agent processes input,
+interacts with tools, and generates output. A strategy graph consists of nodes connected by edges, with conditions
+determining the flow of execution.
 
-Creating a custom strategy graph allows you to tailor the behavior of an agent to your specific needs, whether you're building a simple chatbot, a complex data processing pipeline, or anything in between.
+Creating a custom strategy graph allows you to tailor the behavior of an agent to your specific needs, whether you're
+building a simple chatbot, a complex data processing pipeline, or anything in between.
 
 ## Strategy Graph Architecture
 
@@ -43,7 +22,8 @@ At a high level, a strategy graph consists of the following components:
 - **Edges**: Connections between nodes that define the flow of execution.
 - **Conditions**: Rules that determine when to follow a particular edge.
 
-The execution of a strategy graph starts at a special node called `nodeStart` and ends at `nodeFinish`. The path taken between these nodes depends on the edges and conditions defined in the graph.
+The execution of a strategy graph starts at a special node called `nodeStart` and ends at `nodeFinish`. The path taken
+between these nodes depends on the edges and conditions defined in the graph.
 
 ## Creating a Basic Strategy Graph
 
@@ -65,18 +45,24 @@ val myStrategy = simpleStrategy("my-strategy") {
 ```
 
 This strategy:
-1. Sends the input to the LLM
-2. If the LLM responds with a message, finishes
-3. If the LLM calls a tool, executes it
-4. Sends the tool result back to the LLM
-5. If the LLM responds with a message, finishes
-6. If the LLM calls another tool, executes it
+
+1. Sends the input to the LLM;
+2. If the LLM responds with a message, finishes the execution;
+3. If the LLM calls a tool, executes it;
+4. Sends the tool result back to the LLM;
+5. If the LLM responds with a message, finishes the execution;
+6. If the LLM calls another tool, executes it, then the actions repeat from point 4.
+
+We can visualize the graph as follows:
+
+![scheme](img/scheme.png)
 
 ## Components of a Strategy Graph
 
 ### Nodes
 
-Nodes are the building blocks of a strategy graph. Each node represents a specific operation or transformation in the workflow. The Kotlin AI platform provides several predefined nodes, and you can also create custom nodes.
+Nodes are the building blocks of a strategy graph. Each node represents a specific operation or transformation in the
+workflow. The Kotlin AI platform provides [several predefined nodes](graphNodes.md), and you can also create [custom nodes](customNodes.md).
 
 Here are some commonly used predefined nodes:
 
@@ -96,7 +82,8 @@ val myCustomNode by node<String, Int> { input ->
 
 ### Edges
 
-Edges connect nodes and define the flow of execution in the strategy graph. An edge is created using the `edge` function and the `forwardTo` infix function:
+Edges connect nodes and define the flow of execution in the strategy graph. An edge is created using the `edge` function
+and the `forwardTo` infix function:
 
 ```kotlin
 edge(sourceNode forwardTo targetNode)
@@ -124,7 +111,8 @@ edge(sourceNode forwardTo targetNode onCondition { input -> input.length > 10 } 
 
 ### Stages
 
-Stages are sections of the strategy graph that can have their own set of tools and context. A stage is created using the `stage` function:
+Stages are sections of the strategy graph that can have their own set of tools and context. A stage is created using the
+`stage` function:
 
 ```kotlin
 stage(
@@ -139,7 +127,8 @@ stage(
 
 ### Chat Strategy
 
-A chat strategy is designed for interactive conversations with the user. It typically involves sending user input to the LLM, executing tools as needed, and returning the LLM's response to the user.
+A chat strategy is designed for interactive conversations with the user. It typically involves sending user input to the
+LLM, executing tools as needed, and returning the LLM's response to the user.
 
 Here's an example of a chat strategy:
 
@@ -174,7 +163,8 @@ fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
 
 ### Single Run Strategy
 
-A single run (or one-shot) strategy is designed for non-interactive use cases where the agent processes input once and returns a result. It's simpler than a chat strategy because it doesn't need to handle ongoing conversations.
+A single run (or one-shot) strategy is designed for non-interactive use cases where the agent processes input once and
+returns a result. It's simpler than a chat strategy because it doesn't need to handle ongoing conversations.
 
 Here's an example of a single run strategy:
 
@@ -195,7 +185,8 @@ fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
 
 ### Tool-Based Strategy
 
-A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations. It typically involves executing tools based on the LLM's decisions and processing the results.
+A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations. It typically
+involves executing tools based on the LLM's decisions and processing the results.
 
 Here's an example of a tool-based strategy:
 
@@ -216,13 +207,13 @@ fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry, stageName: Strin
             // If the LLM responds with a message, finish
             edge(
                 (nodeSendInput forwardTo nodeFinish)
-                    onAssistantMessage { true }
+                        onAssistantMessage { true }
             )
 
             // If the LLM calls a tool, execute it
             edge(
                 (nodeSendInput forwardTo nodeExecuteTool)
-                    onToolCall { true }
+                        onToolCall { true }
             )
 
             // Send the tool result back to the LLM
@@ -231,13 +222,13 @@ fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry, stageName: Strin
             // If the LLM calls another tool, execute it
             edge(
                 (nodeSendToolResult forwardTo nodeExecuteTool)
-                    onToolCall { true }
+                        onToolCall { true }
             )
 
             // If the LLM responds with a message, finish
             edge(
                 (nodeSendToolResult forwardTo nodeFinish)
-                    onAssistantMessage { true }
+                        onAssistantMessage { true }
             )
         }
     }
@@ -246,7 +237,8 @@ fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry, stageName: Strin
 
 ### Streaming Data Strategy
 
-A streaming data strategy is designed for processing streaming data from the LLM. It typically involves requesting streaming data, processing it as it arrives, and potentially calling tools with the processed data.
+A streaming data strategy is designed for processing streaming data from the LLM. It typically involves requesting
+streaming data, processing it as it arrives, and potentially calling tools with the processed data.
 
 Here's an example of a streaming data strategy:
 
@@ -276,7 +268,8 @@ fun streamingDataStrategy(): LocalAgentStrategy = simpleStrategy("streaming-data
 
 ### History Compression
 
-For long-running conversations, the history can grow large and consume a lot of tokens. You can use the `nodeLLMCompressHistory` node to compress the history:
+For long-running conversations, the history can grow large and consume a lot of tokens. You can use the
+`nodeLLMCompressHistory` node to compress the history:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>(
@@ -286,7 +279,7 @@ val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>(
 
 edge(
     (nodeExecuteTool forwardTo compressHistory)
-        onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
+            onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
 )
 edge(compressHistory forwardTo nodeSendToolResult)
 ```
@@ -326,11 +319,11 @@ val branchB by node<String, String> { input ->
 
 edge(
     (someNode forwardTo branchA)
-        onCondition { input -> input.contains("A") }
+            onCondition { input -> input.contains("A") }
 )
 edge(
     (someNode forwardTo branchB)
-        onCondition { input -> input.contains("B") }
+            onCondition { input -> input.contains("B") }
 )
 ```
 
@@ -347,9 +340,7 @@ When creating custom strategy graphs, follow these best practices:
 7. **Consider performance**: For long-running conversations, use history compression to reduce token usage.
 8. **Use stages appropriately**: Use stages to organize your graph and manage tool access.
 
-## Examples from the Codebase
-
-Let's look at some real-world examples of strategy graphs from the Kotlin AI codebase.
+## More Examples
 
 ### Tone Analysis Strategy
 
@@ -373,19 +364,19 @@ fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String
             // If the LLM responds with a message, finish
             edge(
                 (nodeSendInput forwardTo nodeFinish)
-                    onAssistantMessage { true }
+                        onAssistantMessage { true }
             )
 
             // If the LLM calls a tool, execute it
             edge(
                 (nodeSendInput forwardTo nodeExecuteTool)
-                    onToolCall { true }
+                        onToolCall { true }
             )
 
             // If the history gets too large, compress it
             edge(
                 (nodeExecuteTool forwardTo nodeCompressHistory)
-                    onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
+                        onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
             )
 
             edge(nodeCompressHistory forwardTo nodeSendToolResult)
@@ -393,19 +384,19 @@ fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String
             // Otherwise, send the tool result directly
             edge(
                 (nodeExecuteTool forwardTo nodeSendToolResult)
-                    onCondition { _ -> llm.readSession { prompt.messages.size <= 100 } }
+                        onCondition { _ -> llm.readSession { prompt.messages.size <= 100 } }
             )
 
             // If the LLM calls another tool, execute it
             edge(
                 (nodeSendToolResult forwardTo nodeExecuteTool)
-                    onToolCall { true }
+                        onToolCall { true }
             )
 
             // If the LLM responds with a message, finish
             edge(
                 (nodeSendToolResult forwardTo nodeFinish)
-                    onAssistantMessage { true }
+                        onAssistantMessage { true }
             )
         }
     }
@@ -413,6 +404,7 @@ fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String
 ```
 
 This strategy:
+
 1. Sends the input to the LLM
 2. If the LLM responds with a message, finishes
 3. If the LLM calls a tool, executes it
@@ -448,6 +440,7 @@ val agentStrategy = simpleStrategy("library-assistant") {
 ```
 
 This strategy:
+
 1. Defines a custom node that requests streaming data from the LLM
 2. Parses the streaming data into Book objects as it arrives
 3. Formats the output and returns it
@@ -460,6 +453,7 @@ When creating custom strategy graphs, you might encounter some common issues. He
 ### Graph Doesn't Reach Finish Node
 
 If your graph doesn't reach the finish node, check that:
+
 - All paths from the start node eventually lead to the finish node
 - Your conditions are not too restrictive, preventing edges from being followed
 - There are no cycles in the graph that don't have an exit condition
@@ -467,6 +461,7 @@ If your graph doesn't reach the finish node, check that:
 ### Tool Calls Not Being Executed
 
 If tool calls are not being executed, check that:
+
 - The tools are properly registered in the tool registry
 - The stage has access to the tools
 - The edge from the LLM node to the tool execution node has the correct condition (`onToolCall { true }`)
@@ -474,6 +469,7 @@ If tool calls are not being executed, check that:
 ### History Gets Too Large
 
 If your history gets too large and consumes too many tokens, consider:
+
 - Adding a history compression node
 - Using a condition to check the size of the history and compress it when it gets too large
 - Using a more aggressive compression strategy (e.g., `FromLastNMessages` with a smaller N)
@@ -481,6 +477,7 @@ If your history gets too large and consumes too many tokens, consider:
 ### Unexpected Branching
 
 If your graph takes unexpected branches, check that:
+
 - Your conditions are correctly defined
 - The conditions are evaluated in the expected order (edges are checked in the order they are defined)
 - You're not accidentally overriding conditions with more general ones
@@ -488,6 +485,7 @@ If your graph takes unexpected branches, check that:
 ### Performance Issues
 
 If your graph has performance issues, consider:
+
 - Simplifying the graph by removing unnecessary nodes and edges
 - Using parallel tool execution for independent operations
 - Compressing history more aggressively

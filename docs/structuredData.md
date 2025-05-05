@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Structured Data Processing API in Code Engine provides a powerful way to ensure that responses from Large Language Models (LLMs) conform to specific data structures. This is crucial for building reliable AI applications where you need predictable, well-formatted data rather than free-form text.
+The Structured Data Processing API provides a powerful way to ensure that responses from Large Language Models (LLMs) conform to specific data structures. This is crucial for building reliable AI applications where you need predictable, well-formatted data rather than free-form text.
 
 This guide explains how to use the Structured Data Processing API to define data structures, generate schemas, and request structured responses from LLMs.
 
@@ -140,8 +140,20 @@ val weatherForecastStructure = JsonStructuredData.createJsonStructure<WeatherFor
 
 ### Schema Type Options
 
-- `SIMPLE`: A simplified schema type.
-- `FULL`: A more comprehensive schema type.
+#### `SIMPLE`: A simplified schema type.
+
+- Supports only standard JSON fields
+- Does not support definitions, URL references, and recursive checks
+- **Does not support polymorphism**
+- Supported by a larger number of language models
+- Used for simpler data structures
+
+#### `FULL`: A more comprehensive schema type.
+
+- Supports advanced JSON Schema capabilities, including definitions, URL references, and recursive checks
+- **Supports polymorphism** - can work with sealed classes/interfaces and their implementations
+- Supported by fewer language models
+- Used for complex data structures with inheritance hierarchies
 
 ### Providing Examples
 

@@ -1,22 +1,23 @@
 site_name: Kotlin AI agents
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
+  - Simple API Quickstart: quickstartSimpleApi.md
+  - Kotlin AI Agent Quickstart: quickstartKotlinAgent.md
   - Basic Usage:
-      - Creating Custom Tools: customTool.md
-      - Handling Agent Events: eventHandler.md
-      - Graph Nodes: nodes_library.md
-      - Custom Graph Nodes: customNodes.md
       - Stages And History: stagesAndHistory.md
+      - Graph Nodes: graphNodes.md
+      - Creating Tools: customTool.md
+      - Handling Agent Events: eventHandler.md
       - Streaming API: streamingApi.md
   - Advanced Usage:
-      - Writing custom graphs: customGraphs.md
-      - LLM Sessions and History: sessions.md
       - Structured Data: structuredData.md
-      - Tracing: tracingFeature.md
-      - Memory: memoryFeature.md
-  - Testing:
-      - Overview: testing.md
+      - Custom Nodes: customNodes.md
+      - Custom Strategy Graphs: customGraphs.md
+      - LLM Sessions and History: sessions.md
+      - Features:
+          - Tracing: tracingFeature.md
+          - Memory: memoryFeature.md
+  - Testing: testing.md
 
 markdown_extensions:
   - pymdownx.highlight:

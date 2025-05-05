@@ -6,9 +6,9 @@ tools, handle complex workflows, and communicate with users.
 
 The module offers two main approaches:
 
-1. **[Simple API](quickstart.md)**: A high-level, user-friendly interface for quickly creating chat agents and
+1. **[Simple API](quickstartSimpleApi)**: A high-level, user-friendly interface for quickly creating chat agents and
    single-run agents with minimal configuration.
-2. **Kotlin AI Agent**: A more flexible, feature-rich framework for building custom agents with advanced capabilities.
+2. **[Kotlin AI Agent](quickstartKotlinAgent)**: A more flexible, feature-rich framework for building custom agents with advanced capabilities.
 
 ## Key Features
 
@@ -31,7 +31,7 @@ dependencies {
 
 ## Quick Start With a Simple API
 
-The [SimpleAPI](quickstart.md) provides the easiest way to get started with AI agents:
+The [SimpleAPI](quickstartSimpleApi) provides the easiest way to get started with AI agents:
 
 #### Chat Agent Example
 
@@ -52,7 +52,7 @@ fun main() = runBlocking {
 ## Best Practices
 
 1. **System Prompts**: Provide clear and concise system prompts to guide the agent's behavior.
-2. **Error Handling**: Implement proper error handling in custom tools to prevent agent failures.
+2. **[Error Handling](eventHandler.md)**: Implement proper error handling in custom tools to prevent agent failures.
 3. **[Tool Design](customTool.md)**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
 4. **Resource Management**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource
    leaks.
