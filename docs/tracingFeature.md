@@ -1,26 +1,28 @@
 # TraceFeature Documentation
 
+Agent features provide a way to extend and enhance the functionality of AI agents. Features can:
+
+- Add new capabilities to agents;
+- Intercept and modify agent behavior;
+- Provide access to external systems and resources;
+- Log and monitor agent execution.
+
+In this section, we'll cover the TraceFeature, which provides comprehensive tracing capabilities for AI agents.
+
 ## Feature Overview
 
-The TraceFeature is a powerful monitoring and debugging tool for AI agents in the Kotlin AI platform. It provides comprehensive tracing capabilities that capture detailed information about agent execution, including:
+The TraceFeature is a powerful monitoring and debugging tool that capture detailed information about agent execution,
+including:
 
-- Agent creation and initialization
-- Strategy execution
-- LLM (Language Learning Model) calls
-- Tool invocations
-- Node execution within the agent graph
+- Agent creation and initialization;
+- Strategy execution;
+- LLM calls;
+- Tool invocations;
+- Node execution within the agent graph.
 
-This feature operates by intercepting key events in the agent pipeline and forwarding them to configurable message processors. These processors can output the trace information to various destinations such as log files or the filesystem, enabling developers to gain insights into agent behavior and troubleshoot issues effectively.
-
-### Architecture
-
-The TraceFeature follows a modular architecture with these key components:
-
-1. **TraceFeature**: The main feature class that intercepts events in the agent pipeline
-2. **TraceFeatureConfig**: Configuration class for customizing feature behavior
-3. **Message Processors**: Components that process and output trace events
-   - **TraceFeatureMessageLogWriter**: Writes trace events to a logger
-   - **TraceFeatureMessageFileWriter**: Writes trace events to a file
+This feature operates by intercepting key events in the agent pipeline and forwarding them to configurable message
+processors. These processors can output the trace information to various destinations such as log files or the
+filesystem, enabling developers to gain insights into agent behavior and troubleshoot issues effectively.
 
 ### Event Flow
 
@@ -29,153 +31,38 @@ The TraceFeature follows a modular architecture with these key components:
 3. Filtered events are passed to registered message processors
 4. Message processors format and output the events to their respective destinations
 
-## Public API Documentation
-
-### TraceFeature
-
-**Location**: `ai.grazie.code.agents.local.features.tracing.feature.TraceFeature`
-
-**Description**: Main feature class that intercepts events in the agent pipeline and forwards them to message processors.
-
-**Usage**:
-```kotlin
-install(TraceFeature) {
-    messageFilter = { true }  // Accept all messages
-    addMessageProcessor(TraceFeatureMessageLogWriter(logger))
-}
-```
-
-### TraceFeatureConfig
-
-**Location**: `ai.grazie.code.agents.local.features.tracing.feature.TraceFeatureConfig`
-
-**Description**: Configuration class for the TraceFeature.
-
-**Properties**:
-
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| messageFilter | (FeatureMessage) -> Boolean | { true } | Filter function that determines which messages are processed |
-
-**Methods**:
-
-| Name                | Parameters                         | Return Type | Description                             |
-|---------------------|------------------------------------|-------------|-----------------------------------------|
-| addMessageProcessor | processor: FeatureMessageProcessor | Unit        | Adds a message processor to the feature |
-
-**Usage**:
-```kotlin
-install(TraceFeature) {
-    messageFilter = { message -> 
-        message is LLMCallWithToolsStartEvent || message is LLMCallWithToolsEndEvent
-    }
-    addMessageProcessor(TraceFeatureMessageLogWriter(logger))
-}
-```
-
-### TraceFeatureMessageLogWriter
-
-**Location**: `ai.grazie.code.agents.local.features.tracing.writer.TraceFeatureMessageLogWriter`
-
-**Description**: Writes trace events to a logger.
-
-**Constructor Parameters**:
-
-| Name | Type | Description |
-|------|------|-------------|
-| targetLogger | MPPLogger | The logger to write events to |
-
-**Usage**:
-```kotlin
-val logger = LoggerFactory.create("my.trace.logger")
-val writer = TraceFeatureMessageLogWriter(logger)
-
-// Use with TraceFeature
-install(TraceFeature) {
-    addMessageProcessor(writer)
-}
-```
-
-### TraceFeatureMessageFileWriter
-
-**Location**: `ai.grazie.code.agents.local.features.tracing.writer.TraceFeatureMessageFileWriter`
-
-**Description**: Writes trace events to a file.
-
-**Constructor Parameters**:
-
-| Name | Type | Description |
-|------|------|-------------|
-| fs | FileSystemProvider.ReadWrite<Path> | File system provider for writing files |
-| path | Path | Path to the file to write events to |
-
-**Usage**:
-```kotlin
-val fs = JVMFileSystemProvider.ReadWrite
-val path = Paths.get("/path/to/trace.log")
-val writer = TraceFeatureMessageFileWriter(fs, path)
-
-// Use with TraceFeature
-install(TraceFeature) {
-    addMessageProcessor(writer)
-}
-```
-
-## Internal Helpers & Utilities
-
-### Event Types
-
-The TraceFeature works with the following event types:
-
-| Event Type | Description |
-|------------|-------------|
-| AgentCreateEvent | Triggered when an agent is created |
-| StrategyStartEvent | Triggered when a strategy execution starts |
-| LLMCallStartEvent | Triggered before a simple LLM call |
-| LLMCallEndEvent | Triggered after a simple LLM call |
-| LLMCallWithToolsStartEvent | Triggered before an LLM call with tools |
-| LLMCallWithToolsEndEvent | Triggered after an LLM call with tools |
-| ToolCallsStartEvent | Triggered before tool calls |
-| ToolCallsEndEvent | Triggered after tool calls |
-| NodeExecutionStartEvent | Triggered before a node execution |
-| NodeExecutionEndEvent | Triggered after a node execution |
-
-### Extension Properties
-
-Both writer implementations provide extension properties for formatting events:
-
-```kotlin
-val AgentCreateEvent.agentCreateEventFormat
-    get() = "${this.eventId} (strategy name: ${this.strategyName})"
-
-val NodeExecutionStartEvent.nodeExecutionStartEventFormat
-    get() = "${this.eventId} (stage: ${this.stageName}, node: ${this.nodeName}, input: ${this.input})"
-```
-
 ## Configuration & Initialization
 
 ### Basic Setup
 
-To use the TraceFeature, you need to:
+To use the `TraceFeature`, you need to:
 
-1. Create one or more message processors
+1. Have one or more message processors (you can use the existing ones or create your own)
 2. Install the TraceFeature in your agent
 3. Configure the message filter (optional)
 4. Add the message processors to the feature
 
 ```kotlin
+// Defining a logger/file that will be used as a destination of trace messages 
+val logger = LoggerFactory.create("my.trace.logger")
+val fs = JVMFileSystemProvider.ReadWrite
+val path = Paths.get("/path/to/trace.log")
+
+// Creating an agent
 val agent = createAgent(
     strategy = myStrategy,
     coroutineScope = coroutineScope,
 ) {
+    // Installing the `TraceFeature` in your agent
     install(TraceFeature) {
-        // Optional: Configure message filter
-        messageFilter = { message -> 
+
+        // Configuring message filter (optional)
+        messageFilter = { message ->
             // Accept only specific message types
             message is NodeExecutionStartEvent || message is NodeExecutionEndEvent
         }
 
-        // Add message processors
+        // Adding message processors
         addMessageProcessor(TraceFeatureMessageLogWriter(logger))
         addMessageProcessor(TraceFeatureMessageFileWriter(fs, path))
     }
@@ -184,15 +71,17 @@ val agent = createAgent(
 
 ### Message Filtering
 
-The message filter allows you to control which events are processed. This is useful for focusing on specific aspects of agent execution:
+You can process all existing events or choose some of them based on the specific criteria.
+The message filter allows you to control which events are processed. This is useful for focusing on specific aspects of
+agent execution:
 
 ```kotlin
 // Filter for LLM-related events only
 messageFilter = { message ->
-    message is LLMCallStartEvent || 
-    message is LLMCallEndEvent || 
-    message is LLMCallWithToolsStartEvent || 
-    message is LLMCallWithToolsEndEvent
+    message is LLMCallStartEvent ||
+            message is LLMCallEndEvent ||
+            message is LLMCallWithToolsStartEvent ||
+            message is LLMCallWithToolsEndEvent
 }
 
 // Filter for tool-related events only
@@ -204,6 +93,159 @@ messageFilter = { message ->
 messageFilter = { message ->
     message is NodeExecutionStartEvent || message is NodeExecutionEndEvent
 }
+```
+
+## Public API Documentation
+
+### Architecture
+
+The TraceFeature follows a modular architecture with these key components:
+
+1. **TraceFeature**: The main feature class that intercepts events in the agent pipeline
+2. **TraceFeatureConfig**: Configuration class for customizing feature behavior
+3. **Message Processors**: Components that process and output trace events
+   - **TraceFeatureMessageLogWriter**: Writes trace events to a logger
+   - **TraceFeatureMessageFileWriter**: Writes trace events to a file
+
+### TraceFeature
+
+**Description**: Main feature class that intercepts events in the agent pipeline and forwards them to message
+processors.
+
+**Usage**:
+
+```kotlin
+val agent = KotlinAIAgent(/*...*/) {
+    // Install the feature when initializing an agent
+    install(TraceFeature) {
+        // here goes the TraceFeatureConfig
+    }
+}
+```
+
+### TraceFeatureConfig
+
+**Description**: Configuration class for the TraceFeature.
+
+**Properties**:
+
+| Name          | Type                        | Default  | Description                                                  |
+|---------------|-----------------------------|----------|--------------------------------------------------------------|
+| messageFilter | (FeatureMessage) -> Boolean | { true } | Filter function that determines which messages are processed |
+
+Please check out the existing filtering options in the [Message Filter](#message-filtering) subsection.
+
+**Methods**:
+
+| Name                | Parameters                         | Return Type | Description                             |
+|---------------------|------------------------------------|-------------|-----------------------------------------|
+| addMessageProcessor | processor: FeatureMessageProcessor | Unit        | Adds a message processor to the feature |
+
+**Usage**:
+
+```kotlin
+val logger = LoggerFactory.create("my.trace.logger")
+
+val agent = KotlinAIAgent(/*...*/) {
+    install(TraceFeature) {
+        // the config of the Trace feature
+        // set up the messageFilter property
+        messageFilter = { message ->
+            message is LLMCallWithToolsStartEvent || message is LLMCallWithToolsEndEvent
+        }
+        // call the addMessageProcessor method
+        addMessageProcessor(TraceFeatureMessageLogWriter(logger))
+    }
+}
+```
+
+### TraceFeatureMessageLogWriter
+
+**Description**: Writes trace events to a logger.
+
+**Constructor Parameters**:
+
+| Name         | Type      | Description                   |
+|--------------|-----------|-------------------------------|
+| targetLogger | MPPLogger | The logger to write events to |
+
+**Usage**:
+
+```kotlin
+// create a logger
+val logger = LoggerFactory.create("my.trace.logger")
+// set the created logger as the target one for the TraceFeatureMessageLogWriter class
+val writer = TraceFeatureMessageLogWriter(logger)
+
+val agent = KotlinAIAgent(/*...*/) {
+    // Install the TraceFeature
+    install(TraceFeature) {
+        // pass TraceFeatureMessageLogWriter to the addMessageProcessor method
+        addMessageProcessor(writer)  // now events are passed to the logger
+    }
+}
+```
+
+### TraceFeatureMessageFileWriter
+
+**Description**: Writes trace events to a file.
+
+**Constructor Parameters**:
+
+| Name | Type                               | Description                            |
+|------|------------------------------------|----------------------------------------|
+| fs   | FileSystemProvider.ReadWrite<Path> | File system provider for writing files |
+| path | Path                               | Path to the file to write events to    |
+
+**Usage**:
+
+```kotlin
+// open a file and allow reading/writing to it
+val fs = JVMFileSystemProvider.ReadWrite
+val path = Paths.get("/path/to/trace.log")
+// set the file as the target one for the TraceFeatureMessageFileWriter class
+val writer = TraceFeatureMessageFileWriter(fs, path)
+
+// Use with TraceFeature
+install(TraceFeature) {
+    // pass TraceFeatureMessageFileWriter to the addMessageProcessor method
+    addMessageProcessor(writer) // now events are written to the file
+}
+```
+
+## Internal Helpers & Utilities
+
+### Event Types
+
+The TraceFeature works with the following event types:
+
+| Event Type                 | When Triggered                |
+|----------------------------|-------------------------------|
+| AgentCreateEvent           | An agent is created           |
+| StrategyStartEvent         | A strategy execution starts   |
+| LLMCallStartEvent          | Before a simple LLM call      |
+| LLMCallEndEvent            | After a simple LLM call       |
+| LLMCallWithToolsStartEvent | Before an LLM call with tools |
+| LLMCallWithToolsEndEvent   | After an LLM call with tools  |
+| ToolCallsStartEvent        | Before tool calls             |
+| ToolCallsEndEvent          | After tool calls              |
+| NodeExecutionStartEvent    | Before a node execution       |
+| NodeExecutionEndEvent      | After a node execution        |
+
+### Extension Properties
+
+Both writer implementations provide extension properties for formatting events:
+
+```kotlin
+// adding new read-only property `agentCreateEventFormat` to the `AgentCreateEvent` class
+val AgentCreateEvent.agentCreateEventFormat
+get() = "${this.eventId} (strategy name: ${this.strategyName})"
+
+// adding new read-only property `nodeExecutionStartEventFormat` to the `NodeExecutionStartEvent` class
+val NodeExecutionStartEvent.nodeExecutionStartEventFormat
+get() = "${this.eventId} (stage: ${this.stageName}, node: ${this.nodeName}, input: ${this.input})"
+
+// Each property returns a formatted string representation of the event
 ```
 
 ## Error Handling & Edge Cases
@@ -220,7 +262,8 @@ The feature will still intercept events, but they won't be processed or output a
 
 ### Resource Management
 
-Message processors may hold resources (like file handles) that need to be properly released. Use the `use` extension function to ensure proper cleanup:
+Message processors may hold resources (like file handles) that need to be properly released. Use the `use` extension
+function to ensure proper cleanup:
 
 ```kotlin
 TraceFeatureMessageFileWriter(fs, path).use { writer ->
