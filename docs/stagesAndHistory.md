@@ -195,9 +195,10 @@ history size:
 val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
 
 edge(
-    nodeStart forwardTo nodeLLMSendInput onCondition { _ ->
-        llm.readSession { prompt.messages.size > 100 }
-    }
+    nodeStart forwardTo nodeLLMSendInput
+            onCondition { _ -> 
+                llm.readSession { prompt.messages.size > 100 } 
+            }
 )
 ```
 
@@ -506,14 +507,18 @@ fun conditionalCompressionStrategy(): LocalAgentStrategy = strategy("conditional
         // If history is too large, compress it before sending tool result
         edge(
             (executeToolCall forwardTo compressHistory)
-                    onCondition { _ -> llm.readSession { prompt.messages.size > 50 } }
+                    onCondition { _ -> 
+                        llm.readSession { prompt.messages.size > 50 } 
+                    }
         )
         edge(compressHistory forwardTo sendToolResult)
 
         // Otherwise, send tool result directly
         edge(
             (executeToolCall forwardTo sendToolResult)
-                    onCondition { _ -> llm.readSession { prompt.messages.size <= 50 } }
+                    onCondition { _ -> 
+                        llm.readSession { prompt.messages.size <= 50 } 
+                    }
         )
 
         edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
