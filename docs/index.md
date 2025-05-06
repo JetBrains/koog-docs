@@ -49,12 +49,72 @@ fun main() = runBlocking {
 }
 ```
 
-## Best Practices
+# Glossary
 
-1. **System Prompts**: Provide clear and concise system prompts to guide the agent's behavior.
-2. **[Error Handling](eventHandler.md)**: Implement proper error handling in custom tools to prevent agent failures.
-3. **[Tool Design](customTool.md)**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
-4. **Resource Management**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource
-   leaks.
-5. **API Token Security**: Never hardcode API tokens in your code. Use environment variables or secure configuration
-   management.
+- **Agent**: A Kotlin-based AI entity that can interact with tools, handle complex workflows, and communicate with
+  users. The framework offers two main approaches: Simple API and Kotlin AI Agent.
+
+- **Concept** (Memory): A category of information with associated metadata in the Memory Feature, including a keyword,
+  description, and fact type.
+
+- **Context**: The environment in which LLM interactions occur, providing access to the conversation history and
+  tools.
+
+- **Edge**: A connection between nodes in an agent graph that defines the flow of execution, often with conditions
+  specifying when to follow each edge.
+
+- **Event Handler**: A component that processes events generated during agent execution, such as tool calls, LLM
+  responses, and errors.
+
+- **Fact** (Memory): An individual piece of information stored in memory, which can be a SingleFact (single value) or
+  MultipleFacts (multiple values).
+
+- **Feature**: A component that extends and enhances the functionality of AI agents.
+
+- **Graph**: A structure of nodes connected bu edges that defines the execution flow of an agent strategy.
+
+- **History Compression**: The process of reducing the size of conversation history to manage token usage, implemented
+  through strategies like WholeHistory, FromLastNMessages, or Chunked.
+
+- **LLM (Language Learning Model)**: The underlying AI model that powers agent capabilities.
+
+- **Memory**: A feature that enables AI agents to store, retrieve, and utilize information across
+  conversations.
+
+- **Memory Scope**: The context in which facts are relevant (Agent, Feature, Product, Organization, CrossProduct).
+
+- **Memory Subject**: Entities that facts can be associated with (USER, MACHINE, PROJECT, ORGANIZATION).
+
+- **Message**: A unit of communication in the agent system and the name of the corresponding class representing data
+  passed from User, Assistant, or System.
+
+- **Node**: A fundamental building block of agent workflows, representing a specific operation or transformation.
+
+- **Prompt**: The conversation history provided to the LLM, consisting of messages from the user, assistant, and system.
+
+- **Session**: A context for interacting with a language model, encapsulating conversation history, available tools,
+  and methods for making requests.
+
+- **Stage**: A self-contained unit of processing within an agent strategy, with its own set of tools, context, and
+  responsibilities. The information about the stage execution can be encapsulated within a stage or passed between
+  stages (using the Memory Feature).
+
+- **Strategy**: A defined workflow for an agent, consisting of stages that are executed sequentially. The strategy can
+  be visualized as a directed graph with nodes representing stages and edges representing transitions between them.
+
+- **System Prompt**: Instructions provided to the agent to guide its behavior and define its role. They can be also used
+  to provide context for the agent.
+
+- **Tool**: A function that an agent can use to perform specific tasks or access external systems. The agent knows the
+  list of available tools and their arguments but is unaware of the implementation details.
+
+- **Tool Call**: A request from the LLM to execute a specific tool with provided arguments. It works like a function
+  call in program code.
+
+- **Tool Descriptor**: Metadata about a tool, including its name, description, and parameter information.
+
+- **Tool Registry**: A list of tools that are available to an agent, organized by stage. The registry is a way of
+  letting the agent know which tools are available.
+
+- **Tool Result**: The output produced by executing a tool. E.g. if the tool is a method, the result is the return
+  value.

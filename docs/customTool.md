@@ -3,6 +3,8 @@
 You can extend agent capabilities by creating custom tools. These tools can be used as with the agents created via the
 `Simple API`, as for more sophisticated agents created with the `KotlinAIAgent`.
 
+**Tip**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
+
 ### Each custom tool consists of:
 
 - Serializable `Args` data class, naming the **arguments** that should be passed to your custom tool, and an overridden
@@ -75,6 +77,8 @@ val agent = simpleChatAgent(
 There are several ways to call tools within your agent's code. The recommended approach is to use the provided methods
 in the agent context rather than calling tools directly, as this ensures proper handling of tool execution within the
 agent environment.
+
+**Tip**: Implement proper [error handling](eventHandler.md) in custom tools to prevent agent failures.
 
 ### Using callTool Methods
 

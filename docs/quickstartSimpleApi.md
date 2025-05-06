@@ -20,6 +20,9 @@ The SimpleAPI uses two types of agents:
 - JetBrains AI API token
 - Kotlin project with coroutine support
 
+**Tip**: Never hardcode API tokens in your code. Use environment variables or secure configuration
+management.
+
 ## Installation
 
 Add the Code Engine dependencies to your project:
@@ -32,6 +35,8 @@ dependencies {
 ```
 
 ## Basic Usage
+
+**Tip**: Provide clear and concise system prompts to guide the agent's behavior.
 
 ### Creating a Chat Agent
 
@@ -107,7 +112,8 @@ the [corresponding page](customTool.md).
 Simple agents support custom event handlers. While having an event handler is not required for creating an agent, it
 might be helpful for testing, debugging, or making hooks for chained agent interactions.
 
-On the page [Handling Agent Events](eventHandler.md) you'll find more information on how to use the `EventHandler` class for monitoring your agent's
+On the page [Handling Agent Events](eventHandler.md) you'll find more information on how to use the `EventHandler` class
+for monitoring your agent's
 interactions.
 
 ## Configuration Options
