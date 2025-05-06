@@ -29,7 +29,7 @@ Add the Code Engine dependencies to your project:
 
 ```kotlin
 dependencies {
-    implementation("ai.grazie:code-agents-local:VERSION")
+    implementation("ai.jetbrains.code.agents:code-agents-local:VERSION")
     // Other dependencies as needed
 }
 ```

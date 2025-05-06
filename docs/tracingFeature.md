@@ -301,7 +301,7 @@ TraceFeature
 │   │   └── FeatureMessageLogWriter
 │   └── TraceFeatureMessageFileWriter
 │       └── FeatureMessageFileWriter
-└── Event Types (from ai.grazie.code.agents.local.features.common.model)
+└── Event Types (from ai.jetbrains.code.agents.local.features.common.model)
     ├── AgentCreateEvent
     ├── StrategyStartEvent
     ├── LLMCallStartEvent
