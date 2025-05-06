@@ -76,6 +76,9 @@ val agent = KotlinAIAgent(
 )
 ```
 
+**Tip**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource
+leaks.
+
 ### 1. Create a Custom Prompt Executor
 
 Create a custom CodePromptExecutor:
