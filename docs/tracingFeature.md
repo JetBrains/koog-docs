@@ -213,6 +213,32 @@ install(TraceFeature) {
 }
 ```
 
+### Using FeatureMessageRemoteWriter
+
+Writes trace events to a remote endpoint, allowing for distributed tracing and monitoring.
+
+**Constructor Parameters**:
+
+| Name             | Type                   | Description                                                                                      |
+|------------------|------------------------|--------------------------------------------------------------------------------------------------|
+| connectionConfig | ServerConnectionConfig | The connection configuration for a local server that is used to broadcast agent execution events |
+
+**Usage**:
+
+```kotlin
+val port = 8080
+val serverConfig = ServerConnectionConfig(port = port)
+val writer = FeatureMessageRemoteWriter(
+    connectionConfig = serverConfig
+)
+
+// Use with TraceFeature
+install(TraceFeature) {
+    // pass FeatureMessageRemoteWriter to the addMessageProcessor method
+    addMessageProcessor(writer) // now events are sent to the remote endpoint
+}
+```
+
 ## Internal Helpers & Utilities
 
 ### Event Types
@@ -299,8 +325,10 @@ TraceFeature
 ├── Message Processors
 │   ├── TraceFeatureMessageLogWriter
 │   │   └── FeatureMessageLogWriter
-│   └── TraceFeatureMessageFileWriter
-│       └── FeatureMessageFileWriter
+│   ├── TraceFeatureMessageFileWriter
+│   │   └── FeatureMessageFileWriter
+│   └── TraceFeatureMessageRemoteWriter
+│       └── FeatureMessageRemoteWriter
 └── Event Types (from ai.jetbrains.code.agents.local.features.common.model)
     ├── AgentCreateEvent
     ├── StrategyStartEvent
@@ -362,6 +390,32 @@ val agent = createAgent(
 agent.run("Generate a story about a robot.")
 ```
 
+### Tracing Specific Events to Remote Endpoint
+
+```kotlin
+// Create a file writer
+val port = 8080
+val serverConfig = ServerConnectionConfig(port = port)
+val writer = TraceFeatureMessageRemoteWriter(connectionConfig = serverConfig)
+
+// Create an agent with filtered tracing
+val agent = createAgent(
+    strategy = myStrategy,
+    coroutineScope = coroutineScope,
+) {
+    install(TraceFeature) {
+        // Only trace LLM calls
+        messageFilter = { message ->
+            message is LLMCallWithToolsStartEvent || message is LLMCallWithToolsEndEvent
+        }
+        addMessageProcessor(writer)
+    }
+}
+
+// Run the agent
+agent.run("Generate a story about a robot.")
+```
+
 ## FAQ / Troubleshooting
 
 ### How do I trace only specific parts of my agent's execution?
@@ -385,6 +439,7 @@ Yes, you can add multiple message processors to trace to different destinations 
 install(TraceFeature) {
     addMessageProcessor(TraceFeatureMessageLogWriter(logger))
     addMessageProcessor(TraceFeatureMessageFileWriter(fs, path))
+    addMessageProcessor(TraceFeatureMessageRemoteWriter(connectionConfig))
 }
 ```
 
