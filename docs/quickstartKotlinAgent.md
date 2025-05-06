@@ -224,7 +224,8 @@ agent.run("Your input or question here")
 
 ## Advanced Usage: Working with Structured Data
 
-KotlinAIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streamingApi.md) for more information.
+KotlinAIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streamingApi.md)
+for more information.
 
 ## Advanced Usage: Parallel Tool Calls
 

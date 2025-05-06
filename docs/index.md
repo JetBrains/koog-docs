@@ -83,8 +83,6 @@ fun main() = runBlocking {
 
 - **Memory Scope**: The context in which facts are relevant (Agent, Feature, Product, Organization, CrossProduct).
 
-- **Memory Subject**: Entities that facts can be associated with (USER, MACHINE, PROJECT, ORGANIZATION).
-
 - **Message**: A unit of communication in the agent system and the name of the corresponding class representing data
   passed from User, Assistant, or System.
 
