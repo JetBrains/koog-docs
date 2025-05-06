@@ -35,6 +35,11 @@ The [SimpleAPI](quickstartSimpleApi) provides the easiest way to get started wit
 
 #### Chat Agent Example
 
+<!--- CLEAR -->
+<!--- INCLUDE
+import ai.grazie.code.agents.local.simpleApi.simpleChatAgent
+import kotlinx.coroutines.runBlocking
+-->
 ```kotlin
 fun main() = runBlocking {
     val apiToken = "YOUR_JETBRAINS_AI_API_TOKEN"
@@ -48,6 +53,7 @@ fun main() = runBlocking {
     agent.run("Hello, how can you help me?")
 }
 ```
+<!--- KNIT example-index-01.kt -->
 
 # Glossary
 

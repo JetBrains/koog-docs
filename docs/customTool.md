@@ -15,6 +15,14 @@ You can extend agent capabilities by creating custom tools. These tools can be u
 
 Example of a custom tool:
 
+<!--- INCLUDE
+import ai.grazie.code.agents.core.tools.SimpleTool
+import ai.grazie.code.agents.core.tools.Tool
+import ai.grazie.code.agents.core.tools.ToolDescriptor
+import ai.grazie.code.agents.core.tools.ToolParameterDescriptor
+import ai.grazie.code.agents.core.tools.ToolParameterType
+import kotlinx.serialization.Serializable
+-->
 ```kotlin
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     @Serializable
@@ -48,6 +56,7 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     }
 }
 ```
+<!--- KNIT example-custom-tool-01.kt -->
 
 Please note that, **to use the custom tool, you must**:
 
