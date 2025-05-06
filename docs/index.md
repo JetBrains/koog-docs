@@ -25,7 +25,7 @@ Add the Code Agents Local dependency to your project:
 
 ```kotlin
 dependencies {
-    implementation("ai.grazie:code-agents-local:VERSION")
+    implementation("ai.jetbrains.code.agents:code-agents-local:VERSION")
 }
 ```
 
