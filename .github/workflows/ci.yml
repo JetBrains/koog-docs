@@ -9,6 +9,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: https://koan-agents.labs.jb.gg/
     steps:
       - uses: actions/checkout@v4
       - name: Configure Git Credentials
