@@ -4,15 +4,16 @@ on:
     branches:
       - master
       - main
-  pull_request:
-    branches:
-      - master
-      - main
+  workflow_dispatch:
+
 permissions:
   contents: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: https://koan-agents.labs.jb.gg/
     steps:
       - uses: actions/checkout@v4
       - name: Configure Git Credentials
@@ -22,12 +23,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Build with Gradle
-        run: ./gradlew build
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
       - uses: actions/cache@v4
         with:
