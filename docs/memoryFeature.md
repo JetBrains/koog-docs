@@ -196,7 +196,7 @@ fun <I> nodeSaveToMemoryAutoDetectFacts(
 
 | Parameter | Type                | Default | Description                          |
 |-----------|---------------------|---------|--------------------------------------|
-| subjects  | List<MemorySubject> | [USER]  | List of subjects to detect facts for |
+| subjects  | List<MemorySubject> | `USER`  | List of subjects to detect facts for |
 
 ## Internal Helpers & Utilities
 
