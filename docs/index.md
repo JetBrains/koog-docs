@@ -1,124 +1,123 @@
-# Introduction to Kotlin AI Agents
+# Overview
 
-Kotlin AI agents is a Kotlin-based framework for creating and running AI agents locally without requiring external
+The Kotlin Agentic Framework is a Kotlin-based framework designed to create and run AI agents locally without external
 services. It provides a pure Kotlin implementation for building intelligent agents that can interact with
 tools, handle complex workflows, and communicate with users.
 
-The module offers two main approaches:
+The framework offers two main approaches:
 
-1. **[Simple API](quickstartSimpleApi)**: A high-level, user-friendly interface for quickly creating chat agents and
-   single-run agents with minimal configuration.
-2. **[Kotlin AI Agent](quickstartKotlinAgent)**: A more flexible, feature-rich framework for building custom agents with advanced capabilities.
+* [Simple API](simple-api-getting-started): A high-level, user-friendly interface that lets you quickly create chat agents and single-run agents with minimal configuration.
+* [AI Agent](ai-agent-getting-started): A more flexible, full-featured framework for building custom agents with advanced capabilities.
 
-## Key Features
+## Key features
 
-- **Pure Kotlin Implementation**: Build and run AI agents entirely in Kotlin without external service dependencies
-- **Modular Feature System**: Extend agent capabilities through a composable feature system
-- **Tool Integration**: Create and use custom tools to give agents access to external systems and resources
-- **Conversation Management**: Support for both conversational agents and one-shot query agents
-- **Pipeline Interceptors**: Intercept and modify agent behavior at various stages of execution
-- **Memory Support**: Optional persistent memory capabilities for agents (via separate module)
+Key features of the Kotlin Agentic Framework include:
 
-## Installation
+- A pure Kotlin implementation that lets you create and run AI agents entirely in Kotlin without relying on external service dependencies.
+- A modular and composable feature system that lets you extend AI agent capabilities.
+- The ability to create custom tools that give agents access to external systems and resources.
+- Support for both conversational agents and single-query (one-shot) agents.
+- The ability to intercept and modify agent behavior at different stages of operation.
+- Optional persistent memory support for agents through a separate module.
 
-Add the Code Agents Local dependency to your project:
+# Key terms and concepts
 
-```kotlin
-dependencies {
-    implementation("ai.jetbrains.code.agents:code-agents-local:VERSION")
-}
-```
+- **Agent**: a Kotlin-based AI entity that can interact with tools, handle complex workflows, and communicate with
+  users. The framework offers two main approaches: the Simple API and AI Agent.
 
-## Quick Start With a Simple API
+- **Concept** (Memory): a category of information with associated metadata in the Memory feature, including a keyword,
+  description, and fact type. Concepts are fundamental building blocks of the agent memory system that the agent can remember and recall.
+  To learn more, see [Memory](memory.md).
 
-The [SimpleAPI](quickstartSimpleApi) provides the easiest way to get started with AI agents:
-
-#### Chat Agent Example
-
-<!--- CLEAR -->
-<!--- INCLUDE
-import ai.grazie.code.agents.local.simpleApi.simpleChatAgent
-import kotlinx.coroutines.runBlocking
--->
-```kotlin
-fun main() = runBlocking {
-    val apiToken = "YOUR_JETBRAINS_AI_API_TOKEN"
-
-    val agent = simpleChatAgent(
-        apiToken = apiToken,
-        cs = this,
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
-    )
-
-    agent.run("Hello, how can you help me?")
-}
-```
-<!--- KNIT example-index-01.kt -->
-
-# Glossary
-
-- **Agent**: A Kotlin-based AI entity that can interact with tools, handle complex workflows, and communicate with
-  users. The framework offers two main approaches: Simple API and Kotlin AI Agent.
-
-- **Concept** (Memory): A category of information with associated metadata in the Memory Feature, including a keyword,
-  description, and fact type.
-
-- **Context**: The environment in which LLM interactions occur, providing access to the conversation history and
+- **Context**: the environment in which LLM interactions occur, with access to the conversation history and
   tools.
 
-- **Edge**: A connection between nodes in an agent graph that defines the flow of execution, often with conditions
-  specifying when to follow each edge.
+- **Edge**: a connection between nodes in an agent graph that defines the flow of operations, often with conditions
+  that specify when to follow each edge.
 
-- **Event Handler**: A component that processes events generated during agent execution, such as tool calls, LLM
+- **Event handler**: a component that processes events generated during the operation of an agent, such as tool calls, LLM
   responses, and errors.
 
-- **Fact** (Memory): An individual piece of information stored in memory, which can be a SingleFact (single value) or
-  MultipleFacts (multiple values).
+- **Fact** (Memory): an individual piece of information stored in the agent memory system.
+  Facts are associated with concepts and can either have a single value or multiple values.
+  To learn more, see [Memory](memory.md).
 
-- **Feature**: A component that extends and enhances the functionality of AI agents.
+- **Feature**: a component that extends and enhances the functionality of AI agents.
 
-- **Graph**: A structure of nodes connected bu edges that defines the execution flow of an agent strategy.
+- **Graph**: a structure of nodes connected by edges that defines an agent strategy workflow.
 
-- **History Compression**: The process of reducing the size of conversation history to manage token usage, implemented
-  through strategies like WholeHistory, FromLastNMessages, or Chunked.
+- **History compression**: the process of reducing the size of the conversation history to manage token usage by applying various compression strategies.
+  To learn more, see [History compression](history-compression.md).
 
-- **LLM (Language Learning Model)**: The underlying AI model that powers agent capabilities.
+- **LLM (Large Language Model)**: the underlying AI model that powers agent capabilities.
 
-- **Memory**: A feature that enables AI agents to store, retrieve, and utilize information across
-  conversations.
+- **Memory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see [Memory](memory.md).
 
-- **Memory Scope**: The context in which facts are relevant (Agent, Feature, Product, Organization, CrossProduct).
+- **Memory scope**: the context in which facts are relevant. To learn more, see [Memory](memory.md).
 
-- **Message**: A unit of communication in the agent system and the name of the corresponding class representing data
-  passed from User, Assistant, or System.
+- **Message**: a unit of communication in the agent system that represents data passed from a user, assistant, or system.
 
-- **Node**: A fundamental building block of agent workflows, representing a specific operation or transformation.
+- **Node**: a fundamental building block of an agent strategy workflow that represents a specific operation or transformation.
 
-- **Prompt**: The conversation history provided to the LLM, consisting of messages from the user, assistant, and system.
+- **Prompt**: the conversation history provided to an LLM that consists of messages from a user, assistant, and system.
 
-- **Session**: A context for interacting with a language model, encapsulating conversation history, available tools,
-  and methods for making requests.
+- **Session**: a context for interacting with an LLM that includes the conversation history, available tools,
+  and methods to make requests.
 
-- **Stage**: A self-contained unit of processing within an agent strategy, with its own set of tools, context, and
-  responsibilities. The information about the stage execution can be encapsulated within a stage or passed between
-  stages (using the Memory Feature).
+- **Subgraph**: a self-contained unit of processing within an agent strategy, with its own set of tools, context, and
+  responsibilities. Information about subgraph operations can be either encapsulated within the subgraph or transferred between
+  subgraph using the Memory feature.
 
-- **Strategy**: A defined workflow for an agent, consisting of stages that are executed sequentially. The strategy can
-  be visualized as a directed graph with nodes representing stages and edges representing transitions between them.
+- **Strategy**: a defined workflow for an agent that consists of sequential subgraphs.
+  The strategy defines how the agent processes input, interacts with tools, and generates output.
+  A strategy graph consists of nodes connected by edges that represent transitions between nodes.
 
-- **System Prompt**: Instructions provided to the agent to guide its behavior and define its role. They can be also used
-  to provide context for the agent.
+- **System prompt**: instructions provided to an agent to guide its behavior and define its role. The instructions can also provide context for the agent.
 
-- **Tool**: A function that an agent can use to perform specific tasks or access external systems. The agent knows the
-  list of available tools and their arguments but is unaware of the implementation details.
+- **Tool**: a function that an agent can use to perform specific tasks or access external systems. The agent is aware of the
+  available tools and their arguments but lacks knowledge of their implementation details.
 
-- **Tool Call**: A request from the LLM to execute a specific tool with provided arguments. It works like a function
-  call in program code.
+- **Tool call**: a request from an LLM to run a specific tool using the provided arguments. It functions similarly to a function call.
 
-- **Tool Descriptor**: Metadata about a tool, including its name, description, and parameter information.
+- **Tool descriptor**: tool metadata that includes its name, description, and parameters.
 
-- **Tool Registry**: A list of tools that are available to an agent, organized by stage. The registry is a way of
-  letting the agent know which tools are available.
+- **Tool registry**: a list of tools available to an agent, organized into logical stages. The registry informs the agent about the available tools.
 
-- **Tool Result**: The output produced by executing a tool. E.g. if the tool is a method, the result is the return
-  value.
+- **Tool result**: an output produced by running a tool. For example, if the tool is a method, the result would be its return value.
+
+# Available LLM providers and platforms
+
+We support the following LLM providers and platforms whose LLMs you can use to power your agent capabilities:
+
+- Google
+- OpenAI
+- Anthropic
+- OpenRouter
+- Ollama
+- LightLLM
+
+# Installation
+
+```
+// Please add installation instructions here
+```
+
+# Quickstart example
+
+The [Simple API](simple-api-getting-started) provides the easiest way to get started with AI agents:
+!!! note
+Before you run the example, assign a corresponding API key as the `YOUR_API_TOKEN` environment variable. For details, see [Getting started](simple-api-getting-started.md).
+
+```kotlin
+fun main() = runBlocking {
+  val apiToken = System.getenv("YOUR_API_TOKEN")
+
+  val agent = simpleChatAgent(
+    apiToken = apiToken,
+    cs = this,
+    systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+  )
+  agent.run("Hello, how can you help me?")
+}
+```
+

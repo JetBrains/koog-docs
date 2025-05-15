@@ -1,28 +1,21 @@
-# Kotlin AI Agent Quickstart Guide
+# Getting started
 
-KotlinAIAgent is a powerful AI agent implementation that provides extensive flexibility and
-control for complex AI workflows.
+The AI Agent is a robust AI agent implementation that offers extensive flexibility and precise control for managing complex AI workflows.
 
 ## Prerequisites
 
-- JetBrains AI API token
-- Kotlin project with coroutine support
+- You have a valid API key from the LLM provider used for implementing an AI agent. For a list of all available providers, see [Overview](index.md).
 
-**Tip**: Never hardcode API tokens in your code. Use environment variables or secure configuration
-management.
+!!! tip
+    Use environment variables or a secure configuration management system to store your API keys.
+    Avoid hardcoding API keys directly in your source code.
 
-## Setting Up Dependencies
+## Add dependencies
 
-Add the following dependencies to your project:
+To use the AI Agent functionality, you need to add the following dependencies to your project:
 
-```kotlin
-// Core AI Agent libraries
-implementation("ai.jetbrains.code.agents:code-agents-core")
-implementation("ai.jetbrains.code.agents:code-agents-core-tools")
-implementation("ai.jetbrains.code.agents:code-agents-tools-registry")
-
-// For local agent execution
-implementation("ai.jetbrains.code.agents:code-agents-local")
+```
+// Please add installation instructions here
 ```
 
 ## Understanding Nodes and Edges
@@ -62,32 +55,28 @@ edge(sourceNode forwardTo targetNode transformed { output ->
 edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
 ```
 
-## Creating a KotlinAIAgent
+## Create an agent
 
-Unlike the `SimpleAPI` agents, `KotlinAIAgent` requires explicit configuration:
+Unlike agents created with the Simple API, agents built using the AI Agent require explicit configuration:
 
 ```kotlin
-val agent = KotlinAIAgent(
-    promptExecutor = createPromptExecutor(apiToken),
-    toolRegistry = toolRegistry,
+val agent = AIAgent(
+    promptExecutor = promptExecutor,
     strategy = agentStrategy,
     agentConfig = agentConfig,
-    cs = coroutineScope
+    toolRegistry = toolRegistry,
+    installFeatures = installFeatures
 )
 ```
 
-**Tip**: Use appropriate coroutine scopes and cancel them when no longer needed to avoid resource
-leaks.
+To learn more about available configuration options, see API reference.<!--[TODO] Link to API reference-->
 
-### 1. Create a Custom Prompt Executor
+### 1. Create a custom prompt executor
 
-Create a custom CodePromptExecutor:
+Prompt executors manage and run prompts. You can create a custom prompt executor as follows:
 
 ```kotlin
-fun createPromptExecutor(
-    apiToken: String,
-    grazieEnvironment: GrazieEnvironment = GrazieEnvironment.Production
-): CodePromptExecutor {
+fun createPromptExecutor(apiToken: String): PromptExecutor {
     val api = SuspendableAPIGatewayClient(
         grazieEnvironment.url,
         SuspendableHTTPClient.WithV5(
@@ -104,7 +93,7 @@ fun createPromptExecutor(
 }
 ```
 
-### 2. Create a Strategy
+### 2. Create a strategy
 
 The strategy defines the workflow of your agent. Use the `strategy` function to create a custom multi-stage strategy:
 
@@ -224,7 +213,7 @@ agent.run("Your input or question here")
 
 ## Advanced Usage: Working with Structured Data
 
-KotlinAIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streamingApi.md)
+KotlinAIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streaming-api.md)
 for more information.
 
 ## Advanced Usage: Parallel Tool Calls
