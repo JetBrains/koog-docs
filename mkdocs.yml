@@ -8,7 +8,6 @@ nav:
           - Available tools: simple-api-available-tools.md
       - AI Agent:
           - Getting started: ai-agent-getting-started.md
-          - Configuration options: ai-agent-configuration.md
       - Tools: tools.md
       - Agent events: agent-events.md
       - Stages And History: stages-and-history.md

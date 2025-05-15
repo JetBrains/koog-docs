@@ -27,7 +27,7 @@ Key features of the Kotlin Agentic Framework include:
 
 - **Concept** (Memory): a category of information with associated metadata in the Memory feature, including a keyword,
   description, and fact type. Concepts are fundamental building blocks of the agent memory system that the agent can remember and recall.
-To learn more, see Memory.
+  To learn more, see [Memory](memory.md).
 
 - **Context**: the environment in which LLM interactions occur, with access to the conversation history and
   tools.
@@ -39,21 +39,21 @@ To learn more, see Memory.
   responses, and errors.
 
 - **Fact** (Memory): an individual piece of information stored in the agent memory system.
-Facts are associated with concepts and can either have a single value or multiple values.
-To learn more, see Memory.
+  Facts are associated with concepts and can either have a single value or multiple values.
+  To learn more, see [Memory](memory.md).
 
 - **Feature**: a component that extends and enhances the functionality of AI agents.
 
 - **Graph**: a structure of nodes connected by edges that defines an agent strategy workflow.
 
 - **History compression**: the process of reducing the size of the conversation history to manage token usage by applying various compression strategies.
-To learn more, see History compression.
+  To learn more, see [History compression](history-compression.md).
 
 - **LLM (Large Language Model)**: the underlying AI model that powers agent capabilities.
 
-- **Memory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see Memory.
+- **Memory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see [Memory](memory.md).
 
-- **Memory scope**: the context in which facts are relevant. To learn more, see Memory.
+- **Memory scope**: the context in which facts are relevant. To learn more, see [Memory](memory.md).
 
 - **Message**: a unit of communication in the agent system that represents data passed from a user, assistant, or system.
 
@@ -64,24 +64,24 @@ To learn more, see History compression.
 - **Session**: a context for interacting with an LLM that includes the conversation history, available tools,
   and methods to make requests.
 
-- **Stage**: a self-contained unit of processing within an agent strategy, with its own set of tools, context, and
-  responsibilities. Information about stage operations can be either encapsulated within the stage or transferred between
-  stages using the Memory feature.
+- **Subgraph**: a self-contained unit of processing within an agent strategy, with its own set of tools, context, and
+  responsibilities. Information about subgraph operations can be either encapsulated within the subgraph or transferred between
+  subgraph using the Memory feature.
 
-- **Strategy**: a defined workflow for an agent that consists of sequential stages.
-The strategy defines how the agent processes input, interacts with tools, and generates output.
-A strategy graph consists of nodes connected by edges that represent transitions between nodes.
+- **Strategy**: a defined workflow for an agent that consists of sequential subgraphs.
+  The strategy defines how the agent processes input, interacts with tools, and generates output.
+  A strategy graph consists of nodes connected by edges that represent transitions between nodes.
 
 - **System prompt**: instructions provided to an agent to guide its behavior and define its role. The instructions can also provide context for the agent.
 
 - **Tool**: a function that an agent can use to perform specific tasks or access external systems. The agent is aware of the
-available tools and their arguments but lacks knowledge of their implementation details.
+  available tools and their arguments but lacks knowledge of their implementation details.
 
 - **Tool call**: a request from an LLM to run a specific tool using the provided arguments. It functions similarly to a function call.
 
 - **Tool descriptor**: tool metadata that includes its name, description, and parameters.
 
-- **Tool registry**: a list of tools available to an agent, organized by stages. The registry informs the agent about the available tools.
+- **Tool registry**: a list of tools available to an agent, organized into logical stages. The registry informs the agent about the available tools.
 
 - **Tool result**: an output produced by running a tool. For example, if the tool is a method, the result would be its return value.
 
@@ -106,7 +106,7 @@ We support the following LLM providers and platforms whose LLMs you can use to p
 
 The [Simple API](simple-api-getting-started) provides the easiest way to get started with AI agents:
 !!! note
-    Before you run the example, assign a corresponding API key as the `YOUR_API_TOKEN` environment variable. For details, see Quickstart.
+Before you run the example, assign a corresponding API key as the `YOUR_API_TOKEN` environment variable. For details, see [Getting started](simple-api-getting-started.md).
 
 ```kotlin
 fun main() = runBlocking {

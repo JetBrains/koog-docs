@@ -11,7 +11,6 @@ The tool result is returned if the tool registry is provided to the agent.
 ## Prerequisites
 
 - You have a valid API key from the LLM provider used for implementing an AI agent. For a list of all available providers, see [Overview](index.md).
-- Your Kotlin project is configured with coroutine support.
 
 !!! tip
     Use environment variables or a secure configuration management system to store your API keys.
@@ -19,7 +18,7 @@ The tool result is returned if the tool registry is provided to the agent.
 
 ## Add dependencies
 
-To use the Simple API, you need to add the following dependencies to your project:
+To use the Simple API functionality, you need to add the following dependencies to your project:
 
 ```
 // Please add installation instructions here
@@ -36,7 +35,6 @@ fun main() = runBlocking {
 
     val agent = simpleChatAgent(
         apiToken = apiToken,
-        cs = this,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely."
     )
     agent.run("Hello, how can you help me?")
@@ -58,7 +56,6 @@ fun main() = runBlocking {
 
     val agent = simpleSingleRunAgent(
         apiToken = apiToken,
-        cs = this,
         systemPrompt = "You are a code assistant. Provide concise code examples."
     )
 
@@ -89,7 +86,6 @@ fun main() = runBlocking {
 
     val agent = simpleChatAgent(
         apiToken = apiToken,
-        cs = this,
         toolRegistry = toolRegistry,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely."
     )
