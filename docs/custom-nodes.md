@@ -1,28 +1,31 @@
-# Custom Node Implementation Guide
+# Custom node implementation
 
-This guide provides detailed instructions on how to implement your own custom nodes in the Kotlin AI platform. Custom
-nodes allow you to extend the functionality of agent workflows by creating reusable components that perform specific
+This page provides detailed instructions on how to implement your own custom nodes in the Kotlin Agentic Framework. 
+Custom nodes let you extend the functionality of agent workflows by creating reusable components that perform specific
 operations.
 
-You can find out more about what the graph nodes are, their usage,
-and existing default nodes in the [Graph Nodes Guide](graphNodes.md).
+To learn more about what graph nodes are, their usage, and existing default nodes, see [Graph nodes](graphNodes.md).
 
-## Node Architecture Overview
+## Node architecture overview
 
-Before diving into implementation details, it's important to understand the architecture of nodes in the Kotlin AI
-platform:
+Before diving into implementation details, it is important to understand the architecture of nodes in the Kotlin Agentic
+Framework:
 
-- **LocalAgentNode**: The abstract base class for all nodes. It defines the core structure and behavior of a node.
-- **SimpleLocalAgentNode**: A concrete implementation of LocalAgentNode that executes a provided function.
-- **LocalAgentNodeDelegate**: A delegate class that handles lazy initialization of nodes.
-- **LocalAgentSubgraphBuilderBase**: Provides the `node` function for creating nodes in a DSL-like manner.
+- **LocalAgentNode**: the abstract base class for all nodes. It defines the core structure and behavior of a node.
+- **SimpleLocalAgentNode**: a concrete implementation of `LocalAgentNode` that executes a provided function.
+- **LocalAgentNodeDelegate**: a delegate class that handles lazy initialization of nodes.
+- **LocalAgentSubgraphBuilderBase**: provides the `node` function for creating nodes in a DSL-like manner.
 
-Nodes are connected using edges, which define the flow of execution between nodes. Each node has an execute method that
-takes an input and produces an output, which is then passed to the next node in the workflow.
+Nodes are connected using edges, which define the flow of execution between nodes.
+Each node has an `execute` method that takes an input and produces an output, which is then passed to the next node in 
+the workflow.
 
-## Implementing a Custom Node
+## Implementing a custom node
 
-### Basic Node Implementation
+Custom node implementations range from simple implementations that perform a basic logic on the input data and return
+an output, to more complex node implementations that accept parameters and maintain state between runs.
+
+### Basic node implementation
 
 The simplest way to implement a custom node is to create an extension function on `LocalAgentSubgraphBuilderBase` that
 calls the `node` function:
@@ -36,9 +39,9 @@ fun <T> LocalAgentSubgraphBuilderBase<*, *>.myCustomNode(
 }
 ```
 
-This creates a pass-through node that performs some custom logic but returns the input as output without modification.
+This creates a pass-through node that performs some custom logic but returns the input as the output without modification.
 
-### Parameterized Nodes
+### Parameterized nodes
 
 You can create nodes that accept parameters to customize their behavior:
 
@@ -49,13 +52,13 @@ fun <T> LocalAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
     param2: Int
 ): LocalAgentNodeDelegate<T, T> = node(name) { input ->
     // Use param1 and param2 in your custom logic
-    input // Return the input as output
+    input // Return the input as the output
 }
 ```
 
-### Stateful Nodes
+### Stateful nodes
 
-If your node needs to maintain state between executions, you can use closure variables:
+If your node needs to maintain state between runs, you can use closure variables:
 
 ```kotlin
 fun <T> LocalAgentSubgraphBuilderBase<*, *>.myStatefulNode(
@@ -71,7 +74,7 @@ fun <T> LocalAgentSubgraphBuilderBase<*, *>.myStatefulNode(
 }
 ```
 
-## Node Input and Output Types
+## Node input and output types
 
 Nodes can have different input and output types, which are specified as generic parameters:
 
@@ -83,28 +86,29 @@ fun LocalAgentSubgraphBuilderBase<*, *>.stringToIntNode(
 }
 ```
 
-The input and output types determine how the node can be connected to other nodes in the workflow. Nodes can only be
+> [!NOTE]
+> The input and output types determine how the node can be connected to other nodes in the workflow. Nodes can only be
 connected if the output type of the source node is compatible with the input type of the target node.
 
-## Best Practices
+## Best practices
 
 When implementing custom nodes, follow these best practices:
 
-1. **Keep nodes focused**: Each node should perform a single, well-defined operation.
-2. **Use descriptive names**: Node names should clearly indicate their purpose.
-3. **Document parameters**: Provide clear documentation for all parameters.
-4. **Handle errors gracefully**: Implement proper error handling to prevent workflow failures.
-5. **Make nodes reusable**: Design nodes to be reusable across different workflows.
-6. **Use type parameters**: Use generic type parameters when appropriate to make nodes more flexible.
-7. **Provide default values**: When possible, provide sensible default values for parameters.
+1. **Keep nodes focused**: each node should perform a single, well-defined operation.
+2. **Use descriptive names**: node names should clearly indicate their purpose.
+3. **Document parameters**: provide clear documentation for all parameters.
+4. **Handle errors gracefully**: implement proper error handling to prevent workflow failures.
+5. **Make nodes reusable**: design nodes to be reusable across different workflows.
+6. **Use type parameters**: use generic type parameters when appropriate to make nodes more flexible.
+7. **Provide default values**: when possible, provide sensible default values for parameters.
 
-## Common Patterns
+## Common patterns
 
-Here are some common patterns for implementing custom nodes:
+The following sections provide some common patterns for implementing custom nodes.
 
-### Pass-Through Nodes
+### Pass-through nodes
 
-Nodes that perform an operation but return the input as output:
+Nodes that perform an operation but return the input as the output:
 
 ```kotlin
 fun <T> LocalAgentSubgraphBuilderBase<*, *>.loggingNode(
@@ -115,7 +119,7 @@ fun <T> LocalAgentSubgraphBuilderBase<*, *>.loggingNode(
 }
 ```
 
-### Transformation Nodes
+### Transformation nodes
 
 Nodes that transform the input into a different output:
 
@@ -127,7 +131,7 @@ fun LocalAgentSubgraphBuilderBase<*, *>.upperCaseNode(
 }
 ```
 
-### LLM Interaction Nodes
+### LLM interaction nodes
 
 Nodes that interact with the LLM:
 
@@ -148,27 +152,29 @@ fun LocalAgentSubgraphBuilderBase<*, *>.summarizeTextNode(
 
 ## Examples
 
-### Simple Pass-Through Node
+The following sections provide specific examples for common usage patterns in custom nodes.
+
+### Simple pass-through node
 
 ```kotlin
 fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeDoNothing(
     name: String? = null
 ): LocalAgentNodeDelegate<T, T> = node(name) { input ->
-    input // Simply return the input as output
+    input // Return the input as the output
 }
 ```
 
-### Data Transformation Node
+### Data transformation node
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeJsonToMap(
     name: String? = null
 ): LocalAgentNodeDelegate<String, Map<String, Any>> = node(name) { jsonString ->
-    Json.decodeFromString<Map<String, Any>>(jsonString)
+    Json.decodeFromString<Map<String, Any>>(jsonString) // Decode and deserialize the given JSON string
 }
 ```
 
-### LLM Interaction Node
+### LLM interaction node
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeGenerateResponse(
@@ -177,7 +183,7 @@ fun LocalAgentSubgraphBuilderBase<*, *>.nodeGenerateResponse(
 ): LocalAgentNodeDelegate<String, Message.Response> = node(name) { input ->
     llm.writeSession {
         updatePrompt {
-            user("$prompt: $input")
+            user("$prompt: $input") // Update the user message in the prompt
         }
 
         requestLLM()
@@ -185,17 +191,17 @@ fun LocalAgentSubgraphBuilderBase<*, *>.nodeGenerateResponse(
 }
 ```
 
-### Tool Execution Node
+### Tool run node
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteCustomTool(
     name: String? = null,
     toolName: String
 ): LocalAgentNodeDelegate<String, String> = node(name) { input ->
-    val toolCall = Message.Tool.Call(
+    val toolCall = Message.Tool.Call( 
         id = UUID.randomUUID().toString(),
         tool = toolName,
-        args = mapOf("input" to input)
+        args = mapOf("input" to input) // Use the input as tool arguments
     )
 
     val result = environment.executeTool(toolCall)
