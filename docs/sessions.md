@@ -1,17 +1,15 @@
-# LLM Sessions and History Guide
+# LLM sessions and manual history management
 
-This guide provides detailed information about LLM sessions, including how to work with read
+This page provides detailed information about LLM sessions, including how to work with read
 and write sessions, manage conversation history, and make requests to language models.
 
 ## Introduction
 
-LLM sessions are a fundamental concept that provides a structured way to interact with
-language models (LLMs). They manage the conversation history, handle requests to the LLM, and provide a consistent
-interface for executing tools and processing responses.
+LLM sessions are a fundamental concept that provides a structured way to interact with language models (LLMs). 
+They manage the conversation history, handle requests to the LLM, and provide a consistent
+interface for running tools and processing responses.
 
-## Understanding LLM Sessions
-
-### What are LLM Sessions?
+## Understanding LLM sessions
 
 An LLM session represents a context for interacting with a language model. It encapsulates:
 
@@ -23,19 +21,19 @@ An LLM session represents a context for interacting with a language model. It en
 
 Sessions are managed by the `LocalAgentLLMContext` class, which provides methods for creating read and write sessions.
 
-### Read vs. Write Sessions
+### Session types
 
-The Code Engine platform provides two types of sessions:
+The Kotlin Agentic Framework provides two types of sessions:
 
-1. **Write Sessions (`LocalAgentLLMWriteSession`)**: Allow modifying the prompt and tools, making LLM requests, and
-   executing tools. Changes made in a write session are persisted back to the LLM context.
+1. **Write Sessions** (`LocalAgentLLMWriteSession`): Allow modifying the prompt and tools, making LLM requests, and
+   running tools. Changes made in a write session are persisted back to the LLM context.
 
-2. **Read Sessions (`LocalAgentLLMReadSession`)**: Provide read-only access to the prompt and tools. They are useful for
+2. **Read Sessions** (`LocalAgentLLMReadSession`): Provide read-only access to the prompt and tools. They are useful for
    inspecting the current state without making changes.
 
 The key difference is that write sessions can modify the conversation history, while read sessions cannot.
 
-### Session Lifecycle
+### Session lifecycle
 
 Sessions have a defined lifecycle:
 
@@ -45,9 +43,9 @@ Sessions have a defined lifecycle:
 
 Sessions implement the `AutoCloseable` interface, ensuring they are properly cleaned up even if an exception occurs.
 
-## Working with LLM Sessions
+## Working with LLM sessions
 
-### Creating Sessions
+### Creating sessions
 
 Sessions are created using extension functions on the `LocalAgentLLMContext` class:
 
@@ -63,10 +61,10 @@ llm.readSession {
 }
 ```
 
-These functions take a lambda block that executes within the context of the session. The session is automatically closed
+These functions take a lambda block that runs within the context of the session. The session is automatically closed
 when the block completes.
 
-### Session Scope and Thread Safety
+### Session scope and thread safety
 
 Sessions use a read-write lock to ensure thread safety:
 
@@ -76,7 +74,7 @@ Sessions use a read-write lock to ensure thread safety:
 
 This ensures that the conversation history is not corrupted by concurrent modifications.
 
-### Accessing Session Properties
+### Accessing session properties
 
 Within a session, you can access the prompt and tools:
 
@@ -101,18 +99,18 @@ llm.writeSession {
 }
 ```
 
-## Making LLM Requests
+## Making LLM requests
 
-### Basic Request Methods
+### Basic request methods
 
 The most common methods for making LLM requests are:
 
-1. **`requestLLM()`**: Makes a request to the LLM with the current prompt and tools, returning a single response.
+1. `requestLLM()`: Makes a request to the LLM with the current prompt and tools, returning a single response.
 
-2. **`requestLLMWithoutTools()`**: Makes a request to the LLM with the current prompt but without any tools, returning a
+2. `requestLLMWithoutTools()`: Makes a request to the LLM with the current prompt but without any tools, returning a
    single response.
 
-3. **`requestLLMMultiple()`**: Makes a request to the LLM with the current prompt and tools, returning multiple
+3. `requestLLMMultiple()`: Makes a request to the LLM with the current prompt and tools, returning multiple
    responses.
 
 Example:
@@ -130,21 +128,18 @@ llm.writeSession {
 }
 ```
 
-### When Requests Actually Happen
+### How requests work
 
 LLM requests are made when you explicitly call one of the request methods. The key points to understand are:
 
-1. **Explicit Invocation**: Requests only happen when you call methods like `requestLLM()`, `requestLLMWithoutTools()`,
-   etc.
-
-2. **Immediate Execution**: When you call a request method, the request is made immediately, and the method blocks until
+1. **Explicit invocation**: Requests only happen when you call methods like `requestLLM()`, `requestLLMWithoutTools()`,
+   and so on.
+2. **Immediate execution**: When you call a request method, the request is made immediately, and the method blocks until
    a response is received.
+3. **Automatic history update**: In a write session, the response is automatically added to the conversation history.
+4. **No implicit requests**: The system does not make implicit requests; you need to explicitly call a request method.
 
-3. **Automatic History Update**: In a write session, the response is automatically added to the conversation history.
-
-4. **No Implicit Requests**: The system does not make implicit requests; you must explicitly call a request method.
-
-### Request Methods with Tools
+### Request methods with tools
 
 When making requests with tools enabled, the LLM may respond with a tool call instead of a text response. The request
 methods handle this transparently:
@@ -162,18 +157,18 @@ llm.writeSession {
 }
 ```
 
-In practice, you typically don't need to check the response type manually, as the agent graph handles this routing
+In practice, you typically do not need to check the response type manually, as the agent graph handles this routing
 automatically.
 
 ### Structured and Streaming Requests
 
 For more advanced use cases, the platform provides methods for structured and streaming requests:
 
-1. **`requestLLMStructured()`**: Requests the LLM to provide a response in a specific structured format.
+1. `requestLLMStructured()`: Requests the LLM to provide a response in a specific structured format.
 
-2. **`requestLLMStructuredOneShot()`**: Similar to `requestLLMStructured()` but without retries or corrections.
+2. `requestLLMStructuredOneShot()`: Similar to `requestLLMStructured()` but without retries or corrections.
 
-3. **`requestLLMStreaming()`**: Makes a streaming request to the LLM, returning a flow of response chunks.
+3. `requestLLMStreaming()`: Makes a streaming request to the LLM, returning a flow of response chunks.
 
 Example:
 
@@ -190,9 +185,9 @@ llm.writeSession {
 }
 ```
 
-## Managing Conversation History
+## Managing conversation history
 
-### Updating the Prompt
+### Updating the prompt
 
 In a write session, you can update the prompt (conversation history) using the `updatePrompt` method:
 
@@ -227,7 +222,7 @@ llm.writeSession {
 }
 ```
 
-### How Responses Update History
+### Automatic history update on response
 
 When you make an LLM request in a write session, the response is automatically added to the conversation history:
 
@@ -238,16 +233,16 @@ llm.writeSession {
         user("What's the capital of France?")
     }
 
-    // Make a request - the response is automatically added to the history
+    // Make a request – the response is automatically added to the history
     val response = requestLLM()
 
-    // The prompt now includes both the user message and the LLM's response
+    // The prompt now includes both the user message and the model's response
 }
 ```
 
-This automatic history update is a key feature of write sessions, ensuring that the conversation flows naturally.
+This automatic history update is the key feature of write sessions, ensuring that the conversation flows naturally.
 
-### History Compression
+### History compression
 
 For long-running conversations, the history can grow large and consume a lot of tokens. The platform provides methods
 for compressing history:
@@ -261,19 +256,21 @@ llm.writeSession {
 
 You can also use the `nodeLLMCompressHistory` node in a strategy graph to compress history at specific points.
 
-## Tool Execution in Sessions
+For more information about history compression and compression strategies, see [History compression](history-compression.md).
 
-### Calling Tools
+## Running tools in sessions
+
+### Calling tools
 
 Write sessions provide several methods for calling tools:
 
-1. **`callTool(tool, args)`**: Calls a tool by reference.
+1. `callTool(tool, args)`: Calls a tool by reference.
 
-2. **`callTool(toolName, args)`**: Calls a tool by name.
+2. `callTool(toolName, args)`: Calls a tool by name.
 
-3. **`callTool(toolClass, args)`**: Calls a tool by class.
+3. `callTool(toolClass, args)`: Calls a tool by class.
 
-4. **`callToolRaw(toolName, args)`**: Calls a tool by name and returns the raw string result.
+4. `callToolRaw(toolName, args)`: Calls a tool by name and returns the raw string result.
 
 Example:
 
@@ -293,18 +290,18 @@ llm.writeSession {
 }
 ```
 
-### Parallel Tool Execution
+### Parallel tool runs
 
-For executing multiple tools in parallel, write sessions provide extension functions on `Flow`:
+To run multiple tools in parallel, write sessions provide extension functions on `Flow`:
 
 ```kotlin
 llm.writeSession {
-    // Execute tools in parallel
+    // Run tools in parallel
     parseDataToArgs(data).toParallelToolCalls(MyTool::class).collect { result ->
         // Process each result
     }
 
-    // Execute tools in parallel and get raw results
+    // Run tools in parallel and get raw results
     parseDataToArgs(data).toParallelToolCallsRaw(MyTool::class).collect { rawResult ->
         // Process each raw result
     }
@@ -313,40 +310,40 @@ llm.writeSession {
 
 This is useful for processing large amounts of data efficiently.
 
-## Best Practices
+## Best practices
 
 When working with LLM sessions, follow these best practices:
 
-1. **Use the Right Session Type**: Use write sessions when you need to modify the conversation history, and read
+1. **Use the right session type**: Use write sessions when you need to modify the conversation history, and read
    sessions when you only need to read it.
 
-2. **Keep Sessions Short**: Sessions should be focused on a specific task and closed as soon as possible to release
+2. **Keep sessions short**: Sessions should be focused on a specific task and closed as soon as possible to release
    resources.
 
-3. **Handle Exceptions**: Make sure to handle exceptions within sessions to prevent resource leaks.
+3. **Handle exceptions**: Make sure to handle exceptions within sessions to prevent resource leaks.
 
-4. **Manage History Size**: For long-running conversations, use history compression to reduce token usage.
+4. **Manage history size**: For long-running conversations, use history compression to reduce token usage.
 
-5. **Prefer High-Level Abstractions**: When possible, use the node-based API (e.g., `nodeLLMSendStageInput`,
-   `nodeLLMRequest`) instead of directly working with sessions.
+5. **Prefer high-Level abstractions**: When possible, use the node-based API. For example, `nodeLLMSendStageInput` or
+   `nodeLLMRequest` instead of directly working with sessions.
 
-6. **Be Mindful of Thread Safety**: Remember that write sessions block other sessions, so keep write operations as short
+6. **Be mindful of thread safety**: Remember that write sessions block other sessions, so keep write operations as short
    as possible.
 
-7. **Use Structured Requests for Complex Data**: When you need the LLM to return structured data, use
+7. **Use structured requests for complex data**: When you need the LLM to return structured data, use
    `requestLLMStructured` instead of parsing free-form text.
 
-8. **Use Streaming for Long Responses**: For long responses, use `requestLLMStreaming` to process the response as it
+8. **Use streaming for long responses**: For long responses, use `requestLLMStreaming` to process the response as it
    arrives.
 
 ## Troubleshooting
 
-### Session Already Closed
+### Session already closed
 
 If you see an error like "Cannot use session after it was closed", you're trying to use a session after its lambda block
 has completed. Make sure all session operations are performed within the session block.
 
-### History Too Large
+### History too large
 
 If your history becomes too large and consumes too many tokens, use history compression techniques:
 
@@ -356,10 +353,12 @@ llm.writeSession {
 }
 ```
 
-### Tool Not Found
+For more information, see [History compression](history-compression.md)
+
+### Tool not found
 
 If you see errors about tools not being found, check that:
 
-- The tool is correctly registered in the tool registry
-- You're using the correct tool name or class
-- The stage has access to the tool
+- The tool is correctly registered in the tool registry.
+- You are using the correct tool name or class.
+- The stage has access to the tool.

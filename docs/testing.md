@@ -3,7 +3,7 @@
 ## Overview
 
 The Testing Feature provides a comprehensive framework for testing AI agent pipelines, stages, and tool interactions in
-the Code Engine project. It enables developers to create controlled test environments with mock LLM (Large Language
+the Kotlin Agentic Framework. It enables developers to create controlled test environments with mock LLM (Large Language
 Model) executors, tool registries, and agent environments.
 
 ### Purpose
@@ -16,27 +16,108 @@ The primary purpose of this feature is to facilitate testing of agent-based AI f
 - Verifying the correct flow of data through agent nodes
 - Providing assertions for expected behaviors
 
-## Public API Documentation
+## Configuration and initialization
+
+### Setting up a test environment
+
+To set up a test environment for an agent pipeline, follow the steps below:
+
+1. Create a testing configuration:
+   ```kotlin
+   val testingConfig = Testing.createInitialConfig()
+   ```
+
+2. Configure the testing environment:
+   ```kotlin
+   testingConfig.apply {
+       // Configure assertions, stages, etc.
+   }
+   ```
+
+3. Install the testing configuration:
+   ```kotlin
+   Testing.install(testingConfig, pipeline)
+   ```
+
+### Mocking LLM responses
+
+To create a mock LLM executor, use one of the following code templates:
+
+* Using the builder directly:
+   ```kotlin
+   val mockExecutor = MockLLMBuilder().apply {
+       setDefaultResponse("Default response")
+       "Custom response" onUserRequestContains "specific pattern"
+   }.build()
+   ```
+
+* Using the utility function:
+   ```kotlin
+   val mockExecutor = getMockExecutor {
+       setDefaultResponse("Default response")
+       "Custom response" onUserRequestContains "specific pattern"
+
+       // Mock tool behavior
+       mockTool(myTool) alwaysReturns myResult
+   }
+   ```
+
+* Using the helper function:
+   ```kotlin
+   val response = mockLLMAnswer("This is a response")
+       .onRequestContains("specific question")
+   ```
+
+### Creating a mock environment
+
+To create a mock environment for testing:
+
+```kotlin
+val mockExecutor = getMockExecutor { /* configuration */ }
+val toolRegistry = ToolRegistry()
+val mockEnvironment = MockEnvironment(toolRegistry, mockExecutor)
+```
+
+### Using the Testing API extensions
+
+To use the graph testing extensions:
+
+```kotlin
+suspend fun testMyFeature() = withTesting {
+    graph {
+        // Configure graph testing
+        stage("myStage") {
+            // Stage-specific assertions
+        }
+    }
+}
+```
+
+## API documentation
 
 ### Class: `Testing`
 
 **Description**: The main class for configuring and running tests for agent pipelines and stages.
 
-**Key Methods**:
+#### Methods
+
+`createInitialConfig`
 
 ```kotlin
 fun createInitialConfig(): Config
 ```
 
-**Description**: Creates an initial configuration for testing
+**Description**: Creates an initial configuration for testing.
 
 - **Returns**: A new `Testing.Config` instance
+
+`install`
 
 ```kotlin
 fun install(config: Config, pipeline: AIAgentPipeline)
 ```
 
-**Description**: Installs the testing configuration into an agent pipeline
+**Description**: Installs the testing configuration into an agent pipeline.
 
 **Parameters**:
 
@@ -45,17 +126,19 @@ fun install(config: Config, pipeline: AIAgentPipeline)
 | config   | Testing.Config  | The testing configuration  |
 | pipeline | AIAgentPipeline | The agent pipeline to test |
 
-#### Class: `Testing.Config`
+### Class: `Testing.Config`
 
 **Description**: Configuration class for the Testing feature.
 
-**Key Methods**:
+#### Methods
+
+`assertEquals`
 
 ```kotlin
 fun assertEquals(expected: Any?, actual: Any?, message: String)
 ```
 
-**Description**: Asserts that two values are equal
+**Description**: Asserts that two values are equal.
 
 **Parameters**:
 
@@ -65,11 +148,14 @@ fun assertEquals(expected: Any?, actual: Any?, message: String)
 | actual   | `Any?`   | The actual value      |
 | message  | `String` | The assertion message |
 
+`assert`
+
 ```kotlin
 fun assert(value: Boolean, message: String)
 ```
 
 **Description**: Asserts that a condition is true
+
 **Parameters**:
 
 | Name    | Type      | Description            |
@@ -77,33 +163,42 @@ fun assert(value: Boolean, message: String)
 | value   | `Boolean` | The condition to check |
 | message | `String`  | The assertion message  |
 
+`handleAssertion`
+
 ```kotlin
 fun handleAssertion(block: (AssertionResult) -> Unit)
 ```
 
-**Description**: Sets a custom handler for assertion results
+**Description**: Sets a custom handler for assertion results.
+
 **Parameters**:
 
 | Name  | Type                        | Description          |
 |-------|-----------------------------|----------------------|
 | block | `(AssertionResult) -> Unit` | The handler function |
 
+`assertStagesOrder`
+
 ```kotlin
 fun assertStagesOrder(vararg stages: String)
 ```
 
-**Description**: Asserts the order of stages in the pipeline
+**Description**: Asserts the order of stages in the pipeline.
+
 **Parameters**:
 
 | Name   | Type            | Description                       |
 |--------|-----------------|-----------------------------------|
 | stages | `vararg String` | The expected stage names in order |
 
+`stage`
+
 ```kotlin
 fun stage(name: String, function: StageAssertionsBuilder.() -> Unit)
 ```
 
-**Description**: Configures assertions for a specific stage
+**Description**: Configures assertions for a specific stage.
+
 **Parameters**:
 
 | Name     | Type                                | Description            |
@@ -111,24 +206,30 @@ fun stage(name: String, function: StageAssertionsBuilder.() -> Unit)
 | name     | `String`                            | The name of the stage  |
 | function | `StageAssertionsBuilder.() -> Unit` | Configuration function |
 
-#### Extension Functions
+#### Extension functions
+
+`Testing.Config.graph`
 
 ```kotlin
 fun Testing.Config.graph(test: Testing.Config.() -> Unit)
 ```
 
-**Description**: Enables graph testing with automatic assertion handling
+**Description**: Enables graph testing with automatic assertion handling.
+
 **Parameters**:
 
 | Name | Type                        | Description                 |
 |------|-----------------------------|-----------------------------|
 | test | `Testing.Config.() -> Unit` | Test configuration function |
 
+`FeatureContext.testGraph`
+
 ```kotlin
 suspend fun FeatureContext.testGraph(test: Testing.Config.() -> Unit)
 ```
 
-**Description**: Extension function for FeatureContext to simplify graph testing
+**Description**: Extension function for FeatureContext to simplify graph testing.
+
 **Parameters**:
 
 | Name | Type                        | Description                 |
@@ -141,29 +242,37 @@ suspend fun FeatureContext.testGraph(test: Testing.Config.() -> Unit)
 
 **Description**: Builder for creating mock LLM executors with configurable responses.
 
-**Key Methods**:
+##### Methods
+
+`setDefaultResponse`
 
 ```kotlin
 fun setDefaultResponse(response: String)
 ```
 
-**Description**: Sets the default response for the mock executor
+**Description**: Sets the default response for the mock executor.
+
 **Parameters**:
 
 | Name     | Type     | Description               |
 |----------|----------|---------------------------|
 | response | `String` | The default response text |
 
+`setToolRegistry`
+
 ```kotlin
 fun setToolRegistry(registry: ToolRegistry)
 ```
 
-**Description**: Sets the tool registry for the mock executor
+**Description**: Sets the tool registry for the mock executor.
+
 **Parameters**:
 
 | Name     | Type           | Description              |
 |----------|----------------|--------------------------|
 | registry | `ToolRegistry` | The tool registry to use |
+
+`addToolAction`
 
 ```kotlin
 fun <Args : Tool.Args, Result : Tool.Result> addToolAction(
@@ -173,7 +282,8 @@ fun <Args : Tool.Args, Result : Tool.Result> addToolAction(
 )
 ```
 
-**Description**: Adds a tool action to the mock executor
+**Description**: Adds a tool action to the mock executor.
+
 **Parameters**:
 
 | Name          | Type                        | Description                           |
@@ -182,43 +292,51 @@ fun <Args : Tool.Args, Result : Tool.Result> addToolAction(
 | argsCondition | `suspend (Args) -> Boolean` | Condition for when to use this action |
 | action        | `suspend (Args) -> Result`  | Function to produce the result        |
 
+`build`
+
 ```kotlin
 fun build(): CodePromptExecutor
 ```
 
-**Description**: Builds and returns a mock LLM executor
+**Description**: Builds and returns a mock LLM executor.
 
-- **Returns**: A `CodePromptExecutor` implementation
+- **Returns**: A `CodePromptExecutor` implementation.
 
-#### Extension Functions
+##### Extension functions
+
+`String.onUserRequestContains`
 
 ```kotlin
 infix fun String.onUserRequestContains(pattern: String): MockLLMBuilder
 ```
 
-**Description**: Configures a response when the user request contains a pattern
+**Description**: Configures a response when the user request contains a pattern.
+
 **Parameters**:
 
 | Name    | Type     | Description          |
 |---------|----------|----------------------|
 | pattern | `String` | The pattern to match |
 
-- **Returns**: The `MockLLMBuilder` instance
+- **Returns**: A `MockLLMBuilder` instance.
+
+`String.onUserRequestEquals`
 
 ```kotlin
 infix fun String.onUserRequestEquals(pattern: String): MockLLMBuilder
 ```
 
-**Description**: Configures a response when the user request exactly matches a pattern
+**Description**: Configures a response when the user request exactly matches a pattern.
+
 **Parameters**:
 
 | Name    | Type     | Description          |
 |---------|----------|----------------------|
 | pattern | `String` | The pattern to match |
 
-- **Returns**: The `MockLLMBuilder` instance
+- **Returns**: A `MockLLMBuilder` instance.
 
-#### Function: `getMockExecutor`
+`getMockExecutor`
 
 ```kotlin
 fun getMockExecutor(
@@ -228,7 +346,8 @@ fun getMockExecutor(
 ): CodePromptExecutor
 ```
 
-**Description**: Creates a mock executor with the given configuration
+**Description**: Creates a mock executor with the given configuration.
+
 **Parameters**:
 
 | Name         | Type                        | Description            |
@@ -237,24 +356,25 @@ fun getMockExecutor(
 | eventHandler | `EventHandler?`             | Optional event handler |
 | init         | `MockLLMBuilder.() -> Unit` | Configuration function |
 
-- **Returns**: A configured `CodePromptExecutor`
+- **Returns**: A configured `CodePromptExecutor`.
 
-#### Function: `mockLLMAnswer`
+`mockLLMAnswer`
 
 ```kotlin
 fun mockLLMAnswer(response: String): DefaultResponseReceiver
 ```
 
-**Description**: Creates a response receiver for configuring mock LLM answers
+**Description**: Creates a response receiver for configuring mock LLM answers.
+
 **Parameters**:
 
 | Name     | Type     | Description       |
 |----------|----------|-------------------|
 | response | `String` | The response text |
 
-- **Returns**: A `DefaultResponseReceiver` for further configuration
+- **Returns**: A `DefaultResponseReceiver` for further configuration.
 
-#### Class: `MockEnvironment`
+`MockEnvironment`
 
 **Description**: A mock implementation of `AgentEnvironment` for testing.
 
@@ -266,13 +386,16 @@ class MockEnvironment(
 ) : AgentEnvironment
 ```
 
-**Key Methods**:
+##### Methods
+
+`executeTools`
 
 ```kotlin
 override suspend fun executeTools(toolCalls: List<Message.Tool.Call>): List<Message.Tool.Result>
 ```
 
-**Description**: Executes a list of tool calls
+**Description**: Executes a list of tool calls.
+
 **Parameters**:
 
 | Name      | Type                      | Description               |
@@ -289,22 +412,25 @@ override suspend fun executeTools(toolCalls: List<Message.Tool.Call>): List<Mess
 class DummyTool : SimpleTool<DummyTool.Args>()
 ```
 
-**Key Methods**:
+##### Methods
+
+`doExecute`
 
 ```kotlin
 override suspend fun doExecute(args: Args): String
 ```
 
-**Description**: Executes the tool with the given arguments
+**Description**: Runs the tool with the given arguments.
+
 **Parameters**:
 
 | Name | Type   | Description        |
 |------|--------|--------------------|
 | args | `Args` | The tool arguments |
 
-- **Returns**: Always returns "Dummy result"
+- **Returns**: Always returns "Dummy result".
 
-## 3. Internal Helpers & Utilities
+## Internal helpers and utilities
 
 ### Class: `ToolCondition`
 
@@ -318,19 +444,23 @@ class ToolCondition<Args : Tool.Args, Result : Tool.Result>(
 )
 ```
 
-**Key Methods**:
+##### Methods
+
+`satisfies`
 
 ```kotlin
 internal suspend fun satisfies(toolCall: Message.Tool.Call): Boolean
 ```
 
-- Checks if this condition applies to a given tool call
+- Checks if this condition applies to a given tool call.
+
+`invokeAndSerialize`
 
 ```kotlin
 internal suspend fun invokeAndSerialize(toolCall: Message.Tool.Call): String
 ```
 
-- Invokes the tool and serializes the result
+- Invokes the tool and serializes the result.
 
 ### Class: `MockLLMExecutor`
 
@@ -349,13 +479,15 @@ internal class MockLLMExecutor(
 ) : CodePromptExecutor
 ```
 
-**Key Methods**:
+##### Methods
+
+`handlePrompt`
 
 ```kotlin
 suspend fun handlePrompt(prompt: Prompt): Message.Response
 ```
 
-- Processes a prompt and returns an appropriate response based on configured patterns
+- Processes a prompt and returns an appropriate response based on configured patterns.
 
 ### Class: `DummyAgentStageContext`
 
@@ -369,116 +501,39 @@ suspend fun handlePrompt(prompt: Prompt): Message.Response
 
 **Description**: Reference to a node in the agent graph for testing purposes.
 
-## 4. Configuration & Initialization
+## Error handling and edge cases
 
-### Setting Up a Test Environment
+The Testing feature includes several mechanisms for handling errors and edge cases:
 
-To set up a test environment for an agent pipeline:
+### Assertion handling
 
-1. **Create a Testing Configuration**:
-   ```kotlin
-   val testingConfig = Testing.createInitialConfig()
-   ```
+- Custom assertion handlers can be registered using `handleAssertion()`.
+- By default, assertions are mapped to Kotlin's test assertions.
+- Failed assertions provide detailed error messages.
 
-2. **Configure the Testing Environment**:
-   ```kotlin
-   testingConfig.apply {
-       // Configure assertions, stages, etc.
-   }
-   ```
+### Tool run errors
 
-3. **Install the Testing Configuration**:
-   ```kotlin
-   Testing.install(testingConfig, pipeline)
-   ```
+- `MockEnvironment` throws exceptions directly via `reportProblem()`.
+- Tool run errors can be simulated by configuring tool actions to throw exceptions.
 
-### Mocking LLM Responses
+### LLM response fallbacks
 
-To create a mock LLM executor:
-
-1. **Using the Builder Directly**:
-   ```kotlin
-   val mockExecutor = MockLLMBuilder().apply {
-       setDefaultResponse("Default response")
-       "Custom response" onUserRequestContains "specific pattern"
-   }.build()
-   ```
-
-2. **Using the Utility Function**:
-   ```kotlin
-   val mockExecutor = getMockExecutor {
-       setDefaultResponse("Default response")
-       "Custom response" onUserRequestContains "specific pattern"
-
-       // Mock tool behavior
-       mockTool(myTool) alwaysReturns myResult
-   }
-   ```
-
-3. **Using the Helper Function**:
-   ```kotlin
-   val response = mockLLMAnswer("This is a response")
-       .onRequestContains("specific question")
-   ```
-
-### Creating a Mock Environment
-
-To create a mock environment for testing:
-
-```kotlin
-val mockExecutor = getMockExecutor { /* configuration */ }
-val toolRegistry = ToolRegistry()
-val mockEnvironment = MockEnvironment(toolRegistry, mockExecutor)
-```
-
-### Using the Testing API Extensions
-
-To use the graph testing extensions:
-
-```kotlin
-suspend fun testMyFeature() = withTesting {
-    graph {
-        // Configure graph testing
-        stage("myStage") {
-            // Stage-specific assertions
-        }
-    }
-}
-```
-
-## 5. Error Handling & Edge Cases
-
-The Testing Feature includes several mechanisms for handling errors and edge cases:
-
-### Assertion Handling
-
-- Custom assertion handlers can be registered using `handleAssertion()`
-- By default, assertions are mapped to Kotlin's test assertions
-- Failed assertions provide detailed error messages
-
-### Tool Execution Errors
-
-- The `MockEnvironment` throws exceptions directly via `reportProblem()`
-- Tool execution errors can be simulated by configuring tool actions to throw exceptions
-
-### LLM Response Fallbacks
-
-- The `MockLLMExecutor` uses a priority-based approach to find responses:
+- `MockLLMExecutor` uses a priority-based approach to find responses:
     1. Exact matches
     2. Partial matches
     3. Conditional matches
     4. Default response
 
-### Edge Cases
+### Edge cases
 
-- **Empty Tool Calls**: Handled gracefully by returning empty results
-- **Missing Tool Registry**: Defaults to no tools available
-- **Null Responses**: Treated as empty strings
-- **Circular Graph References**: Detected and reported during graph traversal
+- Empty tool calls: handled gracefully by returning empty results.
+- Missing tool registry: defaults to no tools available.
+- Null responses: treated as empty strings.
+- Circular graph references: detected and reported during graph traversal.
 
-## 6. Dependency Graph
+## Dependency graph
 
-The Testing Feature has the following component dependencies:
+The Testing feature has the following component dependencies:
 
 ```
 TestingFeature.kt
@@ -491,16 +546,16 @@ TestingFeature.kt
 └── DummyTool.kt
 ```
 
-### External Dependencies
+### External dependencies
 
-- `ai.jetbrains.code.agents.core.tools`: Core tool interfaces and implementations
-- `ai.jetbrains.code.agents.local`: Local agent implementation
-- `ai.jetbrains.code.prompt`: Prompt execution framework
-- `kotlin.test`: Testing utilities
+- `ai.jetbrains.code.agents.core.tools`: core tool interfaces and implementations
+- `ai.jetbrains.code.agents.local`: local agent implementation
+- `ai.jetbrains.code.prompt`: prompt execution framework
+- `kotlin.test`: testing utilities
 
-## 7. Examples & Quickstarts
+## Examples and quickstarts
 
-### Basic Example: Mocking LLM Responses
+### Basic example: Mocking LLM responses
 
 ```kotlin
 // Create a mock executor
@@ -517,7 +572,7 @@ val response = mockExecutor.execute(myPrompt)
 assertEquals("Expected response", response)
 ```
 
-### Advanced Example: Testing Agent Graph Flow
+### Advanced example: Testing agent graph flow
 
 ```kotlin
 class MyAgentTest {
@@ -552,9 +607,9 @@ class MyAgentTest {
 }
 ```
 
-### Quickstart: Setting Up a Test Environment
+### Quickstart: Setting up a test environment
 
-1. **Add Dependencies**:
+1. Add dependencies:
    ```kotlin
    // build.gradle.kts
    dependencies {
@@ -562,7 +617,7 @@ class MyAgentTest {
    }
    ```
 
-2. **Create a Test Class**:
+2. Create a test class:
    ```kotlin
    class MyTest {
        @Test
@@ -583,13 +638,11 @@ class MyAgentTest {
    }
    ```
 
-## 8. FAQ / Troubleshooting
+## FAQ and troubleshooting
 
-### Common Questions
+#### How do I mock a specific tool response?
 
-#### Q: How do I mock a specific tool response?
-
-A: Use the `mockTool` method in the `MockLLMBuilder`:
+Use the `mockTool` method in `MockLLMBuilder`:
 
 ```kotlin
 val mockExecutor = getMockExecutor {
@@ -600,9 +653,9 @@ val mockExecutor = getMockExecutor {
 }
 ```
 
-#### Q: How can I test complex graph structures?
+#### How can I test complex graph structures?
 
-A: Use the stage assertions and node references:
+Use the stage assertions and node references:
 
 ```kotlin
 testGraph {
@@ -622,9 +675,9 @@ testGraph {
 }
 ```
 
-#### Q: How do I simulate different LLM responses based on input?
+#### How do I simulate different LLM responses based on input?
 
-A: Use the pattern matching methods:
+Use pattern matching methods:
 
 ```kotlin
 getMockExecutor {
@@ -637,23 +690,21 @@ getMockExecutor {
 
 ### Troubleshooting
 
-#### Issue: Mock executor always returns the default response
+#### Mock executor always returns the default response
 
-**Solution**: Check that your pattern matching is correct. Patterns are case-sensitive and must match exactly as
+Check that your pattern matching is correct. Patterns are case-sensitive and must match exactly as
 specified.
 
-#### Issue: Tool calls are not being intercepted
+#### Tool calls are not being intercepted
 
-**Solution**: Ensure that:
+Ensure that:
 
-1. The tool registry is properly set up
-2. The tool names match exactly
-3. The tool actions are configured correctly
+1. The tool registry is properly set up.
+2. The tool names match exactly.
+3. The tool actions are configured correctly.
 
-#### Issue: Graph assertions are failing
+#### Graph assertions are failing
 
-**Solution**:
-
-1. Verify that node names are correct
-2. Check that the graph structure matches your expectations
-3. Use the `startNode()` and `finishNode()` methods to get the correct entry and exit points
+1. Verify that node names are correct.
+2. Check that the graph structure matches your expectations.
+3. Use the `startNode()` and `finishNode()` methods to get the correct entry and exit points.

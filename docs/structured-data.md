@@ -1,25 +1,28 @@
-# Structured Data Processing Guide
+# Structured data processing
 
 ## Introduction
 
-The Structured Data Processing API provides a powerful way to ensure that responses from Large Language Models (LLMs) conform to specific data structures. This is crucial for building reliable AI applications where you need predictable, well-formatted data rather than free-form text.
+The Structured Data Processing API provides a way to ensure that responses from Large Language Models (LLMs) 
+conform to specific data structures.
+This is crucial for building reliable AI applications where you need predictable, well-formatted data rather than free-form text.
 
-This guide explains how to use the Structured Data Processing API to define data structures, generate schemas, and request structured responses from LLMs.
+This page explains how to use the Structured Data Processing API to define data structures, generate schemas, and 
+request structured responses from LLMs.
 
-## Key Components and Concepts
+## Key components and concepts
 
 The Structured Data Processing API consists of several key components:
 
-1. **Data Structure Definition**: Kotlin data classes annotated with Kotlinx.Serialization and LLM-specific annotations.
-2. **JSON Schema Generation**: Tools to generate JSON schemas from Kotlin data classes.
-3. **Structured LLM Requests**: Methods to request responses from LLMs that conform to the defined structures.
-4. **Response Handling**: Processing and validating the structured responses.
+1. **Data structure definition**: Kotlin data classes annotated with kotlinx.serialization and LLM-specific annotations.
+2. **JSON Schema generation**: tools to generate JSON schemas from Kotlin data classes.
+3. **Structured LLM requests**: methods to request responses from LLMs that conform to the defined structures.
+4. **Response handling**: processing and validating the structured responses.
 
-## Defining Data Structures
+## Defining data structures
 
 The first step in using the Structured Data Processing API is to define your data structures using Kotlin data classes.
 
-### Basic Structure
+### Basic structure
 
 ```kotlin
 @Serializable
@@ -35,23 +38,23 @@ data class WeatherForecast(
 )
 ```
 
-### Key Annotations
+### Key annotations
 
-- `@Serializable`: Required for Kotlinx.Serialization to work with the class.
-- `@SerialName`: Specifies the name to use during serialization.
-- `@LLMDescription`: Provides a description of the class or field for the LLM.
+- `@Serializable`: required for kotlinx.serialization to work with the class.
+- `@SerialName`: specifies the name to use during serialization.
+- `@LLMDescription`: provides a description of the class or field for the LLM.
 
-### Supported Features
+### Supported features
 
 The API supports a wide range of data structure features:
 
-#### Nested Classes
+#### Nested classes
 
 ```kotlin
 @Serializable
 @SerialName("WeatherForecast")
 data class WeatherForecast(
-    // Other fields...
+    // Other fields
     @LLMDescription("Coordinates of the location")
     val latLon: LatLon
 ) {
@@ -66,13 +69,13 @@ data class WeatherForecast(
 }
 ```
 
-#### Collections (Lists and Maps)
+#### Collections (lists and maps)
 
 ```kotlin
 @Serializable
 @SerialName("WeatherForecast")
 data class WeatherForecast(
-    // Other fields...
+    // Other fields
     @LLMDescription("List of news articles")
     val news: List<WeatherNews>,
     @LLMDescription("Map of weather sources")
@@ -88,7 +91,7 @@ data class WeatherForecast(
 enum class Pollution { Low, Medium, High }
 ```
 
-#### Polymorphism with Sealed Classes
+#### Polymorphism with sealed classes
 
 ```kotlin
 @Serializable
@@ -121,9 +124,9 @@ sealed class WeatherAlert {
 }
 ```
 
-## Generating JSON Schemas
+## Generating JSON schemas
 
-Once you've defined your data structures, you can generate JSON schemas from them using the `JsonStructuredData` class:
+Once you have defined your data structures, you can generate JSON schemas from them using the `JsonStructuredData` class:
 
 ```kotlin
 val weatherForecastStructure = JsonStructuredData.createJsonStructure<WeatherForecast>(
@@ -133,29 +136,29 @@ val weatherForecastStructure = JsonStructuredData.createJsonStructure<WeatherFor
 )
 ```
 
-### Schema Format Options
+### Schema format options
 
 - `JsonSchema`: Standard JSON Schema format.
-- `SimpleSchema`: A simplified schema format that may work better with some models but has limitations (e.g., no polymorphism support).
+- `SimpleSchema`: A simplified schema format that may work better with some models but has limitations such as no polymorphism support.
 
-### Schema Type Options
+### Schema type options
 
-#### `SIMPLE`: A simplified schema type.
+The following schema types are supported
 
-- Supports only standard JSON fields
-- Does not support definitions, URL references, and recursive checks
-- **Does not support polymorphism**
-- Supported by a larger number of language models
-- Used for simpler data structures
+* `SIMPLE`: A simplified schema type.
+    - Supports only standard JSON fields
+    - Does not support definitions, URL references, and recursive checks
+    - **Does not support polymorphism**
+    - Supported by a larger number of language models
+    - Used for simpler data structures
 
-#### `FULL`: A more comprehensive schema type.
+* `FULL`: A more comprehensive schema type.
+    - Supports advanced JSON Schema capabilities, including definitions, URL references, and recursive checks
+    - **Supports polymorphism**: can work with sealed classes or interfaces and their implementations
+    - Supported by fewer language models
+    - Used for complex data structures with inheritance hierarchies
 
-- Supports advanced JSON Schema capabilities, including definitions, URL references, and recursive checks
-- **Supports polymorphism** - can work with sealed classes/interfaces and their implementations
-- Supported by fewer language models
-- Used for complex data structures with inheritance hierarchies
-
-### Providing Examples
+### Providing examples
 
 You can provide examples to help the LLM understand the expected format:
 
@@ -165,18 +168,18 @@ val exampleForecasts = listOf(
         temperature = 25,
         conditions = "Sunny",
         precipitation = 0,
-        // Other fields...
+        // Other fields
     ),
     WeatherForecast(
         temperature = 18,
         conditions = "Cloudy",
         precipitation = 30,
-        // Other fields...
+        // Other fields
     )
 )
 ```
 
-## Requesting Structured Responses
+## Requesting structured responses
 
 To request a structured response from an LLM, use the `requestLLMStructured` method within a `writeSession`:
 
@@ -189,11 +192,11 @@ val structuredResponse = llm.writeSession {
 }
 ```
 
-### Fixing Model
+### Fixing model
 
 The `fixingModel` parameter specifies a model that will handle coercion if the output does not conform to the requested structure. This helps ensure that you always get a valid response.
 
-## Integrating with Agent Strategies
+## Integrating with agent strategies
 
 You can integrate structured data processing into your agent strategies:
 
@@ -223,9 +226,9 @@ val agentStrategy = strategy("weather-forecast") {
 }
 ```
 
-## Complete Example
+## Full code sample
 
-Here's a complete example of using the Structured Data Processing API:
+Here is a full example of using the Structured Data Processing API:
 
 ```kotlin
 // Note: Import statements are omitted for brevity
@@ -243,7 +246,7 @@ data class SimpleWeatherForecast(
 )
 
 fun main(): Unit = runBlocking {
-    // Create example forecasts
+    // Create sample forecasts
     val exampleForecasts = listOf(
         SimpleWeatherForecast(
             location = "New York",
@@ -257,7 +260,7 @@ fun main(): Unit = runBlocking {
         )
     )
 
-    // Generate JSON schema
+    // Generate JSON Schema
     val forecastStructure = JsonStructuredData.createJsonStructure<SimpleWeatherForecast>(
         schemaFormat = JsonSchemaGenerator.SchemaFormat.JsonSchema,
         examples = exampleForecasts,
@@ -329,18 +332,18 @@ fun main(): Unit = runBlocking {
 }
 ```
 
-## Best Practices
+## Best practices
 
-1. **Use Clear Descriptions**: Provide clear and detailed descriptions using `@LLMDescription` annotations to help the LLM understand the expected data.
+1. **Use clear descriptions**: provide clear and detailed descriptions using `@LLMDescription` annotations to help the LLM understand the expected data.
 
-2. **Provide Examples**: Include examples of valid data structures to guide the LLM.
+2. **Provide examples**: include examples of valid data structures to guide the LLM.
 
-3. **Handle Errors Gracefully**: Implement proper error handling to deal with cases where the LLM might not produce a valid structure.
+3. **Handle errors gracefully**: implement proper error handling to deal with cases where the LLM might not produce a valid structure.
 
-4. **Use Appropriate Schema Types**: Choose the appropriate schema format and type based on your needs and the capabilities of the LLM you're using.
+4. **Use appropriate schema types**: select the appropriate schema format and type based on your needs and the capabilities of the LLM you are using.
 
-5. **Test with Different Models**: Different LLMs may have varying abilities to follow structured formats, so test with multiple models if possible.
+5. **Test with different models**: different LLMs may have varying abilities to follow structured formats, so test with multiple models if possible.
 
-6. **Start Simple**: Begin with simple structures and gradually add complexity as needed.
+6. **Start simple**: begin with simple structures and gradually add complexity as needed.
 
-7. **Use Polymorphism Carefully**: While the API supports polymorphism with sealed classes, be aware that it can be more challenging for LLMs to handle correctly.
+7. **Use polymorphism Carefully**: while the API supports polymorphism with sealed classes, be aware that it can be more challenging for LLMs to handle correctly.

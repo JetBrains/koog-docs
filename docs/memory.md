@@ -1,57 +1,57 @@
-# Memory Feature Documentation
+# Memory
 
-## Feature Overview
+## Feature overview
 
-The Memory Feature is a component of the Code Engine platform that enables AI agents to store, retrieve, and utilize
+The Memory feature is a component of the Kotlin Agentic Framework that lets AI agents store, retrieve, and use
 information across conversations.
 
 ### Purpose
 
 The Memory Feature addresses the challenge of maintaining context in AI agent interactions by:
 
-- Storing important facts extracted from conversations
-- Organizing information by concepts, subjects, and scopes
-- Retrieving relevant information when needed in future interactions
-- Enabling personalization based on user preferences and history
+- Storing important facts extracted from conversations.
+- Organizing information by concepts, subjects, and scopes.
+- Retrieving relevant information when needed in future interactions.
+- Enabling personalization based on user preferences and history.
 
 ### Architecture
 
-The Memory Feature is built on a hierarchical structure:
+The Memory feature is built on a hierarchical structure:
 
-**Facts**: Individual pieces of information stored in memory
+**Facts**: individual pieces of information stored in memory
 
-- **SingleFact**: A single value associated with a concept
-- **MultipleFacts**: Multiple values associated with a concept
+- **SingleFact**: a single value associated with a concept.
+- **MultipleFacts**: multiple values associated with a concept.
 
-**Concepts**: Categories of information with associated metadata
+**Concepts**: categories of information with associated metadata.
 
-- Keyword: Unique identifier for the concept
-- Description: Detailed explanation of what the concept represents
-- FactType: Whether the concept stores single or multiple facts
+- Keyword: unique identifier for the concept.
+- Description: detailed explanation of what the concept represents.
+- FactType: whether the concept stores single or multiple facts.
 
-**Subjects**: Entities that facts can be associated with
+**Subjects**: entities that facts can be associated with:
 
-- USER: Facts about the user
-- MACHINE: Facts about the local machine
-- PROJECT: Facts about the current project
-- ORGANIZATION: Facts about the organization
+- USER: facts about the user.
+- MACHINE: facts about the local machine.
+- PROJECT: facts about the current project.
+- ORGANIZATION: facts about the organization.
 
-**Scopes**: Contexts in which facts are relevant
+**Scopes**: contexts in which facts are relevant:
 
-- Agent: Specific to an agent
-- Feature: Specific to a feature
-- Product: Specific to a product
-- Organization: Relevant across an organization
-- CrossProduct: Relevant across multiple products
+- Agent: specific to an agent.
+- Feature: specific to a feature.
+- Product: specific to a product.
+- Organization: relevant across an organization.
+- CrossProduct: relevant across multiple products.
 
-## Configuration & Initialization
+## Configuration and initialization
 
 The feature integrates with the agent pipeline through the `MemoryFeature` class, which provides methods for saving and
 loading facts, and can be installed as a feature in the agent configuration.
 
-### MemoryFeature.Config
+### Class: `MemoryFeature.Config`
 
-Configuration class for the Memory Feature.
+Configuration class for the Memory feature.
 
 ```kotlin
 class Config : FeatureConfig() {
@@ -67,11 +67,11 @@ class Config : FeatureConfig() {
 
 ### Installation
 
-To install the Memory Feature in an agent:
+To install the Memory feature in an agent:
 
 ```kotlin
 val agent = KotlinAIAgent(
-    // other parameters...
+    // Other parameters
 ) {
     install(MemoryFeature) {
         memoryProvider = YourMemoryProvider()
@@ -83,11 +83,11 @@ val agent = KotlinAIAgent(
 }
 ```
 
-## Public API Documentation
+## API documentation
 
-### MemoryFeature
+### Class: `MemoryFeature`
 
-Main class that implements memory capabilities for a LocalAIAgent.
+The main class that implements memory capabilities for a LocalAIAgent.
 
 #### Constructor
 
@@ -105,12 +105,12 @@ class MemoryFeature(
 | llm           | LocalAgentLLMContext | Context for interacting with the LLM         |
 | scopesProfile | MemoryScopesProfile  | Profile defining the available memory scopes |
 
-Please note that `agentMemory`  can have a custom value or use one of the existing implementations: `NoMemory`,
+Please note that `agentMemory` can have a custom value or use one of the existing implementations: `NoMemory`,
 `LocalFileMemoryProvider`, `SharedRemoteMemoryProvider`.
 
 #### Methods
 
-##### `saveFactsFromHistory`
+`saveFactsFromHistory`
 
 Extracts facts about a specific concept from the LLM chat history and saves them to memory.
 
@@ -130,7 +130,7 @@ suspend fun saveFactsFromHistory(
 | scope                      | MemoryScope   | required | The memory scope for the facts                                  |
 | preserveQuestionsInLLMChat | Boolean       | false    | If true, keeps the fact extraction messages in the chat history |
 
-##### `loadFactsToAgent`
+`loadFactsToAgent`
 
 Loads facts about a specific concept from memory and adds them to the LLM chat history.
 
@@ -148,7 +148,7 @@ suspend fun loadFactsToAgent(
 | scopes    | List<MemoryScopeType> | all scopes   | List of memory scopes to search in |
 | subjects  | List<MemorySubject>   | all subjects | List of subjects to look for       |
 
-##### `loadAllFactsToAgent`
+`loadAllFactsToAgent`
 
 Loads all available facts from memory and adds them to the LLM chat history.
 
@@ -164,17 +164,17 @@ suspend fun loadAllFactsToAgent(
 | scopes    | List<MemoryScopeType> | all scopes   | List of memory scopes to search in |
 | subjects  | List<MemorySubject>   | all subjects | List of subjects to look for       |
 
-### Extension Functions
+### Extension functions
 
-#### memory
+`memory`
 
-Extension function to access the memory feature from a LocalAgentStageContext.
+An extension function to access the memory feature from a LocalAgentStageContext.
 
 ```kotlin
 fun LocalAgentStageContext.memory(): MemoryFeature
 ```
 
-#### withMemory
+`withMemory`
 
 Extension function to perform an action with the memory feature.
 
@@ -182,9 +182,9 @@ Extension function to perform an action with the memory feature.
 suspend fun <T> LocalAgentStageContext.withMemory(action: suspend MemoryFeature.() -> T)
 ```
 
-### Memory Nodes
+### Memory nodes
 
-#### nodeSaveToMemoryAutoDetectFacts
+`nodeSaveToMemoryAutoDetectFacts`
 
 Creates a node that automatically detects and saves facts from the conversation history.
 
@@ -198,36 +198,36 @@ fun <I> nodeSaveToMemoryAutoDetectFacts(
 |-----------|---------------------|---------|--------------------------------------|
 | subjects  | List<MemorySubject> | `USER`  | List of subjects to detect facts for |
 
-## Internal Helpers & Utilities
+## Internal helpers and utilities
 
-### retrieveFactsFromHistory
+`retrieveFactsFromHistory`
 
-Helper function that retrieves facts about a concept from the LLM chat history.
+A helper function that retrieves facts about a concept from the LLM chat history.
 
 ```kotlin
 val facts = retrieveFactsFromHistory(concept, preserveQuestionsInLLMChat)
 ```
 
-## Error Handling & Edge Cases
+## Error handling and edge cases
 
-The Memory Feature includes several mechanisms to handle edge cases:
+The Memory feature includes several mechanisms to handle edge cases:
 
-1. **NoMemory Provider**: A default implementation that doesn't store anything, used when no memory provider is
+1. **NoMemory provider**: a default implementation that doesn't store anything, used when no memory provider is
    specified.
 
-2. **Subject Specificity Handling**: When loading facts, the feature prioritizes facts from more specific subjects (
-   e.g., USER over ORGANIZATION).
+2. **Subject specificity handling**: when loading facts, the feature prioritizes facts from more specific subjects. 
+For example, USER over ORGANIZATION.
 
-3. **Scope Filtering**: Facts can be filtered by scope to ensure only relevant information is loaded.
+3. **Scope filtering**: facts can be filtered by scope to ensure only relevant information is loaded.
 
-4. **Timestamp Tracking**: Facts are stored with timestamps to track when they were created.
+4. **Timestamp tracking**: facts are stored with timestamps to track when they were created.
 
-5. **Fact Type Handling**: The feature supports both single facts and multiple facts, with appropriate handling for each
+5. **Fact type handling**: the feature supports both single facts and multiple facts, with appropriate handling for each
    type.
 
-## Examples & Quickstarts
+## Examples and quickstarts
 
-### Basic Usage
+### Basic usage
 
 ```kotlin
 // Create a memory provider
@@ -235,7 +235,7 @@ val memoryProvider = YourMemoryProvider()
 
 // Install the memory feature
 val agent = KotlinAIAgent(
-    // other parameters...
+    // Other parameters
 ) {
     install(MemoryFeature) {
         memoryProvider = memoryProvider
@@ -254,7 +254,7 @@ agent.run {
     }
 }
 
-// Load facts to agent
+// Load facts to the agent
 agent.run {
     withMemory {
         loadFactsToAgent(
@@ -264,7 +264,7 @@ agent.run {
 }
 ```
 
-### Using Memory Nodes
+### Using memory nodes
 
 ```kotlin
 val strategy = strategy("example-agent") {
@@ -292,7 +292,7 @@ val strategy = strategy("example-agent") {
 }
 ```
 
-## FAQ / Troubleshooting
+## FAQ and troubleshooting
 
 ### How do I implement a custom memory provider?
 
@@ -346,4 +346,4 @@ val concept = Concept(
 )
 ```
 
-This will allow storing multiple values for the concept, which will be retrieved as a list.
+This lets you store multiple values for the concept, which is retrieved as a list.
