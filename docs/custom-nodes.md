@@ -4,7 +4,7 @@ This page provides detailed instructions on how to implement your own custom nod
 Custom nodes let you extend the functionality of agent workflows by creating reusable components that perform specific
 operations.
 
-To learn more about what graph nodes are, their usage, and existing default nodes, see [Graph nodes](graphNodes.md).
+To learn more about what graph nodes are, their usage, and existing default nodes, see [Graph nodes](nodes-and-components.md).
 
 ## Node architecture overview
 
