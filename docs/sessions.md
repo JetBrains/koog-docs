@@ -128,8 +128,7 @@ llm.writeSession {
 }
 ```
 
-[//]: # (TODO: Come up with a better name for the title)
-### When Requests Actually Happen
+### How requests work
 
 LLM requests are made when you explicitly call one of the request methods. The key points to understand are:
 
@@ -257,8 +256,7 @@ llm.writeSession {
 
 You can also use the `nodeLLMCompressHistory` node in a strategy graph to compress history at specific points.
 
-[//]: # (TODO: Add link to the new History compression page)
-For more information about history compression and compression strategies, see [History compression]().
+For more information about history compression and compression strategies, see [History compression](history-compression.md).
 
 ## Running tools in sessions
 
@@ -355,8 +353,7 @@ llm.writeSession {
 }
 ```
 
-[//]: # (TODO: Add link to the new History compression page)
-For more information, see [History compression]()
+For more information, see [History compression](history-compression.md)
 
 ### Tool not found
 
