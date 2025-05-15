@@ -16,7 +16,7 @@ The following built-in tools are available:
 ## Custom tools
 
 You can create custom tools by extending the `SimpleTool` class, register them in a tool registry, and pass it to the
-created agent. For more details, see [Creating tools](customTool.md).
+created agent. For more details, see [Creating tools](tools.md).
 
 ## Tool usage
 

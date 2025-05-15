@@ -62,7 +62,7 @@ We can visualize the graph as follows:
 ### Nodes
 
 Nodes are the building blocks of a strategy graph. Each node represents a specific operation or transformation in the
-workflow. The Kotlin AI platform provides [several predefined nodes](graphNodes.md), and you can also create [custom nodes](customNodes.md).
+workflow. The Kotlin AI platform provides [several predefined nodes](nodes-and-components.md), and you can also create [custom nodes](customNodes.md).
 
 Here are some commonly used predefined nodes:
 

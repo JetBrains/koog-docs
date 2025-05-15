@@ -104,4 +104,4 @@ For more details about tools, see [Available tools](simple-api-available-tools.m
 Simple agents support custom event handlers.
 While having an event handler is not required for creating an agent, it might be helpful for testing, debugging, or making hooks for chained agent interactions.
 
-For more information on how to use the `EventHandler` class for monitoring your agent interactions, see [Agent events](eventHandler.md).
+For more information on how to use the `EventHandler` class for monitoring your agent interactions, see [Agent events](agent-events.md).

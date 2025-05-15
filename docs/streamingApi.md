@@ -64,7 +64,7 @@ llm.writeSession {
 
 ## Working with Structured Data
 
-Although it's possible to work with the raw string stream, it's often more convenient to work with a [structured data](structuredData.md).
+Although it's possible to work with the raw string stream, it's often more convenient to work with a [structured data](structured-data.md).
 
 The structured data approach includes of the following key components:
 
