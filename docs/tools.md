@@ -87,7 +87,7 @@ There are several ways to call tools within your agent's code. The recommended a
 in the agent context rather than calling tools directly, as this ensures proper handling of tool execution within the
 agent environment.
 
-**Tip**: Implement proper [error handling](eventHandler.md) in custom tools to prevent agent failures.
+**Tip**: Implement proper [error handling](agent-events.md) in custom tools to prevent agent failures.
 
 ### Using callTool Methods
 

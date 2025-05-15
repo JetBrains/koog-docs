@@ -5,7 +5,7 @@ nodes allow you to extend the functionality of agent workflows by creating reusa
 operations.
 
 You can find out more about what the graph nodes are, their usage,
-and existing default nodes in the [Graph Nodes Guide](graphNodes.md).
+and existing default nodes in the [Graph Nodes Guide](nodes-and-components.md).
 
 ## Node Architecture Overview
 
