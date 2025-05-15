@@ -1,23 +1,29 @@
-site_name: Kotlin AI agents
+site_name: Kotlin Agentic Framework
 nav:
-  - Home: index.md
-  - Simple API Quickstart: quickstartSimpleApi.md
-  - Kotlin AI Agent Quickstart: quickstartKotlinAgent.md
-  - Basic Usage:
+  - Documentation:
+      - Overview: index.md
+      - Simple API:
+          - Getting started: simple-api-getting-started.md
+          - Configuration options: simple-api-configuration.md
+          - Available tools: simple-api-available-tools.md
+      - AI Agent:
+          - Getting started: ai-agent-getting-started.md
+          - Configuration options: ai-agent-configuration.md
       - Stages And History: stagesAndHistory.md
       - Graph Nodes: graphNodes.md
       - Creating Tools: customTool.md
       - Handling Agent Events: eventHandler.md
       - Streaming API: streamingApi.md
-  - Advanced Usage:
-      - Structured Data: structuredData.md
-      - Custom Nodes: customNodes.md
-      - Custom Strategy Graphs: customGraphs.md
-      - LLM Sessions and History: sessions.md
-      - Features:
-          - Tracing: tracingFeature.md
-          - Memory: memoryFeature.md
-  - Testing: testing.md
+      - Advanced Usage:
+          - Structured Data: structuredData.md
+          - Custom Nodes: customNodes.md
+          - Custom Strategy Graphs: customGraphs.md
+          - LLM Sessions and History: sessions.md
+          - Features:
+              - Tracing: tracingFeature.md
+              - Memory: memoryFeature.md
+      - Testing: testing.md
+  - API reference: api-reference.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -27,6 +33,7 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - admonition
 
 theme:
   name: material
@@ -34,10 +41,13 @@ theme:
   logo: img/favicon.ico
   features:
     - content.code.copy
-  color_mode: dark
-  nav_style: dark
+    - navigation.expand
+    - navigation.tabs
+    - navigation.tabs.sticky
+  color_mode: light
+  nav_style: light
   user_color_mode_toggle: true
   palette:
-    - scheme: slate
+    - scheme: default
       primary: black
-      accent: deep orange
+      accent: blue
