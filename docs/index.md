@@ -66,7 +66,7 @@ Key features of the Kotlin Agentic Framework include:
 
 - **Subgraph**: a self-contained unit of processing within an agent strategy, with its own set of tools, context, and
   responsibilities. Information about subgraph operations can be either encapsulated within the subgraph or transferred between
-  subgraph using the Memory feature.
+  subgraphs using the Memory feature.
 
 - **Strategy**: a defined workflow for an agent that consists of sequential subgraphs.
   The strategy defines how the agent processes input, interacts with tools, and generates output.

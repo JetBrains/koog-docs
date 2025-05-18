@@ -68,9 +68,9 @@ fun main() = runBlocking {
 You can configure the agent by passing optional parameters, such as tools or an event handler.
 For details, see [Configuration options](simple-api-configuration.md).
 
-### Pass tools
+### Provide tools
 
-The Simple API provides a set of built-in tools and lets you implement your own custom tools.
+The Simple API provides a set of built-in tools along with the ability to implement your own custom tools.
 
 The following example demonstrates how to pass the built-in `SayToUser` tool to the chat agent:
 

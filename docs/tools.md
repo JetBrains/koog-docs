@@ -1,19 +1,33 @@
-# Creating Tools
+# Tools
 
-You can extend agent capabilities by creating custom tools. These tools can be used as with the agents created via the
-`Simple API`, as for more sophisticated agents created with the `KotlinAIAgent`.
+Tools are functions that an agent can use to perform specific tasks or access external systems.
 
-**Tip**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
+There are built-in tools available in the Simple API only and custom tools that can be used with both agents created using the Simple API and more sophisticated agents
+created with the AI Agent. 
 
-### Each custom tool consists of:
+The process for enabling tools is the same for all agent types:
 
-- Serializable `Args` data class, naming the **arguments** that should be passed to your custom tool, and an overridden
-  `argsSerializer`;
-- overridden `descriptor` variable consisting of the `name`, `description`, `requiredParameters` (empty by default), and
-  `optionalParameters` (empty by default) for your tool;
-- overridden function `doExecute()` that describes **the main action underneath your tool's execution**.
+1. Add the tool to a tool registry. For details, see [Tool registry](#tool-registry)
+2. Pass the tool registry to the agent. For details, see [Passing tools to an agent](#passing-tools-to-an-agent)
 
-Example of a custom tool:
+This page explains how to implement a tool and use it in the agent. To learn more about built-in tools, see [Available tools](simple-api-available-tools.md).
+
+## Tool implementation
+
+Each tool consists of the following components:
+
+| Component        | Description                                                                                                                                                                                                                              |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Args`           | The serializable data class that defines arguments required for the custom tool.                                                                                                                                                         |
+| `argsSerializer` | The overridden variable that defines how the arguments for the tool are serialized. See also SimpleTool.<!--[TODO] Link to API reference-->                                                                                              |
+| `descriptor`     | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default), - `optionalParameters` (empty by default). See also SimpleTool.<!--[TODO] Link to API reference--> |
+| `doExecute()`    | The overridden function that describes the main action performed by the tool. See also SimpleTool.<!--[TODO] Link to API reference-->                                                                                                    |
+
+
+!!! tip
+    Ensure your tools have clear descriptions and well-defined parameter names to make it easier for the LLM to understand and use them properly.
+
+Here is an example of the custom tool implementation:
 
 <!--- INCLUDE
 import ai.grazie.code.agents.core.tools.SimpleTool
@@ -58,43 +72,81 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
 ```
 <!--- KNIT example-custom-tool-01.kt -->
 
-Please note that, **to use the custom tool, you must**:
+For more details, see API reference.<!--[TODO] Link to API reference-->
 
-1. Add it to the tool registry by creating a new `ToolRegistry` instance including your tool;
-2. Pass the created tool registry to the agent in the corresponding field:
+## Tool registry
+
+Before you can use a tool in the agent, you need to add it to a tool registry.
+The tool registry manages all tools available to the agent.
+<!--It organizes them into logical stages, where each stage represents a group of tools that might be relevant for a particular phase or context of the agent operation.-->
+
+The key features of the tool registry:
+
+- Organizes tools.
+- Supports merging of multiple tool registries.
+- Provides methods to retrieve tools by name or type.
+- Enables finding stages based on their name or the tools they contain.
+
+To learn more, see ToolRegistry.<!--[TODO] Link to API reference-->
+
+Here is an example of how to create the tool registry and add the implemented tool to it:
 
 ```kotlin
 val toolRegistry = ToolRegistry {
-    stage {
-        // Your custom tool(s)
-        tool(CastToDoubleTool)
-    }
+    tool(CastToDoubleTool())
+}
+```
+!!! note
+    For built-in tools, you also need to create a tool registry.
+
+To merge multiple tool registries, do the following:
+
+```kotlin
+val firstToolRegistry = ToolRegistry {
+    tool(CastToDoubleTool())
 }
 
+val secondToolRegistry = ToolRegistry {
+    tool(SampleTool())
+}
+
+val newRegistry = firstToolRegistry + secondToolRegistry
+```
+
+## Passing tools to an agent
+
+For an agent to use a tool, you need to pass a tool registry containing the tool as an argument when creating the agent:
+
+```kotlin
 // Agent initialization
 val agent = simpleChatAgent(
     apiToken = apiToken,
-    cs = coroutineScope,
-    systemPrompt = "You are a helpful assistant with mathematical capabilities.",
-    // Passing your tool registry to the agent
+    systemPrompt = "You are a helpful assistant with strong mathematical skills.",
+    // Pass your tool registry to the agent
     toolRegistry = toolRegistry
 )
 ```
 
-## Calling Tools
+## Calling tools
 
-There are several ways to call tools within your agent's code. The recommended approach is to use the provided methods
-in the agent context rather than calling tools directly, as this ensures proper handling of tool execution within the
+There are several ways to call tools within your agent code. The recommended approach is to use the provided methods
+in the agent context rather than calling tools directly, as this ensures proper handling of tool operation within the
 agent environment.
 
-**Tip**: Implement proper [error handling](agent-events.md) in custom tools to prevent agent failures.
+!!! tip 
+    Ensure you have implemented proper [error handling](agent-events.md) in your tools to prevent agent failure.
 
-### Using callTool Methods
+The `AIAgentStageContext` interface provides several methods for calling tools:
 
-The `LocalAgentStageContext` provides several overloaded `callTool` methods from `writeSession` for executing tools:
+- Call a tool with the given arguments:
+```kotlin
+suspend inline fun <reified TArgs : Tool.Args, reified TResult : ToolResult> callTool(
+    tool: Tool<TArgs, TResult>,
+    args: TArgs
+): TResult
+```
 
-**Call by tool name and args**:
-
+- Call a tool by its name and the given arguments:
 ```kotlin
 suspend inline fun <reified TArgs : Tool.Args> callTool(
     toolName: String,
@@ -102,8 +154,7 @@ suspend inline fun <reified TArgs : Tool.Args> callTool(
 ): Tool.Result
 ```
 
-**Call by tool class and args**:
-
+- Call a tool by the provided tool class and arguments:
 ```kotlin
 suspend inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> callTool(
     toolClass: KClass<out Tool<TArgs, TResult>>,
@@ -111,16 +162,14 @@ suspend inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> ca
 ): TResult
 ```
 
-**Call by reified type parameter**:
-
+- Call a tool of the specified type with the given arguments:
 ```kotlin
 suspend inline fun <reified ToolT : Tool<*, *>> callTool(
     args: Tool.Args
 ): Tool.Result
 ```
 
-**Call with raw string result**:
-
+- Call a tool that returns a raw string result:
 ```kotlin
 suspend inline fun <reified TArgs : Tool.Args> callToolRaw(
     toolName: String,
@@ -128,9 +177,9 @@ suspend inline fun <reified TArgs : Tool.Args> callToolRaw(
 ): String
 ```
 
-### Example Usage
+For more details, see API reference.<!--[TODO] Link to API reference-->
 
-Here's an example of different ways to call a tool:
+Here is an example that demonstrates how to call a tool:
 
 ```kotlin
 llm.writeSession {
@@ -157,7 +206,7 @@ callToolRaw(BookTool.NAME, bookArgs)
 findTool(BookTool::class).execute(bookArgs)
 ```
 
-### Parallel Tool Calls
+### Parallel tool calls
 
 You can also execute tool calls in parallel using the `toParallelToolCallsRaw` extension:
 
@@ -168,7 +217,7 @@ inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> Flow<TArgs
 ): Flow<TResult>
 ```
 
-Example:
+For example:
 
 ```kotlin
 @Serializable
@@ -189,11 +238,11 @@ val myNode by node<Unit, Unit> { _ ->
 }
 ```
 
-## Calling Tools from Nodes
+## Calling tools from nodes
 
-When building agent workflows with nodes, you can use specialized nodes for tool execution:
+When building agent workflows with nodes, you can use specialized nodes to call tools:
 
-**nodeExecuteTool**: Executes a single tool call and returns its result
+* **nodeExecuteTool**: executes a single tool call and returns its result.
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
@@ -201,7 +250,7 @@ fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
 ): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
 ```
 
-**nodeExecuteMultipleTools**: Executes multiple tool calls and returns their results
+* **nodeExecuteMultipleTools**: executes multiple tool calls and returns their results.
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
@@ -209,7 +258,7 @@ fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
 ): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
 ```
 
-**nodeLLMSendToolResult**: Sends a tool result to the LLM and gets a response
+* **nodeLLMSendToolResult**: sends a tool result to the LLM and gets a response.
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
@@ -217,7 +266,7 @@ fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
 ): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
 ```
 
-**nodeLLMSendMultipleToolResults**: Sends multiple tool results to the LLM
+* **nodeLLMSendMultipleToolResults**: Sends multiple tool results to the LLM.
 
 ```kotlin
 fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
@@ -225,7 +274,7 @@ fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
 ): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
 ```
 
-### Example Node Usage
+### Node usage example
 
 ```kotlin
 val processData by node<Unit, String> { _ ->
@@ -240,5 +289,4 @@ edge(nodeStart forwardTo processData)
 edge(processData forwardTo nodeFinish)
 ```
 
-Remember that tools should always be called through the agent environment context to ensure proper handling of events,
-feature pipelines, and testing capabilities.
+Remember to always call tools through the agent environment context to ensure proper handling of events, feature pipelines, and testing capabilities.

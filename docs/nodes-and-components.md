@@ -1,4 +1,4 @@
-# Graph Nodes
+# Predefined nodes and components
 
 Nodes are the fundamental building blocks of agent workflows in the Kotlin AI platform. Each node represents a specific
 operation or transformation in the workflow, and they can be connected using edges to define the flow of execution.
@@ -7,18 +7,21 @@ In general, they allow you to encapsulate complex logic into reusable components
 different agent workflows. This guide will walk you through the existing nodes that can be used in your agent
 strategies.
 
-## Utility Nodes
+## Utility nodes
 
 ### nodeDoNothing
 
 ```kotlin
-fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeDoNothing(name: String? = null): LocalAgentNodeDelegate<T, T>
+fun <T> AIAgentSubgraphBuilderBase<*, *>.nodeDoNothing(name: String? = null): LocalAgentNodeDelegate<T, T>
 ```
 
-**Description:**  
+#### Description 
+
 A simple pass-through node that performs no actions. The input is directly passed as the output without any processing.
 
-**Parameters:**
+#### Parameters
+
+
 
 - `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
 
@@ -39,7 +42,7 @@ edge(someNode forwardTo passthrough)
 edge(passthrough forwardTo anotherNode)
 ```
 
-## LLM Nodes
+## LLM nodes
 
 ### nodeUpdatePrompt
 
@@ -256,7 +259,7 @@ val compressHistory by nodeLLMCompressHistory<String>(
 edge(someNode forwardTo compressHistory)
 ```
 
-## Tool Nodes
+## Tool nodes
 
 ### nodeExecuteTool
 
@@ -388,9 +391,9 @@ val processMultipleToolResults by nodeLLMSendMultipleToolResults("processMultipl
 edge(executeMultipleTools forwardTo processMultipleToolResults)
 ```
 
-## Usage Examples
+## Usage examples
 
-### Chat Agent Strategy
+### Chat agent strategy
 
 The following example shows how to use nodes to create a chat agent strategy:
 
@@ -423,7 +426,7 @@ fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
 }
 ```
 
-### Single Run Strategy
+### Single run strategy
 
 The following example shows how to use nodes to create a single run (one-shot) strategy:
 

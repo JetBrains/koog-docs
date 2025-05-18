@@ -1,31 +1,29 @@
-# Custom Strategy Graph Implementation Guide
+# Custom strategy graphs
 
 Strategy graphs define the flow of execution in an agent, connecting nodes that perform specific operations to create
 complex workflows.
 
-## Introduction
-
-Strategy graphs are the backbone of agent workflows in the Kotlin AI platform. They define how an agent processes input,
+The strategy graphs are the backbone of agent workflows in the Kotlin AI platform. They define how an agent processes input,
 interacts with tools, and generates output. A strategy graph consists of nodes connected by edges, with conditions
 determining the flow of execution.
 
 Creating a custom strategy graph allows you to tailor the behavior of an agent to your specific needs, whether you're
 building a simple chatbot, a complex data processing pipeline, or anything in between.
 
-## Strategy Graph Architecture
+## Strategy graph architecture
 
 At a high level, a strategy graph consists of the following components:
 
-- **Strategy**: The top-level container for the graph, created using the `strategy` or `simpleStrategy` function.
-- **Stages**: Sections of the graph that can have their own set of tools and context.
-- **Nodes**: Individual operations or transformations in the workflow.
-- **Edges**: Connections between nodes that define the flow of execution.
-- **Conditions**: Rules that determine when to follow a particular edge.
+- **Strategy**: the top-level container for the graph, created using the `strategy` or `simpleStrategy` function.
+- **Subgraphs**: sections of the graph that can have their own set of tools and context.
+- **Nodes**: individual operations or transformations in the workflow.
+- **Edges**: connections between nodes that define the flow of execution.
+- **Conditions**: rules that determine when to follow a particular edge.
 
 The execution of a strategy graph starts at a special node called `nodeStart` and ends at `nodeFinish`. The path taken
 between these nodes depends on the edges and conditions defined in the graph.
 
-## Creating a Basic Strategy Graph
+## Creating a basic strategy graph
 
 Here's a simple example of creating a basic strategy graph:
 
@@ -57,7 +55,7 @@ We can visualize the graph as follows:
 
 ![scheme](img/scheme.png)
 
-## Components of a Strategy Graph
+## Strategy graph components
 
 ### Nodes
 
@@ -123,9 +121,9 @@ stage(
 }
 ```
 
-## Common Strategy Patterns
+## Common strategy patterns
 
-### Chat Strategy
+### Chat strategy
 
 A chat strategy is designed for interactive conversations with the user. It typically involves sending user input to the
 LLM, executing tools as needed, and returning the LLM's response to the user.
@@ -161,7 +159,7 @@ fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
 }
 ```
 
-### Single Run Strategy
+### Single run strategy
 
 A single run (or one-shot) strategy is designed for non-interactive use cases where the agent processes input once and
 returns a result. It's simpler than a chat strategy because it doesn't need to handle ongoing conversations.
@@ -183,7 +181,7 @@ fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
 }
 ```
 
-### Tool-Based Strategy
+### Tool-based strategy
 
 A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations. It typically
 involves executing tools based on the LLM's decisions and processing the results.
@@ -235,7 +233,7 @@ fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry, stageName: Strin
 }
 ```
 
-### Streaming Data Strategy
+### Streaming data strategy
 
 A streaming data strategy is designed for processing streaming data from the LLM. It typically involves requesting
 streaming data, processing it as it arrives, and potentially calling tools with the processed data.
@@ -264,9 +262,9 @@ fun streamingDataStrategy(): LocalAgentStrategy = simpleStrategy("streaming-data
 }
 ```
 
-## Advanced Strategy Techniques
+## Advanced strategy techniques
 
-### History Compression
+### History compression
 
 For long-running conversations, the history can grow large and consume a lot of tokens. You can use the
 `nodeLLMCompressHistory` node to compress the history:
@@ -284,7 +282,7 @@ edge(
 edge(compressHistory forwardTo nodeSendToolResult)
 ```
 
-### Parallel Tool Execution
+### Parallel tool execution
 
 For workflows that require executing multiple tools in parallel, you can use the `nodeExecuteMultipleTools` node:
 
@@ -302,7 +300,7 @@ You can also use the `toParallelToolCallsRaw` extension function for streaming d
 parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
 ```
 
-### Conditional Branching
+### Conditional branching
 
 For complex workflows that require different paths based on certain conditions, you can use conditional branching:
 
@@ -327,7 +325,7 @@ edge(
 )
 ```
 
-## Best Practices
+## Best practices
 
 When creating custom strategy graphs, follow these best practices:
 
@@ -340,11 +338,11 @@ When creating custom strategy graphs, follow these best practices:
 7. **Consider performance**: For long-running conversations, use history compression to reduce token usage.
 8. **Use stages appropriately**: Use stages to organize your graph and manage tool access.
 
-## More Examples
+## Usage Examples
 
-### Tone Analysis Strategy
+### Tone analysis strategy
 
-The Tone Analysis Strategy is a good example of a tool-based strategy that includes history compression:
+The tone analysis strategy is a good example of a tool-based strategy that includes history compression:
 
 ```kotlin
 fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String): LocalAgentStrategy {
@@ -403,7 +401,7 @@ fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String
 }
 ```
 
-This strategy:
+This strategy does the following:
 
 1. Sends the input to the LLM
 2. If the LLM responds with a message, finishes
@@ -413,7 +411,7 @@ This strategy:
 6. If the LLM calls another tool, executes it
 7. If the LLM responds with a message, finishes
 
-### Markdown Streaming Strategy
+### Markdown streaming strategy
 
 The Markdown Streaming Strategy is an example of a strategy that processes streaming data:
 
@@ -450,43 +448,43 @@ This strategy:
 
 When creating custom strategy graphs, you might encounter some common issues. Here are some troubleshooting tips:
 
-### Graph Doesn't Reach Finish Node
+### Graph fails to reach finish node
 
-If your graph doesn't reach the finish node, check that:
+If your graph doesn't reach the finish node, check:
 
-- All paths from the start node eventually lead to the finish node
-- Your conditions are not too restrictive, preventing edges from being followed
-- There are no cycles in the graph that don't have an exit condition
+- All paths from the start node eventually lead to the finish node.
+- Your conditions are not too restrictive, preventing edges from being followed.
+- There are no cycles in the graph that don't have an exit condition.
 
-### Tool Calls Not Being Executed
+### Tool calls are not running
 
-If tool calls are not being executed, check that:
+If tool calls are not running, check:
 
-- The tools are properly registered in the tool registry
-- The stage has access to the tools
-- The edge from the LLM node to the tool execution node has the correct condition (`onToolCall { true }`)
+- The tools are properly registered in the tool registry.
+- The stage has access to the tools.
+- The edge from the LLM node to the tool execution node has the correct condition (`onToolCall { true }`).
 
-### History Gets Too Large
+### History gets too large
 
 If your history gets too large and consumes too many tokens, consider:
 
-- Adding a history compression node
-- Using a condition to check the size of the history and compress it when it gets too large
-- Using a more aggressive compression strategy (e.g., `FromLastNMessages` with a smaller N)
+- Adding a history compression node.
+- Using a condition to check the size of the history and compress it when it gets too large.
+- Using a more aggressive compression strategy (e.g., `FromLastNMessages` with a smaller N).
 
-### Unexpected Branching
+### Graph behaves unexpectedly
 
 If your graph takes unexpected branches, check that:
 
-- Your conditions are correctly defined
-- The conditions are evaluated in the expected order (edges are checked in the order they are defined)
-- You're not accidentally overriding conditions with more general ones
+- Your conditions are correctly defined.
+- The conditions are evaluated in the expected order (edges are checked in the order they are defined).
+- You're not accidentally overriding conditions with more general ones.
 
-### Performance Issues
+### Performance issues occur
 
 If your graph has performance issues, consider:
 
-- Simplifying the graph by removing unnecessary nodes and edges
-- Using parallel tool execution for independent operations
-- Compressing history more aggressively
-- Using more efficient nodes and operations
+- Simplifying the graph by removing unnecessary nodes and edges.
+- Using parallel tool execution for independent operations.
+- Compressing history more aggressively.
+- Using more efficient nodes and operations.
