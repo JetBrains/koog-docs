@@ -1,31 +1,111 @@
 # Custom strategy graphs
 
-Strategy graphs define the flow of execution in an agent, connecting nodes that perform specific operations to create
-complex workflows.
-
-The strategy graphs are the backbone of agent workflows in the Kotlin AI platform. They define how an agent processes input,
+Strategy graphs are the backbone of agent workflows in the Koog framework. They define how the agent processes input,
 interacts with tools, and generates output. A strategy graph consists of nodes connected by edges, with conditions
 determining the flow of execution.
 
-Creating a custom strategy graph allows you to tailor the behavior of an agent to your specific needs, whether you're
+Creating a strategy graph lets you tailor the behavior of an agent to your specific needs, whether you are
 building a simple chatbot, a complex data processing pipeline, or anything in between.
 
 ## Strategy graph architecture
 
 At a high level, a strategy graph consists of the following components:
 
-- **Strategy**: the top-level container for the graph, created using the `strategy` or `simpleStrategy` function.
+- **Strategy**: the top-level container for the graph, created using the `strategy` function.
 - **Subgraphs**: sections of the graph that can have their own set of tools and context.
 - **Nodes**: individual operations or transformations in the workflow.
-- **Edges**: connections between nodes that define the flow of execution.
+- **Edges**: connections between nodes that define the flow of agent operations.
 - **Conditions**: rules that determine when to follow a particular edge.
 
-The execution of a strategy graph starts at a special node called `nodeStart` and ends at `nodeFinish`. The path taken
-between these nodes depends on the edges and conditions defined in the graph.
+The strategy graph begins at a special node called `nodeStart` and ends at `nodeFinish`.
+The path between these nodes is determined by the edges and conditions specified in the graph.
+
+## Strategy graph components
+
+### Nodes
+
+Nodes are building blocks of a strategy graph. Each node represents a specific operation or transformation in the
+workflow.
+
+The Koog framework provides predefined nodes and also lets you create custom nodes by using the `node` function.
+
+For details, see [Predefined nodes and components](nodes-and-components.md) and [Custom nodes](custom-nodes.md).
+
+### Edges
+
+Edges connect nodes and define the flow of operation in the strategy graph.
+An edge is created using the `edge` function and the `forwardTo` infix function:
+
+```kotlin
+edge(sourceNode forwardTo targetNode)
+```
+
+### Conditions
+
+Conditions determine when to follow a particular edge in the strategy graph. There are several types of conditions:
+
+| Condition type      | Description                                                                              |
+|---------------------|------------------------------------------------------------------------------------------|
+| onCondition         | A general-purpose condition that takes a lambda expression that returns a boolean value. |
+| onToolCall          | A condition that matches when the LLM calls a tool.                                      |
+| onAssistantMessage  | A condition that matches when the LLM responds with a message.                           |
+| onMultipleToolCalls | A condition that matches when the LLM calls multiple tools.                              |
+| onToolNotCalled     | A condition that matches when the LLM does not call a tool.                              |
+
+You can transform the output before passing it to the target node by using the `transformed` function:
+
+```kotlin
+edge(sourceNode forwardTo targetNode 
+        onCondition { input -> input.length > 10 }
+        transformed { input -> input.uppercase() }
+)
+```
+
+### Subgraphs
+
+Subgraphs are sections of the strategy graph that operate with their own set of tools and context.
+The strategy graph can contain multiple subgraphs. Each subgraph is defined by using the `subgraph` function:
+
+```kotlin
+val strategy = strategy("strategy-name") {
+    val firstSubgraph by subgraph("first") {
+        // Define nodes and edges for this subgraph
+    }
+    val secondSubgraph by subgraph("second") {
+        // Define nodes and edges for this subgraph
+    }
+}
+```
+A subgraph can use any tool from a tool registry. 
+However, you can specify a subset of tools from this registry that can be used in the subgraph and pass it as an argument to the `subgraph` function:
+
+```kotlin
+val strategy = strategy("strategy-name") {
+    val firstSubgraph by subgraph(
+        name = "first",
+        tools = listOf(ToolName)
+    ) {
+        // Define nodes and edges for this subgraph
+    }
+   // Define other subgraphs
+}
+```
 
 ## Creating a basic strategy graph
 
-Here's a simple example of creating a basic strategy graph:
+The basic strategy graph operates as follows: 
+
+1. Sends the input to the LLM.
+2. If the LLM responds with a message, finishes the process.
+3. If the LLM calls a tool, runs the tool.
+4. Sends the tool result back to the LLM.
+5. If the LLM responds with a message, finishes the process.
+6. If the LLM calls another tool, runs the tool, and the process repeats from step 4.
+
+![basic-strategy-graph](img/basic-strategy-graph.png)
+
+
+Here is an example of a basic strategy graph:
 
 ```kotlin
 val myStrategy = simpleStrategy("my-strategy") {
@@ -42,84 +122,6 @@ val myStrategy = simpleStrategy("my-strategy") {
 }
 ```
 
-This strategy:
-
-1. Sends the input to the LLM;
-2. If the LLM responds with a message, finishes the execution;
-3. If the LLM calls a tool, executes it;
-4. Sends the tool result back to the LLM;
-5. If the LLM responds with a message, finishes the execution;
-6. If the LLM calls another tool, executes it, then the actions repeat from point 4.
-
-We can visualize the graph as follows:
-
-![scheme](img/scheme.png)
-
-## Strategy graph components
-
-### Nodes
-
-Nodes are the building blocks of a strategy graph. Each node represents a specific operation or transformation in the
-workflow. The Kotlin AI platform provides [several predefined nodes](nodes-and-components.md), and you can also create [custom nodes](custom-nodes.md).
-
-Here are some commonly used predefined nodes:
-
-- `nodeLLMSendStageInput`: Sends the stage input to the LLM and gets a response.
-- `nodeExecuteTool`: Executes a tool call and returns the result.
-- `nodeLLMSendToolResult`: Sends a tool result to the LLM and gets a response.
-- `nodeLLMCompressHistory`: Compresses the conversation history to reduce token usage.
-
-You can also create custom nodes using the `node` function:
-
-```kotlin
-val myCustomNode by node<String, Int> { input ->
-    // Custom logic here
-    input.length // Return the length of the input string
-}
-```
-
-### Edges
-
-Edges connect nodes and define the flow of execution in the strategy graph. An edge is created using the `edge` function
-and the `forwardTo` infix function:
-
-```kotlin
-edge(sourceNode forwardTo targetNode)
-```
-
-You can also add conditions to edges to determine when to follow them:
-
-```kotlin
-edge(sourceNode forwardTo targetNode onCondition { input -> input.length > 10 })
-```
-
-### Conditions
-
-Conditions determine when to follow a particular edge in the strategy graph. There are several types of conditions:
-
-- `onCondition`: A general-purpose condition that takes a lambda returning a boolean.
-- `onToolCall`: A condition that matches when the LLM calls a tool.
-- `onAssistantMessage`: A condition that matches when the LLM responds with a message.
-
-You can also transform the output before passing it to the target node:
-
-```kotlin
-edge(sourceNode forwardTo targetNode onCondition { input -> input.length > 10 } transformed { input -> input.uppercase() })
-```
-
-### Stages
-
-Stages are sections of the strategy graph that can have their own set of tools and context. A stage is created using the
-`stage` function:
-
-```kotlin
-stage(
-    name = "my-stage",
-    tools = listOf(myTool1, myTool2)
-) {
-    // Define nodes and edges for this stage
-}
-```
 
 ## Common strategy patterns
 
