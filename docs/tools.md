@@ -78,14 +78,12 @@ For more details, see API reference.<!--[TODO] Link to API reference-->
 
 Before you can use a tool in the agent, you need to add it to a tool registry.
 The tool registry manages all tools available to the agent.
-<!--It organizes them into logical stages, where each stage represents a group of tools that might be relevant for a particular phase or context of the agent operation.-->
 
 The key features of the tool registry:
 
 - Organizes tools.
 - Supports merging of multiple tool registries.
 - Provides methods to retrieve tools by name or type.
-- Enables finding stages based on their name or the tools they contain.
 
 To learn more, see ToolRegistry.<!--[TODO] Link to API reference-->
 
@@ -136,88 +134,38 @@ agent environment.
 !!! tip 
     Ensure you have implemented proper [error handling](agent-events.md) in your tools to prevent agent failure.
 
-The `AIAgentStageContext` interface provides several methods for calling tools:
+The tools are called within a specific session context represented by `AIAgentLLMWriteSession`.
+It provides several methods for calling tools:
 
-- Call a tool with the given arguments:
+- Calling a tool with the given arguments:
 ```kotlin
-suspend inline fun <reified TArgs : Tool.Args, reified TResult : ToolResult> callTool(
-    tool: Tool<TArgs, TResult>,
-    args: TArgs
-): TResult
+// Add a code example here
 ```
 
-- Call a tool by its name and the given arguments:
+- Calling a tool by its name and the given arguments:
 ```kotlin
-suspend inline fun <reified TArgs : Tool.Args> callTool(
-    toolName: String,
-    args: TArgs
-): Tool.Result
+// Add a code example here
 ```
 
-- Call a tool by the provided tool class and arguments:
+- Calling a tool by the provided tool class and arguments:
 ```kotlin
-suspend inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> callTool(
-    toolClass: KClass<out Tool<TArgs, TResult>>,
-    args: TArgs
-): TResult
+// Add a code example here
 ```
 
-- Call a tool of the specified type with the given arguments:
+- Calling a tool of the specified type with the given arguments:
 ```kotlin
-suspend inline fun <reified ToolT : Tool<*, *>> callTool(
-    args: Tool.Args
-): Tool.Result
+// Add a code example here
 ```
 
-- Call a tool that returns a raw string result:
+- Calling a tool that returns a raw string result:
 ```kotlin
-suspend inline fun <reified TArgs : Tool.Args> callToolRaw(
-    toolName: String,
-    args: TArgs
-): String
+// Add a code example here
 ```
-
 For more details, see API reference.<!--[TODO] Link to API reference-->
-
-Here is an example that demonstrates how to call a tool:
-
-```kotlin
-llm.writeSession {
-    callToolRaw(toolName = "toolName", args = listOf())
-}
-```
-
-Alternatively, you can use the following methods to call the tool:
-
-```kotlin
-// Call by name
-callTool(BookTool.NAME, bookArgs)
-
-// Call by class reference
-callTool(BookTool::class, bookArgs)
-
-// Call using reified type parameter
-callTool<BookTool>(bookArgs)
-
-// Call with raw string result
-callToolRaw(BookTool.NAME, bookArgs)
-
-// Find tool first, then execute
-findTool(BookTool::class).execute(bookArgs)
-```
 
 ### Parallel tool calls
 
-You can also execute tool calls in parallel using the `toParallelToolCallsRaw` extension:
-
-```kotlin
-inline fun <reified TArgs : Tool.Args, reified TResult : Tool.Result> Flow<TArgs>.toParallelToolCalls(
-    safeTool: SafeTool<TArgs, TResult>,
-    concurrency: Int = 16
-): Flow<TResult>
-```
-
-For example:
+You can also call tools in parallel using the `toParallelToolCallsRaw` extension. For example:
 
 ```kotlin
 @Serializable
@@ -240,53 +188,34 @@ val myNode by node<Unit, Unit> { _ ->
 
 ## Calling tools from nodes
 
-When building agent workflows with nodes, you can use specialized nodes to call tools:
+When building agent workflows with nodes, you can use special nodes to call tools:
 
-* **nodeExecuteTool**: executes a single tool call and returns its result.
-
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
-    name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
-```
-
-* **nodeExecuteMultipleTools**: executes multiple tool calls and returns their results.
+* **nodeExecuteTool**: calls a single tool call and returns its result.
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
-    name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
+val nodeExecuteTool by nodeExecuteTool()
 ```
 
-* **nodeLLMSendToolResult**: sends a tool result to the LLM and gets a response.
+* **nodeExecuteSingleTool** that calls a specific tool with the provided arguments.
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
-    name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
+// Add a code example here
 ```
 
-* **nodeLLMSendMultipleToolResults**: Sends multiple tool results to the LLM.
+* **nodeExecuteMultipleTools** that calls multiple tool calls and returns their results.
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
-    name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
+// Add a code example here
 ```
 
-### Node usage example
+* **nodeLLMSendToolResult** that sends a tool result to the LLM and gets a response.
 
 ```kotlin
-val processData by node<Unit, String> { _ ->
-    llm.writeSession {
-        callToolRaw(toolName = "toolName", args = listOf())
-    }
-    "Processing complete"
-}
-
-// Connect nodes
-edge(nodeStart forwardTo processData)
-edge(processData forwardTo nodeFinish)
+val nodeLLMSendToolResult by nodeLLMSendToolResult()
 ```
 
-Remember to always call tools through the agent environment context to ensure proper handling of events, feature pipelines, and testing capabilities.
+* **nodeLLMSendMultipleToolResults** that sends multiple tool results to the LLM.
+
+```kotlin
+// Add a code example here
+```
