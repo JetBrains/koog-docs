@@ -292,7 +292,7 @@ val agent = AIAgent(
 suspend fun main() {
     println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
     
-    // Read the user input and sent it to the agent
+    // Read the user input and send it to the agent
     val userInput = readlnOrNull() ?: ""
     agent.run(userInput)
 }

@@ -1,7 +1,8 @@
-site_name: Kotlin Agentic Framework
+site_name: Koog
 nav:
   - Documentation:
       - Overview: index.md
+      - Key concepts: key-concepts.md
       - Simple API:
           - Getting started: simple-api-getting-started.md
           - Configuration options: simple-api-configuration.md
