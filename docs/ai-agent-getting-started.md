@@ -17,7 +17,7 @@ To use the AI Agent functionality, you need to add the following dependencies to
 
 ```
 dependencies {
-    implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
+    implementation("ai.koog.agents:koog-agents:VERSION")
 }
 ```
 
@@ -85,10 +85,11 @@ To create a prompt executor that works with multiple LLM providers, do the follo
 ```kotlin
 val openAIClient = OpenAILLMClient(System.getenv("OPENAI_KEY"))
 val anthropicClient = AnthropicLLMClient(System.getenv("ANTHROPIC_KEY"))
+val googleClient = GoogleLLMClient(System.getenv("GOOGLE_KEY"))
 ```
 2. Pass the configured clients to the `DefaultMultiLLMPromptExecutor` class constructor to create a prompt executor with multiple LLM providers:
 ```kotlin
-val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient)
+val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient, googleClient)
 ```
 
 ### 2. Create a strategy

@@ -1,1 +1,1 @@
-rootProject.name = "code-engine-agent-docs"
+rootProject.name = "koog-docs"
