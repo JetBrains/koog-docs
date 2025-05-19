@@ -135,7 +135,7 @@ val agentStrategy = strategy("Simple calculator") {
 !!! tip
     The `strategy` function lets you define multiple subgraphs, each containing its own set of nodes and edges.
     This approach offers more flexibility and functionality compared to using simplified strategy builders.
-    To learn more about subgraphs, see [Subgraphs](predefined-sequential-subgraphs.md).
+    To learn more about subgraphs, see [Subgraphs](subgraphs-overview.md).
 
 ### 3. Configure the agent
 
