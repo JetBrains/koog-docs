@@ -46,10 +46,10 @@ The Memory feature is built on a hierarchical structure:
 
 ## Configuration and initialization
 
-The feature integrates with the agent pipeline through the `MemoryFeature` class, which provides methods for saving and
+The feature integrates with the agent pipeline through the `AgentMemory` class, which provides methods for saving and
 loading facts, and can be installed as a feature in the agent configuration.
 
-### Class: `MemoryFeature.Config`
+### Class: `AgentMemory.Config`
 
 Configuration class for the Memory feature.
 
@@ -70,10 +70,10 @@ class Config : FeatureConfig() {
 To install the Memory feature in an agent:
 
 ```kotlin
-val agent = KotlinAIAgent(
+val agent = AIAgent(
     // Other parameters
 ) {
-    install(MemoryFeature) {
+    install(AgentMemory) {
         memoryProvider = YourMemoryProvider()
         agentName = "your-agent-name"
         featureName = "your-feature-name"
@@ -85,16 +85,16 @@ val agent = KotlinAIAgent(
 
 ## API documentation
 
-### Class: `MemoryFeature`
+### Class: `AgentMemory`
 
-The main class that implements memory capabilities for a LocalAIAgent.
+The main class that implements memory capabilities for a AIAgent.
 
 #### Constructor
 
 ```kotlin
-class MemoryFeature(
+class AgentMemory(
     val agentMemory: AgentMemoryProvider,
-    val llm: LocalAgentLLMContext,
+    val llm: AIAgentLLMContext,
     val scopesProfile: MemoryScopesProfile
 )
 ```
@@ -102,7 +102,7 @@ class MemoryFeature(
 | Parameter     | Type                 | Description                                  |
 |---------------|----------------------|----------------------------------------------|
 | agentMemory   | AgentMemoryProvider  | Provider for storing and retrieving facts    |
-| llm           | LocalAgentLLMContext | Context for interacting with the LLM         |
+| llm           | AIAgentLLMContext | Context for interacting with the LLM         |
 | scopesProfile | MemoryScopesProfile  | Profile defining the available memory scopes |
 
 Please note that `agentMemory` can have a custom value or use one of the existing implementations: `NoMemory`,
@@ -168,10 +168,10 @@ suspend fun loadAllFactsToAgent(
 
 `memory`
 
-An extension function to access the memory feature from a LocalAgentStageContext.
+An extension function to access the memory feature from a AIAgentStageContext.
 
 ```kotlin
-fun LocalAgentStageContext.memory(): MemoryFeature
+fun AIAgentStageContext.memory(): AgentMemory
 ```
 
 `withMemory`
@@ -179,7 +179,7 @@ fun LocalAgentStageContext.memory(): MemoryFeature
 Extension function to perform an action with the memory feature.
 
 ```kotlin
-suspend fun <T> LocalAgentStageContext.withMemory(action: suspend MemoryFeature.() -> T)
+suspend fun <T> AIAgentStageContext.withMemory(action: suspend AgentMemory.() -> T)
 ```
 
 ### Memory nodes
@@ -234,10 +234,10 @@ For example, USER over ORGANIZATION.
 val memoryProvider = YourMemoryProvider()
 
 // Install the memory feature
-val agent = KotlinAIAgent(
+val agent = AIAgent(
     // Other parameters
 ) {
-    install(MemoryFeature) {
+    install(AgentMemory) {
         memoryProvider = memoryProvider
         agentName = "example-agent"
     }
@@ -268,27 +268,25 @@ agent.run {
 
 ```kotlin
 val strategy = strategy("example-agent") {
-    stage {
-        // Node to automatically detect and save facts
-        val detectFacts by nodeSaveToMemoryAutoDetectFacts<Unit>(
-            subjects = listOf(MemorySubject.USER, MemorySubject.PROJECT)
-        )
+     // Node to automatically detect and save facts
+     val detectFacts by nodeSaveToMemoryAutoDetectFacts<Unit>(
+         subjects = listOf(MemorySubject.USER, MemorySubject.PROJECT)
+     )
 
-        // Node to load specific facts
-        val loadPreferences by node<Unit, Unit> {
-            withMemory {
-                loadFactsToAgent(
-                    concept = Concept("user-preference", "User's preferred programming language", FactType.SINGLE),
-                    subjects = listOf(MemorySubject.USER)
-                )
-            }
-        }
+     // Node to load specific facts
+     val loadPreferences by node<Unit, Unit> {
+         withMemory {
+             loadFactsToAgent(
+                 concept = Concept("user-preference", "User's preferred programming language", FactType.SINGLE),
+                 subjects = listOf(MemorySubject.USER)
+             )
+         }
+     }
 
-        // Connect nodes in the strategy
-        edge(nodeStart forwardTo detectFacts)
-        edge(detectFacts forwardTo loadPreferences)
-        edge(loadPreferences forwardTo nodeFinish)
-    }
+     // Connect nodes in the strategy
+     edge(nodeStart forwardTo detectFacts)
+     edge(detectFacts forwardTo loadPreferences)
+     edge(loadPreferences forwardTo nodeFinish)
 }
 ```
 

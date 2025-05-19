@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Testing Feature provides a comprehensive framework for testing AI agent pipelines, stages, and tool interactions in
+The Testing Feature provides a comprehensive framework for testing AI agent pipelines, and tool interactions in
 the Kotlin Agentic Framework. It enables developers to create controlled test environments with mock LLM (Large Language
 Model) executors, tool registries, and agent environments.
 
@@ -12,7 +12,6 @@ The primary purpose of this feature is to facilitate testing of agent-based AI f
 
 - Mocking LLM responses to specific prompts
 - Simulating tool calls and their results
-- Testing agent pipeline stages and their graph structures
 - Verifying the correct flow of data through agent nodes
 - Providing assertions for expected behaviors
 
@@ -30,7 +29,7 @@ To set up a test environment for an agent pipeline, follow the steps below:
 2. Configure the testing environment:
    ```kotlin
    testingConfig.apply {
-       // Configure assertions, stages, etc.
+       // Configure assertions, etc.
    }
    ```
 
@@ -86,9 +85,6 @@ To use the graph testing extensions:
 suspend fun testMyFeature() = withTesting {
     graph {
         // Configure graph testing
-        stage("myStage") {
-            // Stage-specific assertions
-        }
     }
 }
 ```
@@ -97,7 +93,7 @@ suspend fun testMyFeature() = withTesting {
 
 ### Class: `Testing`
 
-**Description**: The main class for configuring and running tests for agent pipelines and stages.
+**Description**: The main class for configuring and running tests for agent pipelines.
 
 #### Methods
 
@@ -177,34 +173,6 @@ fun handleAssertion(block: (AssertionResult) -> Unit)
 |-------|-----------------------------|----------------------|
 | block | `(AssertionResult) -> Unit` | The handler function |
 
-`assertStagesOrder`
-
-```kotlin
-fun assertStagesOrder(vararg stages: String)
-```
-
-**Description**: Asserts the order of stages in the pipeline.
-
-**Parameters**:
-
-| Name   | Type            | Description                       |
-|--------|-----------------|-----------------------------------|
-| stages | `vararg String` | The expected stage names in order |
-
-`stage`
-
-```kotlin
-fun stage(name: String, function: StageAssertionsBuilder.() -> Unit)
-```
-
-**Description**: Configures assertions for a specific stage.
-
-**Parameters**:
-
-| Name     | Type                                | Description            |
-|----------|-------------------------------------|------------------------|
-| name     | `String`                            | The name of the stage  |
-| function | `StageAssertionsBuilder.() -> Unit` | Configuration function |
 
 #### Extension functions
 
@@ -225,7 +193,7 @@ fun Testing.Config.graph(test: Testing.Config.() -> Unit)
 `FeatureContext.testGraph`
 
 ```kotlin
-suspend fun FeatureContext.testGraph(test: Testing.Config.() -> Unit)
+suspend fun FeatureContext.testGraph(strategyName: String, test: Testing.Config.() -> Unit)
 ```
 
 **Description**: Extension function for FeatureContext to simplify graph testing.
@@ -236,7 +204,7 @@ suspend fun FeatureContext.testGraph(test: Testing.Config.() -> Unit)
 |------|-----------------------------|-----------------------------|
 | test | `Testing.Config.() -> Unit` | Test configuration function |
 
-### Module: `ai.jetbrains.code.agents.testing.tools`
+### Module: `ai.koog.agents.testing.tools`
 
 #### Class: `MockLLMBuilder`
 
@@ -341,7 +309,6 @@ infix fun String.onUserRequestEquals(pattern: String): MockLLMBuilder
 ```kotlin
 fun getMockExecutor(
     toolRegistry: ToolRegistry? = null,
-    eventHandler: EventHandler? = null,
     init: MockLLMBuilder.() -> Unit
 ): CodePromptExecutor
 ```
@@ -353,7 +320,6 @@ fun getMockExecutor(
 | Name         | Type                        | Description            |
 |--------------|-----------------------------|------------------------|
 | toolRegistry | `ToolRegistry?`             | Optional tool registry |
-| eventHandler | `EventHandler?`             | Optional event handler |
 | init         | `MockLLMBuilder.() -> Unit` | Configuration function |
 
 - **Returns**: A configured `CodePromptExecutor`.
@@ -472,7 +438,6 @@ internal class MockLLMExecutor(
     private val exactMatches: Map<String, Message.Response>? = null,
     private val conditional: Map<(String) -> Boolean, String>? = null,
     private val defaultResponse: String = "",
-    private val eventHandler: EventHandler? = null,
     private val toolRegistry: ToolRegistry? = null,
     private val logger: MPPLogger = LoggerFactory.create(MockLLMExecutor::class.simpleName!!),
     val toolActions: List<ToolCondition<*, *>> = emptyList()
@@ -489,13 +454,13 @@ suspend fun handlePrompt(prompt: Prompt): Message.Response
 
 - Processes a prompt and returns an appropriate response based on configured patterns.
 
-### Class: `DummyAgentStageContext`
+### Class: `DummyAgentContext`
 
-**Description**: A dummy implementation of `LocalAgentStageContext` for testing.
+**Description**: A dummy implementation of `AIAgentContext` for testing.
 
-### Class: `LocalAgentStageContextMockBuilder`
+### Class: `AIAgentContextMockBuilder`
 
-**Description**: Builder for creating mock stage contexts.
+**Description**: Builder for creating mock agent contexts.
 
 ### Class: `NodeReference`
 
@@ -548,9 +513,9 @@ TestingFeature.kt
 
 ### External dependencies
 
-- `ai.jetbrains.code.agents.core.tools`: core tool interfaces and implementations
-- `ai.jetbrains.code.agents.local`: local agent implementation
-- `ai.jetbrains.code.prompt`: prompt execution framework
+- `ai.koog.agents.core.tools`: core tool interfaces and implementations
+- `ai.koog.agents.local`: local agent implementation
+- `ai.koog.prompt`: prompt execution framework
 - `kotlin.test`: testing utilities
 
 ## Examples and quickstarts
@@ -582,25 +547,19 @@ class MyAgentTest {
         val pipeline = createPipeline()
 
         // Test the graph flow
-        testGraph {
-            // Assert the order of stages
-            assertStagesOrder("input", "processing", "output")
+        testGraph("test-strategy") {
+            // Get references to nodes
+            val startNode = startNode()
+            val processNode = assertNodeByName<String, String>("process")
+            val finishNode = finishNode()
 
-            // Configure stage assertions
-            stage("processing") {
-                // Get references to nodes
-                val startNode = startNode()
-                val processNode = assertNodeByName("process")
-                val finishNode = finishNode()
+            // Assert node connectivity
+            assertReachable(startNode, processNode)
+            assertReachable(processNode, finishNode)
 
-                // Assert node connectivity
-                assertReachable(startNode, processNode)
-                assertReachable(processNode, finishNode)
-
-                // Assert node outputs
-                assertNodes {
-                    processNode.withInput("test input") outputs "test output"
-                }
+            // Assert node outputs
+            assertNodes {
+                processNode.withInput("test input") outputs "test output"
             }
         }
     }
@@ -613,7 +572,7 @@ class MyAgentTest {
    ```kotlin
    // build.gradle.kts
    dependencies {
-       testImplementation("ai.jetbrains.code:code-agents-test:1.0.0")
+       testImplementation("ai.koog:agents-test:0.1.0-alpha.6")
    }
    ```
 
@@ -655,11 +614,13 @@ val mockExecutor = getMockExecutor {
 
 #### How can I test complex graph structures?
 
-Use the stage assertions and node references:
+Use the subgraph assertions, `verifySubgraph`, and node references:
 
 ```kotlin
-testGraph {
-    stage("myStage") {
+testGraph("test") {
+    val mySubgraph = assertSubgraphByName<Unit, String>("mySubgraph")
+
+    verifySubgraph(mySubgraph) {
         // Get references to nodes
         val nodeA = assertNodeByName("nodeA")
         val nodeB = assertNodeByName("nodeB")

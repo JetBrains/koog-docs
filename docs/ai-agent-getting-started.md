@@ -20,7 +20,7 @@ To use the AI Agent functionality, you need to add the following dependencies to
 
 ## Understanding Nodes and Edges
 
-When creating a KotlinAIAgent, you define the workflow using nodes and edges.
+When creating a AIAgent, you define the workflow using nodes and edges.
 
 Nodes represent processing steps in your agent's workflow:
 
@@ -71,26 +71,23 @@ val agent = AIAgent(
 
 To learn more about available configuration options, see API reference.<!--[TODO] Link to API reference-->
 
-### 1. Create a custom prompt executor
+### 1. Create a prompt executor
 
-Prompt executors manage and run prompts. You can create a custom prompt executor as follows:
+Prompt executors manage and run prompts. You can create a custom prompt executor using one of the existing LLM clients:
 
 ```kotlin
-fun createPromptExecutor(apiToken: String): PromptExecutor {
-    val api = SuspendableAPIGatewayClient(
-        grazieEnvironment.url,
-        SuspendableHTTPClient.WithV5(
-            SuspendableClientWithBackoff(
-                GrazieKtorHTTPClient.Client.Default,
-            ), AuthData(
-                apiToken,
-                grazieAgent = GrazieAgent("custom-agent-app", "dev")
-            )
-        )
-    )
+val openAIPromptExecutor = SingleLLMPromptExecutor(
+    llmClient = OpenAILLMClient(apiKey = System.getEnv("OPENAI_API_KEY")!!)
+)
+```
 
-    return CodePromptExecutor(api, LLMParams())
-}
+Or you can create a routing multi llm prompt executor that would forward each prompt to the correct LLM depending on the model selected:
+
+```kotlin
+val promptExecutor = MultiLLMPromptExecutor(
+    LLMProvider.OpenAI to OpenAILLMClient(System.getEnv("OPENAI_API_KEY")!!),
+    LLMProvider.Anthropic to AnthropicLLMClient(System.getEnv("ANTHROPIC_API_KEY")!!),
+)
 ```
 
 ### 2. Create a strategy
@@ -102,8 +99,8 @@ val agentStrategy = strategy(
     name = "custom-agent-name",
     llmHistoryTransitionPolicy = ContextTransitionPolicy.PERSIST_LLM_HISTORY
 ) {
-    // Define the main stage
-    stage {
+    // Define the main part of the strategy
+    val mainPart by subgraph {
         // Define nodes for processing
         val processInput by node<String, String> { input ->
             // Process the input
@@ -123,8 +120,8 @@ val agentStrategy = strategy(
         edge(generateResponse forwardTo nodeFinish)
     }
 
-    // Optional: Define additional stages for different processing phases
-    stage("refinement") {
+    // Optional: Define additional subgraphs for different processing phases
+    val refinement by subgraph {
         val refineOutput by node<String, String> { input ->
             llm.writeSession {
                 requestLLM("Refine the following output: $input")
@@ -134,40 +131,19 @@ val agentStrategy = strategy(
         edge(nodeStart forwardTo refineOutput)
         edge(refineOutput forwardTo nodeFinish)
     }
+    
+    nodeStart then mainPart then refinement then nodeFinish
 }
 ```
-
-The `strategy` function allows you to define multiple stages, each with its own set of nodes and edges. This is more
-powerful than using simplified strategy builders.
 
 ### 3. Set Up the Tool Registry
 
 Tools allow your agent to perform specific actions:
 
 ```kotlin
-val toolRegistry = SimpleToolRegistry {
+val toolRegistry = ToolRegistry {
     tool(YourCustomTool())
     // Add more tools as needed
-}
-```
-
-For more complex scenarios, you can use multi-stage tool registries:
-
-```kotlin
-val toolRegistry = multiStageToolRegistry {
-    statelessStage("initialStage", initialStageToolDescriptors) {
-        tool("firstTool") { arguments: JsonObject ->
-            // Tool implementation
-            "Result of first tool"
-        }
-    }
-
-    statelessStage("finalStage", finalStageToolDescriptors) {
-        tool("secondTool") { arguments: JsonObject ->
-            // Tool implementation
-            "Result of second tool"
-        }
-    }
 }
 ```
 
@@ -176,7 +152,7 @@ val toolRegistry = multiStageToolRegistry {
 Define the agent's behavior with a configuration:
 
 ```kotlin
-val agentConfig = LocalAgentConfig.withSystemPrompt(
+val agentConfig = AIAgentConfig.withSystemPrompt(
     prompt = """
         You are an AI assistant with specific capabilities.
         Your task is to help users by utilizing your tools and knowledge.
@@ -188,7 +164,7 @@ val agentConfig = LocalAgentConfig.withSystemPrompt(
 For more advanced configuration, you can pass the LLM parameters explicitly:
 
 ```kotlin
-val agentConfig = LocalAgentConfig(
+val agentConfig = AIAgentConfig(
     systemPrompt = """
         You are an AI assistant with specific capabilities.
         Your task is to help users by utilizing your tools and knowledge.
@@ -213,12 +189,12 @@ agent.run("Your input or question here")
 
 ## Advanced Usage: Working with Structured Data
 
-KotlinAIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streaming-api.md)
+AIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streaming-api.md)
 for more information.
 
 ## Advanced Usage: Parallel Tool Calls
 
-KotlinAIAgent supports parallel tool execution:
+AIAgent supports parallel tool execution:
 
 ```kotlin
 parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
@@ -228,7 +204,7 @@ This allows you to process multiple items concurrently, improving performance fo
 
 ## Complete Example
 
-Here's a complete example of a KotlinAIAgent implementation:
+Here's a complete example of a AIAgent implementation:
 
 ```kotlin
 fun main() = runBlocking {
@@ -249,34 +225,32 @@ fun main() = runBlocking {
     )
     val promptExecutor = CodePromptExecutor(api, LLMParams())
 
-    // Create a multi-stage strategy
+    // Create a strategy
     val agentStrategy = strategy("library-assistant") {
-        stage {
-            val processQuery by node<String, String> { query ->
-                llm.writeSession {
-                    val markdownStream = requestLLMStreaming(
-                        "Generate information about books related to: $query"
-                    )
+        val processQuery by node<String, String> { query ->
+            llm.writeSession {
+                val markdownStream = requestLLMStreaming(
+                    "Generate information about books related to: $query"
+                )
 
-                    parseMarkdownStreamToBooks(markdownStream).collect { book ->
-                        callToolRaw("book", book)
-                    }
+                parseMarkdownStreamToBooks(markdownStream).collect { book ->
+                    callToolRaw("book", book)
                 }
-                "Query processed successfully"
             }
-
-            edge(nodeStart forwardTo processQuery)
-            edge(processQuery forwardTo nodeFinish)
+            "Query processed successfully"
         }
+
+        edge(nodeStart forwardTo processQuery)
+        edge(processQuery forwardTo nodeFinish)
     }
 
     // Set up the tool registry
-    val toolRegistry = SimpleToolRegistry {
+    val toolRegistry = ToolRegistry {
         tool(BookTool())
     }
 
     // Configure the agent
-    val agentConfig = LocalAgentConfig.withSystemPrompt(
+    val agentConfig = AIAgentConfig.withSystemPrompt(
         prompt = """
             You're an AI library assistant. Provide users with comprehensive 
             and structured information about books.
@@ -284,12 +258,11 @@ fun main() = runBlocking {
     )
 
     // Create and run the agent
-    val agent = KotlinAIAgent(
+    val agent = AIAgent(
         promptExecutor = promptExecutor,
         toolRegistry = toolRegistry,
         strategy = agentStrategy,
         agentConfig = agentConfig,
-        cs = this,
     )
 
     agent.run("Please recommend science fiction books about space exploration.")
@@ -298,6 +271,6 @@ fun main() = runBlocking {
 
 ## Conclusion
 
-KotlinAIAgent provides a powerful framework for building AI agents in Kotlin. By defining custom
+AIAgent provides a powerful framework for building AI agents in Kotlin. By defining custom
 strategies, tools, and configurations, you can create agents that handle complex workflows and provide rich, interactive
 experiences.

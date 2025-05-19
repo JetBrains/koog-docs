@@ -22,18 +22,16 @@ The EventHandler configuration consists of five main handler types:
 The EventHandler is a feature that can be added to your agent 
 
 ```kotlin
-val agent = KotlinAIAgent(
+val agent = AIAgent(
     promptExecutor = simpleOpenAIExecutor(API_TOKEN),
     toolRegistry = toolRegistry,
     strategy = strategy,
     agentConfig = agentConfig,
 ) {
     handleEvents {
-        handleInit { /* initialization logic */ }
-        handleResult { result -> /* process result */ }
-        handleError { error -> /* handle error */ }
-        onToolCall { stage, tool, args -> /* before tool execution */ }
-        afterToolCalled { stage, tool, args, result -> /* after tool execution */ }
+        onAgentFinished = { strategyName: String, result: String? -> /* process result */ }
+        onAgentRunError = { strategyName: String, throwable: Throwable -> /* handle error */ }
+        onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args -> /* before tool execution */ }
     }
 }
 ```
@@ -41,18 +39,16 @@ val agent = KotlinAIAgent(
 Or you may prefer to use an equivalent version with explicit feature installation: 
 
 ```kotlin
-val agent = KotlinAIAgent(
+val agent = AIAgent(
     promptExecutor = simpleOpenAIExecutor(API_TOKEN),
     toolRegistry = toolRegistry,
     strategy = strategy,
     agentConfig = agentConfig,
 ) {
     install(EventHandler) {
-        handleInit { /* initialization logic */ }
-        handleResult { result -> /* process result */ }
-        handleError { error -> /* handle error */ }
-        onToolCall { stage, tool, args -> /* before tool execution */ }
-        afterToolCalled { stage, tool, args, result -> /* after tool execution */ }
+        onAgentFinished = { strategyName: String, result: String? -> /* process result */ }
+        onAgentRunError = { strategyName: String, throwable: Throwable -> /* handle error */ }
+        onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args -> /* before tool execution */ }
     }
 }
 ```

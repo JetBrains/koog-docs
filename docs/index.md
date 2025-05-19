@@ -114,7 +114,6 @@ fun main() = runBlocking {
 
   val agent = simpleChatAgent(
     apiToken = apiToken,
-    cs = this,
     systemPrompt = "You are a helpful assistant. Answer user questions concisely."
   )
   agent.run("Hello, how can you help me?")

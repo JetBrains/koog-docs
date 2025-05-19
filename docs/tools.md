@@ -1,7 +1,7 @@
 # Creating Tools
 
 You can extend agent capabilities by creating custom tools. These tools can be used as with the agents created via the
-`Simple API`, as for more sophisticated agents created with the `KotlinAIAgent`.
+`Simple API`, as for more sophisticated agents created with the `AIAgent`.
 
 **Tip**: Design tools with clear descriptions and parameter names to help the LLM understand how to use them.
 
@@ -16,11 +16,11 @@ You can extend agent capabilities by creating custom tools. These tools can be u
 Example of a custom tool:
 
 <!--- INCLUDE
-import ai.grazie.code.agents.core.tools.SimpleTool
-import ai.grazie.code.agents.core.tools.Tool
-import ai.grazie.code.agents.core.tools.ToolDescriptor
-import ai.grazie.code.agents.core.tools.ToolParameterDescriptor
-import ai.grazie.code.agents.core.tools.ToolParameterType
+import ai.koog.agents.core.tools.SimpleTool
+import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolDescriptor
+import ai.koog.agents.core.tools.ToolParameterDescriptor
+import ai.koog.agents.core.tools.ToolParameterType
 import kotlinx.serialization.Serializable
 -->
 ```kotlin
@@ -65,16 +65,13 @@ Please note that, **to use the custom tool, you must**:
 
 ```kotlin
 val toolRegistry = ToolRegistry {
-    stage {
-        // Your custom tool(s)
-        tool(CastToDoubleTool)
-    }
+    // Your custom tool(s)
+    tool(CastToDoubleTool)
 }
 
 // Agent initialization
 val agent = simpleChatAgent(
-    apiToken = apiToken,
-    cs = coroutineScope,
+    executor = simpleOpenAIExecutor(apiToken),
     systemPrompt = "You are a helpful assistant with mathematical capabilities.",
     // Passing your tool registry to the agent
     toolRegistry = toolRegistry
@@ -91,7 +88,7 @@ agent environment.
 
 ### Using callTool Methods
 
-The `LocalAgentStageContext` provides several overloaded `callTool` methods from `writeSession` for executing tools:
+The `AIAgentContext` provides several overloaded `callTool` methods from `writeSession` for executing tools:
 
 **Call by tool name and args**:
 
@@ -196,33 +193,33 @@ When building agent workflows with nodes, you can use specialized nodes for tool
 **nodeExecuteTool**: Executes a single tool call and returns its result
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
     name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
+): AIAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
 ```
 
 **nodeExecuteMultipleTools**: Executes multiple tool calls and returns their results
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
     name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
+): AIAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
 ```
 
 **nodeLLMSendToolResult**: Sends a tool result to the LLM and gets a response
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
     name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
+): AIAgentNodeDelegate<Message.Tool.Result, Message.Response>
 ```
 
 **nodeLLMSendMultipleToolResults**: Sends multiple tool results to the LLM
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
     name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
+): AIAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
 ```
 
 ### Example Node Usage

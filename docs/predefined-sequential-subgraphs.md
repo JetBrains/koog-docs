@@ -29,15 +29,15 @@ Stages are run sequentially within a strategy, with each stage building upon the
 
 The Kotlin Agentic Framework provides two types of stages:
 
-1. **Static stages** (`LocalAgentStaticStage`): Expect a predefined set of tools and validate that all required tools
+1. **Static stages** (`AIAgentStaticStage`): Expect a predefined set of tools and validate that all required tools
    are available. This is useful when you know exactly which tools a stage needs.
 
-2. **Dynamic Stages** (`LocalAgentDynamicStage`): Do not expect any predefined tools, relying on the tools defined in
+2. **Dynamic Stages** (`AIAgentDynamicStage`): Do not expect any predefined tools, relying on the tools defined in
    the graph. This provides more flexibility but less validation.
 
 ### Stage context
 
-Each stage executes within a context (`LocalAgentStageContext`) that provides access to:
+Each stage executes within a context (`AIAgentStageContext`) that provides access to:
 
 - The environment
 - Output from the previous stage

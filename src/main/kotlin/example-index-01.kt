@@ -1,15 +1,17 @@
 // This file was automatically generated from index.md by Knit tool. Do not edit.
-package ai.grazie.code.agents.example.exampleIndex01
+package ai.koog.agents.example.exampleIndex01
 
-import ai.grazie.code.agents.local.simpleApi.simpleChatAgent
+import ai.koog.agents.ext.agent.simpleChatAgent
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
-    val apiToken = "YOUR_JETBRAINS_AI_API_TOKEN"
+    val apiKey = "YOUR_OPENAI_API_KEY"
 
     val agent = simpleChatAgent(
-        apiToken = apiToken,
-        cs = this,
+        executor = simpleOpenAIExecutor(apiKey),
+        llmModel = OpenAIModels.Chat.GPT4_1,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely."
     )
 

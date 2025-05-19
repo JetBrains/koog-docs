@@ -19,16 +19,16 @@ An LLM session represents a context for interacting with a language model. It en
 - Methods for updating the conversation history
 - Methods for executing tools
 
-Sessions are managed by the `LocalAgentLLMContext` class, which provides methods for creating read and write sessions.
+Sessions are managed by the `AIAgentLLMContext` class, which provides methods for creating read and write sessions.
 
 ### Session types
 
 The Kotlin Agentic Framework provides two types of sessions:
 
-1. **Write Sessions** (`LocalAgentLLMWriteSession`): Allow modifying the prompt and tools, making LLM requests, and
+1. **Write Sessions** (`AIAgentLLMWriteSession`): Allow modifying the prompt and tools, making LLM requests, and
    running tools. Changes made in a write session are persisted back to the LLM context.
 
-2. **Read Sessions** (`LocalAgentLLMReadSession`): Provide read-only access to the prompt and tools. They are useful for
+2. **Read Sessions** (`AIAgentLLMReadSession`): Provide read-only access to the prompt and tools. They are useful for
    inspecting the current state without making changes.
 
 The key difference is that write sessions can modify the conversation history, while read sessions cannot.
@@ -47,7 +47,7 @@ Sessions implement the `AutoCloseable` interface, ensuring they are properly cle
 
 ### Creating sessions
 
-Sessions are created using extension functions on the `LocalAgentLLMContext` class:
+Sessions are created using extension functions on the `AIAgentLLMContext` class:
 
 ```kotlin
 // Creating a write session
