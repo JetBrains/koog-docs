@@ -1,6 +1,6 @@
 ## Event Handler
 
-The **EventHandler** serves as an event delegation mechanism that:
+The **EventHandler** feature serves as an event delegation mechanism that:
 
 - Manages the lifecycle of AI agent operations
 - Provides hooks for monitoring and responding to different stages of execution
@@ -9,7 +9,7 @@ The **EventHandler** serves as an event delegation mechanism that:
 
 ### Key Components
 
-The EventHandler entity consists of five main handler types:
+The EventHandler configuration consists of five main handler types:
 
 - `InitHandler`: Executes at the initialization of an agent run
 - `ResultHandler`: Processes successful results from agent operations
@@ -17,29 +17,38 @@ The EventHandler entity consists of five main handler types:
 - `ToolCallListener`: Notifies when a tool is about to be invoked
 - `ToolResultListener`: Processes the results after a tool has been called
 
-### Creating an event handler
+### Adding an event handler to your agent
 
-The EventHandler uses the Builder pattern to create instances with specific handler configurations:
+The EventHandler is a feature that can be added to your agent 
 
 ```kotlin
-val eventHandler = EventHandler {
-    handleInit { /* initialization logic */ }
-    handleResult { result -> /* process result */ }
-    handleError { error -> /* handle error */ }
-    onToolCall { stage, tool, args -> /* before tool execution */ }
-    afterToolCalled { stage, tool, args, result -> /* after tool execution */ }
+val agent = AIAgent(
+    promptExecutor = simpleOpenAIExecutor(API_TOKEN),
+    toolRegistry = toolRegistry,
+    strategy = strategy,
+    agentConfig = agentConfig,
+) {
+    handleEvents {
+        onAgentFinished = { strategyName: String, result: String? -> /* process result */ }
+        onAgentRunError = { strategyName: String, throwable: Throwable -> /* handle error */ }
+        onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args -> /* before tool execution */ }
+    }
 }
 ```
 
-Then it can be passed to the agent as one of the fields in the constructor:
+Or you may prefer to use an equivalent version with explicit feature installation: 
 
 ```kotlin
-val agent = KotlinAIAgent(
-        toolRegistry = toolRegistry,
-        strategy = strategy,
-        eventHandler = eventHandler,
-        promptExecutor = simpleGrazieExecutor(API_TOKEN),
-        agentConfig = agentConfig,
-        cs = this
-    )
+val agent = AIAgent(
+    promptExecutor = simpleOpenAIExecutor(API_TOKEN),
+    toolRegistry = toolRegistry,
+    strategy = strategy,
+    agentConfig = agentConfig,
+) {
+    install(EventHandler) {
+        onAgentFinished = { strategyName: String, result: String? -> /* process result */ }
+        onAgentRunError = { strategyName: String, throwable: Throwable -> /* handle error */ }
+        onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args -> /* before tool execution */ }
+    }
+}
 ```

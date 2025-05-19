@@ -1,11 +1,7 @@
 // This file was automatically generated from customTool.md by Knit tool. Do not edit.
-package ai.grazie.code.agents.example.exampleCustomTool01
+package ai.koog.agents.example.exampleCustomTool01
 
-import ai.grazie.code.agents.core.tools.SimpleTool
-import ai.grazie.code.agents.core.tools.Tool
-import ai.grazie.code.agents.core.tools.ToolDescriptor
-import ai.grazie.code.agents.core.tools.ToolParameterDescriptor
-import ai.grazie.code.agents.core.tools.ToolParameterType
+import ai.koog.agents.core.tools.*
 import kotlinx.serialization.Serializable
 
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {

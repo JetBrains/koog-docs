@@ -17,7 +17,6 @@ building a simple chatbot, a complex data processing pipeline, or anything in be
 At a high level, a strategy graph consists of the following components:
 
 - **Strategy**: The top-level container for the graph, created using the `strategy` or `simpleStrategy` function.
-- **Stages**: Sections of the graph that can have their own set of tools and context.
 - **Nodes**: Individual operations or transformations in the workflow.
 - **Edges**: Connections between nodes that define the flow of execution.
 - **Conditions**: Rules that determine when to follow a particular edge.
@@ -30,14 +29,14 @@ between these nodes depends on the edges and conditions defined in the graph.
 Here's a simple example of creating a basic strategy graph:
 
 ```kotlin
-val myStrategy = simpleStrategy("my-strategy") {
-    val sendInput by nodeLLMSendStageInput()
+val myStrategy = strategy("my-strategy") {
+    val callLLM by nodeLLMRequest()
     val executeToolCall by nodeExecuteTool()
     val sendToolResult by nodeLLMSendToolResult()
 
-    edge(nodeStart forwardTo sendInput)
-    edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
-    edge(sendInput forwardTo executeToolCall onToolCall { true })
+    edge(nodeStart forwardTo callLLM)
+    edge(callLLM forwardTo nodeFinish onAssistantMessage { true })
+    edge(callLLM forwardTo executeToolCall onToolCall { true })
     edge(executeToolCall forwardTo sendToolResult)
     edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
     edge(sendToolResult forwardTo executeToolCall onToolCall { true })
@@ -66,7 +65,7 @@ workflow. The Kotlin AI platform provides [several predefined nodes](nodes-and-c
 
 Here are some commonly used predefined nodes:
 
-- `nodeLLMSendStageInput`: Sends the stage input to the LLM and gets a response.
+- `nodeLLMRequest`: Sends the provided text together with the whole previous prompt history to the LLM and gets a response.
 - `nodeExecuteTool`: Executes a tool call and returns the result.
 - `nodeLLMSendToolResult`: Sends a tool result to the LLM and gets a response.
 - `nodeLLMCompressHistory`: Compresses the conversation history to reduce token usage.
@@ -109,20 +108,6 @@ You can also transform the output before passing it to the target node:
 edge(sourceNode forwardTo targetNode onCondition { input -> input.length > 10 } transformed { input -> input.uppercase() })
 ```
 
-### Stages
-
-Stages are sections of the strategy graph that can have their own set of tools and context. A stage is created using the
-`stage` function:
-
-```kotlin
-stage(
-    name = "my-stage",
-    tools = listOf(myTool1, myTool2)
-) {
-    // Define nodes and edges for this stage
-}
-```
-
 ## Common Strategy Patterns
 
 ### Chat Strategy
@@ -133,10 +118,10 @@ LLM, executing tools as needed, and returning the LLM's response to the user.
 Here's an example of a chat strategy:
 
 ```kotlin
-fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
+fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
+    val callLLM by nodeLLMRequest()
+    val nodeExecuteTool by nodeExecuteTool()
+    val nodeSendToolResult by nodeLLMSendToolResult()
 
     val giveFeedbackToCallTools by node<String, Message.Response> { input ->
         llm.writeSession {
@@ -148,10 +133,10 @@ fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
         }
     }
 
-    edge(nodeStart forwardTo sendInput)
+    edge(nodeStart forwardTo callLLM)
 
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo giveFeedbackToCallTools onAssistantMessage { true })
+    edge(callLLM forwardTo nodeExecuteTool onToolCall { true })
+    edge(callLLM forwardTo giveFeedbackToCallTools onAssistantMessage { true })
     edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
     edge(giveFeedbackToCallTools forwardTo nodeExecuteTool onToolCall { true })
     edge(nodeExecuteTool forwardTo nodeSendToolResult)
@@ -169,14 +154,14 @@ returns a result. It's simpler than a chat strategy because it doesn't need to h
 Here's an example of a single run strategy:
 
 ```kotlin
-fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
+fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
+    val callLLM by nodeLLMRequest()
+    val nodeExecuteTool by nodeExecuteTool()
+    val nodeSendToolResult by nodeLLMSendToolResult()
 
-    edge(nodeStart forwardTo sendInput)
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
+    edge(nodeStart forwardTo callLLM)
+    edge(callLLM forwardTo nodeExecuteTool onToolCall { true })
+    edge(callLLM forwardTo nodeFinish onAssistantMessage { true })
     edge(nodeExecuteTool forwardTo nodeSendToolResult)
     edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
     edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
@@ -191,46 +176,41 @@ involves executing tools based on the LLM's decisions and processing the results
 Here's an example of a tool-based strategy:
 
 ```kotlin
-fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry, stageName: String): LocalAgentStrategy {
+fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry): AIAgentStrategy {
     return strategy(name) {
-        stage(
-            name = stageName,
-            tools = toolRegistry.stagesToolDescriptors.getValue(stageName)
-        ) {
-            val nodeSendInput by nodeLLMSendStageInput()
-            val nodeExecuteTool by nodeExecuteTool()
-            val nodeSendToolResult by nodeLLMSendToolResult()
+        val nodeSendInput by nodeLLMRequest()
+        val nodeExecuteTool by nodeExecuteTool()
+        val nodeSendToolResult by nodeLLMSendToolResult()
 
-            // Define the flow of the agent
-            edge(nodeStart forwardTo nodeSendInput)
+        // Define the flow of the agent
+        edge(nodeStart forwardTo nodeSendInput)
 
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendInput forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendInput forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
 
-            // If the LLM calls a tool, execute it
-            edge(
-                (nodeSendInput forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
+        // If the LLM calls a tool, execute it
+        edge(
+            (nodeSendInput forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
 
-            // Send the tool result back to the LLM
-            edge(nodeExecuteTool forwardTo nodeSendToolResult)
+        // Send the tool result back to the LLM
+        edge(nodeExecuteTool forwardTo nodeSendToolResult)
 
-            // If the LLM calls another tool, execute it
-            edge(
-                (nodeSendToolResult forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
+        // If the LLM calls another tool, execute it
+        edge(
+            (nodeSendToolResult forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
 
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendToolResult forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
-        }
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendToolResult forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
     }
 }
 ```
@@ -243,7 +223,7 @@ streaming data, processing it as it arrives, and potentially calling tools with 
 Here's an example of a streaming data strategy:
 
 ```kotlin
-fun streamingDataStrategy(): LocalAgentStrategy = simpleStrategy("streaming-data") {
+fun streamingDataStrategy(): AIAgentStrategy = strategy("streaming-data") {
     val processStreamingData by node<Unit, String> { _ ->
         val books = mutableListOf<Book>()
         val mdDefinition = markdownBookDefinition()
@@ -338,7 +318,6 @@ When creating custom strategy graphs, follow these best practices:
 5. **Document your graph**: Document the purpose and behavior of your graph for future reference.
 6. **Reuse common patterns**: Use predefined strategies or common patterns as a starting point.
 7. **Consider performance**: For long-running conversations, use history compression to reduce token usage.
-8. **Use stages appropriately**: Use stages to organize your graph and manage tool access.
 
 ## More Examples
 
@@ -347,58 +326,53 @@ When creating custom strategy graphs, follow these best practices:
 The Tone Analysis Strategy is a good example of a tool-based strategy that includes history compression:
 
 ```kotlin
-fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String): LocalAgentStrategy {
+fun toneStrategy(name: String, toolRegistry: ToolRegistry): AIAgentStrategy {
     return strategy(name) {
-        stage(
-            name = toneStageName,
-            tools = toolRegistry.stagesToolDescriptors.getValue(toneStageName)
-        ) {
-            val nodeSendInput by nodeLLMSendStageInput()
-            val nodeExecuteTool by nodeExecuteTool()
-            val nodeSendToolResult by nodeLLMSendToolResult()
-            val nodeCompressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
+        val nodeSendInput by nodeLLMRequest()
+        val nodeExecuteTool by nodeExecuteTool()
+        val nodeSendToolResult by nodeLLMSendToolResult()
+        val nodeCompressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
 
-            // Define the flow of the agent
-            edge(nodeStart forwardTo nodeSendInput)
+        // Define the flow of the agent
+        edge(nodeStart forwardTo nodeSendInput)
 
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendInput forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendInput forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
 
-            // If the LLM calls a tool, execute it
-            edge(
-                (nodeSendInput forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
+        // If the LLM calls a tool, execute it
+        edge(
+            (nodeSendInput forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
 
-            // If the history gets too large, compress it
-            edge(
-                (nodeExecuteTool forwardTo nodeCompressHistory)
-                        onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
-            )
+        // If the history gets too large, compress it
+        edge(
+            (nodeExecuteTool forwardTo nodeCompressHistory)
+                    onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
+        )
 
-            edge(nodeCompressHistory forwardTo nodeSendToolResult)
+        edge(nodeCompressHistory forwardTo nodeSendToolResult)
 
-            // Otherwise, send the tool result directly
-            edge(
-                (nodeExecuteTool forwardTo nodeSendToolResult)
-                        onCondition { _ -> llm.readSession { prompt.messages.size <= 100 } }
-            )
+        // Otherwise, send the tool result directly
+        edge(
+            (nodeExecuteTool forwardTo nodeSendToolResult)
+                    onCondition { _ -> llm.readSession { prompt.messages.size <= 100 } }
+        )
 
-            // If the LLM calls another tool, execute it
-            edge(
-                (nodeSendToolResult forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
+        // If the LLM calls another tool, execute it
+        edge(
+            (nodeSendToolResult forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
 
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendToolResult forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
-        }
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendToolResult forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
     }
 }
 ```
@@ -418,7 +392,7 @@ This strategy:
 The Markdown Streaming Strategy is an example of a strategy that processes streaming data:
 
 ```kotlin
-val agentStrategy = simpleStrategy("library-assistant") {
+val agentStrategy = strategy("library-assistant") {
     val getMdOutput by node<Unit, String> { _ ->
         val books = mutableListOf<Book>()
         val mdDefinition = markdownBookDefinition()
@@ -463,7 +437,6 @@ If your graph doesn't reach the finish node, check that:
 If tool calls are not being executed, check that:
 
 - The tools are properly registered in the tool registry
-- The stage has access to the tools
 - The edge from the LLM node to the tool execution node has the correct condition (`onToolCall { true }`)
 
 ### History Gets Too Large

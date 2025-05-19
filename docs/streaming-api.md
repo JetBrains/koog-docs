@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Streaming API in the Kotlin Agentic Framework lets you process structured data from Large Language Models 
+The Streaming API in Koog framework lets you process structured data from Large Language Models 
 (LLMs) as it arrives, rather than waiting for the entire response.
 This page explains how to use the Streaming API to efficiently handle structured data in Markdown format.
 
@@ -195,7 +195,7 @@ fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
 ### 4. Use the parser in your agent strategy
 
 ```kotlin
-val agentStrategy = simpleStrategy("library-assistant") {
+val agentStrategy = strategy("library-assistant") {
     // Describe the node containing the output stream parsing 
     val getMdOutput by node<Unit, String> { _ ->
         val books = mutableListOf<Book>()
@@ -254,7 +254,7 @@ class BookTool() : SimpleTool<Book>() {
 ### 2. Use the tool with streaming data
 
 ```kotlin
-val agentStrategy = simpleStrategy("library-assistant") {
+val agentStrategy = strategy("library-assistant") {
     val getMdOutput by node<Unit, String> { _ ->
         val mdDefinition = markdownBookDefinition()
 
@@ -283,16 +283,15 @@ val agentStrategy = simpleStrategy("library-assistant") {
 ### 3. Register the tool in your agent configuration
 
 ```kotlin
-val toolRegistry = SimpleToolRegistry {
+val toolRegistry = ToolRegistry {
     tool(BookTool())
 }
 
-val runner = KotlinAIAgent(
-    promptExecutor = simpleGrazieExecutor(token),
+val runner = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
     toolRegistry = toolRegistry,
     strategy = agentStrategy,
-    agentConfig = agentConfig,
-    cs = this,
+    agentConfig = agentConfig
 )
 ```
 

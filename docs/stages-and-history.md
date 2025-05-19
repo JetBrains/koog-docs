@@ -32,15 +32,15 @@ Stages are executed sequentially within a strategy, with each stage building upo
 
 The Kotlin AI platform provides two types of stages:
 
-1. **Static Stages (`LocalAgentStaticStage`)**: Expect a predefined set of tools and validate that all required tools
+1. **Static Stages (`AIAgentStaticStage`)**: Expect a predefined set of tools and validate that all required tools
    are available. This is useful when you know exactly which tools a stage needs.
 
-2. **Dynamic Stages (`LocalAgentDynamicStage`)**: Do not expect any predefined tools, relying on the tools defined in
+2. **Dynamic Stages (`AIAgentDynamicStage`)**: Do not expect any predefined tools, relying on the tools defined in
    the graph. This provides more flexibility but less validation.
 
 ### Stage Context
 
-Each stage executes within a context (`LocalAgentStageContext`) that provides access to:
+Each stage executes within a context (`AIAgentStageContext`) that provides access to:
 
 - The environment
 - Output from the previous stage
@@ -66,7 +66,7 @@ strategy("my-strategy") {
         tools = listOf(myTool1, myTool2)
     ) {
         // Define nodes and edges for this stage
-        val sendInput by nodeLLMSendStageInput()
+        val sendInput by nodeLLMRequest()
         val executeToolCall by nodeExecuteTool()
         val sendToolResult by nodeLLMSendToolResult()
 
@@ -158,7 +158,7 @@ The Kotlin AI platform provides three policies for handling LLM conversation his
 These policies are specified when creating a strategy:
 
 ```kotlin
-LocalAgentStrategy(
+AIAgentStrategy(
     name = "my-strategy",
     stages = listOf(stage1, stage2, stage3),
     llmHistoryTransitionPolicy = ContextTransitionPolicy.COMPRESS_LLM_HISTORY
@@ -195,7 +195,7 @@ history size:
 val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
 
 edge(
-    nodeStart forwardTo nodeLLMSendInput
+    nodeStart forwardTo nodeCallLLM
             onCondition { _ -> 
                 llm.readSession { prompt.messages.size > 100 } 
             }
@@ -304,7 +304,7 @@ val stagesWithLogging = insertIntermediateStage(stages, intermediateStage)
 For advanced history management, you can create custom stages that handle history in specific ways:
 
 ```kotlin
-val customHistoryStage = with(LocalAgentStageBuilder("custom-history", tools = null)) {
+val customHistoryStage = with(AIAgentStageBuilder("custom-history", tools = null)) {
     val processHistory by node<Unit, Unit> {
         llm.writeSession {
             // Custom history processing logic
@@ -396,9 +396,9 @@ Here are some examples of how stages and history passing are used in real-world 
 This example shows a strategy with multiple stages and history compression between stages:
 
 ```kotlin
-fun complexProcessingStrategy(): LocalAgentStrategy {
-    val stage1 = with(LocalAgentStageBuilder("input-processing", tools = listOf(inputTool))) {
-        val processInput by nodeLLMSendStageInput()
+fun complexProcessingStrategy(): AIAgentStrategy {
+    val stage1 = with(AIAgentStageBuilder("input-processing", tools = listOf(inputTool))) {
+        val processInput by nodeLLMRequest()
         val executeInputTool by nodeExecuteTool()
         val sendToolResult by nodeLLMSendToolResult()
 
@@ -410,8 +410,8 @@ fun complexProcessingStrategy(): LocalAgentStrategy {
         build()
     }
 
-    val stage2 = with(LocalAgentStageBuilder("reasoning", tools = listOf(reasoningTool))) {
-        val processReasoning by nodeLLMSendStageInput()
+    val stage2 = with(AIAgentStageBuilder("reasoning", tools = listOf(reasoningTool))) {
+        val processReasoning by nodeLLMRequest()
         val executeReasoningTool by nodeExecuteTool()
         val sendToolResult by nodeLLMSendToolResult()
 
@@ -423,8 +423,8 @@ fun complexProcessingStrategy(): LocalAgentStrategy {
         build()
     }
 
-    val stage3 = with(LocalAgentStageBuilder("output-generation", tools = listOf(outputTool))) {
-        val generateOutput by nodeLLMSendStageInput()
+    val stage3 = with(AIAgentStageBuilder("output-generation", tools = listOf(outputTool))) {
+        val generateOutput by nodeLLMRequest()
         val executeOutputTool by nodeExecuteTool()
         val sendToolResult by nodeLLMSendToolResult()
 
@@ -436,7 +436,7 @@ fun complexProcessingStrategy(): LocalAgentStrategy {
         build()
     }
 
-    return LocalAgentStrategy(
+    return AIAgentStrategy(
         name = "complex-processing",
         stages = listOf(stage1, stage2, stage3),
         llmHistoryTransitionPolicy = ContextTransitionPolicy.COMPRESS_LLM_HISTORY
@@ -449,13 +449,13 @@ fun complexProcessingStrategy(): LocalAgentStrategy {
 This example shows a strategy with custom history handling between stages:
 
 ```kotlin
-fun customHistoryStrategy(): LocalAgentStrategy {
-    val stage1 = with(LocalAgentStageBuilder("first-stage", tools = listOf(firstTool))) {
+fun customHistoryStrategy(): AIAgentStrategy {
+    val stage1 = with(AIAgentStageBuilder("first-stage", tools = listOf(firstTool))) {
         // First stage definition
         build()
     }
 
-    val historyProcessingStage = with(LocalAgentStageBuilder("history-processing", tools = null)) {
+    val historyProcessingStage = with(AIAgentStageBuilder("history-processing", tools = null)) {
         val processHistory by node<Unit, Unit> {
             llm.writeSession {
                 // Extract important information from history
@@ -476,12 +476,12 @@ fun customHistoryStrategy(): LocalAgentStrategy {
         build()
     }
 
-    val stage2 = with(LocalAgentStageBuilder("second-stage", tools = listOf(secondTool))) {
+    val stage2 = with(AIAgentStageBuilder("second-stage", tools = listOf(secondTool))) {
         // Second stage definition
         build()
     }
 
-    return LocalAgentStrategy(
+    return AIAgentStrategy(
         name = "custom-history",
         stages = listOf(stage1, historyProcessingStage, stage2),
         llmHistoryTransitionPolicy = ContextTransitionPolicy.PERSIST_LLM_HISTORY
@@ -494,9 +494,9 @@ fun customHistoryStrategy(): LocalAgentStrategy {
 This example shows how to conditionally compress history within a stage based on the history size:
 
 ```kotlin
-fun conditionalCompressionStrategy(): LocalAgentStrategy = strategy("conditional-compression") {
+fun conditionalCompressionStrategy(): AIAgentStrategy = strategy("conditional-compression") {
     stage("main-stage", tools = listOf(myTool1, myTool2)) {
-        val sendInput by nodeLLMSendStageInput()
+        val sendInput by nodeLLMRequest()
         val executeToolCall by nodeExecuteTool()
         val sendToolResult by nodeLLMSendToolResult()
         val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>()

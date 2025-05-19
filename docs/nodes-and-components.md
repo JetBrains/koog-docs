@@ -12,7 +12,7 @@ strategies.
 ### nodeDoNothing
 
 ```kotlin
-fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeDoNothing(name: String? = null): LocalAgentNodeDelegate<T, T>
+fun <T> AIAgentSubgraphBuilderBase<*, *>.nodeDoNothing(name: String? = null): AIAgentNodeDelegate<T, T>
 ```
 
 **Description:**  
@@ -44,10 +44,10 @@ edge(passthrough forwardTo anotherNode)
 ### nodeUpdatePrompt
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeUpdatePrompt(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeUpdatePrompt(
     name: String? = null,
     body: PromptBuilder.() -> Unit
-): LocalAgentNodeDelegate<Unit, Unit>
+): AIAgentNodeDelegate<Unit, Unit>
 ```
 
 **Description:**  
@@ -77,78 +77,13 @@ val setupContext by nodeUpdatePrompt("setupContext") {
 }
 ```
 
-### nodeLLMSendStageInput
-
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendStageInput(
-    name: String? = null
-): LocalAgentNodeDelegate<Unit, Message.Response>
-```
-
-**Description:**  
-An LLM node that updates the prompt with the user's stage input and triggers an LLM request within a write session. This
-node is commonly used as the first step in an agent workflow to process the initial user input.
-
-**Parameters:**
-
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the defined node, which takes no input (Unit) and produces a `Message.Response` from the LLM.
-
-**Use Cases:**
-
-- Processing the initial user query in a conversation
-- Starting a new interaction with the LLM
-- Handling user input at the beginning of a workflow
-
-**Example:**
-
-```kotlin
-val sendInput by nodeLLMSendStageInput("sendInput")
-edge(nodeStart forwardTo sendInput)
-```
-
-### nodeLLMSendStageInputMultiple
-
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendStageInputMultiple(
-    name: String? = null
-): LocalAgentNodeDelegate<Unit, List<Message.Response>>
-```
-
-**Description:**  
-Creates a node that sends the current stage input to the LLM and gets multiple responses. This is useful when you need
-to generate multiple alternative responses to the same input.
-
-**Parameters:**
-
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the defined node, which takes no input (Unit) and produces a list of `Message.Response` objects
-from the LLM.
-
-**Use Cases:**
-
-- Generating multiple alternative responses to a user query
-- Creating diverse suggestions or solutions
-- Implementing a response ranking or selection mechanism
-
-**Example:**
-
-```kotlin
-val generateAlternatives by nodeLLMSendStageInputMultiple("generateAlternatives")
-edge(nodeStart forwardTo generateAlternatives)
-```
-
 ### nodeLLMRequest
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMRequest(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeLLMRequest(
     name: String? = null,
     allowToolCalls: Boolean = true
-): LocalAgentNodeDelegate<String, Message.Response>
+): AIAgentNodeDelegate<String, Message.Response>
 ```
 
 **Description:**  
@@ -180,9 +115,9 @@ edge(someNode forwardTo processQuery)
 ### nodeLLMRequestMultiple
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMRequestMultiple(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeLLMRequestMultiple(
     name: String? = null
-): LocalAgentNodeDelegate<String, List<Message.Response>>
+): AIAgentNodeDelegate<String, List<Message.Response>>
 ```
 
 **Description:**  
@@ -213,11 +148,11 @@ edge(someNode forwardTo processComplexQuery)
 ### nodeLLMCompressHistory
 
 ```kotlin
-fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeLLMCompressHistory(
+fun <T> AIAgentSubgraphBuilderBase<*, *>.nodeLLMCompressHistory(
     name: String? = null,
     strategy: HistoryCompressionStrategy = HistoryCompressionStrategy.WholeHistory,
     preserveMemory: Boolean = true
-): LocalAgentNodeDelegate<T, T>
+): AIAgentNodeDelegate<T, T>
 ```
 
 **Description:**  
@@ -261,9 +196,9 @@ edge(someNode forwardTo compressHistory)
 ### nodeExecuteTool
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
     name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
+): AIAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
 ```
 
 **Description:**  
@@ -290,44 +225,12 @@ val executeToolCall by nodeExecuteTool("executeToolCall")
 edge(llmNode forwardTo executeToolCall onToolCall { true })
 ```
 
-### nodeLLMSendToolResult
-
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
-    name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
-```
-
-**Description:**  
-An LLM node that processes a `ToolCall.Result` and generates a `Message.Response`. The tool result is incorporated into
-the prompt, and a request is made to the LLM for a response.
-
-**Parameters:**
-
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the node, handling the transformation from `ToolCall.Result` to `Message.Response`.
-
-**Use Cases:**
-
-- Processing the results of tool executions
-- Generating responses based on tool outputs
-- Continuing the conversation after tool execution
-
-**Example:**
-
-```kotlin
-val processToolResult by nodeLLMSendToolResult("processToolResult")
-edge(executeToolCall forwardTo processToolResult)
-```
-
 ### nodeExecuteMultipleTools
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
     name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
+): AIAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
 ```
 
 **Description:**  
@@ -358,9 +261,9 @@ edge(llmNode forwardTo executeMultipleTools)
 ### nodeLLMSendMultipleToolResults
 
 ```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
+fun AIAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
     name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
+): AIAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
 ```
 
 **Description:**  
@@ -395,10 +298,10 @@ edge(executeMultipleTools forwardTo processMultipleToolResults)
 The following example shows how to use nodes to create a chat agent strategy:
 
 ```kotlin
-fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
+fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
+    val sendInput by nodeLLMRequest()
+    val nodeExecuteTool by nodeExecuteTool()
+    val nodeSendToolResult by nodeLLMSendToolResult()
 
     val giveFeedbackToCallTools by node<String, Message.Response> { input ->
         llm.writeSession {
@@ -428,10 +331,10 @@ fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
 The following example shows how to use nodes to create a single run (one-shot) strategy:
 
 ```kotlin
-fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
+fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
+    val sendInput by nodeLLMRequest()
+    val nodeExecuteTool by nodeExecuteTool()
+    val nodeSendToolResult by nodeLLMSendToolResult()
 
     edge(nodeStart forwardTo sendInput)
     edge(sendInput forwardTo nodeExecuteTool onToolCall { true })

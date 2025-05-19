@@ -203,7 +203,7 @@ You can integrate structured data processing into your agent strategies:
 ```kotlin
 val agentStrategy = strategy("weather-forecast") {
     stage("weather") {
-        val setup by nodeLLMSendStageInput()
+        val setup by nodeLLMRequest()
 
         val getStructuredForecast by node<Message.Response, String> { _ ->
             val structuredResponse = llm.writeSession {
@@ -270,7 +270,7 @@ fun main(): Unit = runBlocking {
     // Define agent strategy
     val agentStrategy = strategy("weather-forecast") {
         stage("weather") {
-            val setup by nodeLLMSendStageInput()
+            val setup by nodeLLMRequest()
 
             val getStructuredForecast by node<Message.Response, String> { _ ->
                 val structuredResponse = llm.writeSession {
@@ -292,22 +292,10 @@ fun main(): Unit = runBlocking {
         }
     }
 
-    // Set up event handler
-    val eventHandler = EventHandler {
-        handleError {
-            println("An error occurred: ${it.message}")
-            true
-        }
-
-        handleResult {
-            println("Result:\n$it")
-        }
-    }
-
     // Configure and run the agent
     val token = System.getenv("GRAZIE_TOKEN") ?: error("Environment variable GRAZIE_TOKEN is not set")
 
-    val agentConfig = LocalAgentConfig(
+    val agentConfig = AIAgentConfig(
         prompt = prompt(JetBrainsAIModels.OpenAI.GPT4o, "weather-forecast") {
             system(
                 """
@@ -319,14 +307,23 @@ fun main(): Unit = runBlocking {
         maxAgentIterations = 5
     )
 
-    val runner = KotlinAIAgent(
-        promptExecutor = simpleGrazieExecutor(token),
+    val runner = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(token),
         toolRegistry = ToolRegistry.EMPTY,
         strategy = agentStrategy,
-        eventHandler = eventHandler,
         agentConfig = agentConfig,
-        cs = this,
-    )
+    ) {
+        handleEvents {
+          handleError {
+            println("An error occurred: ${it.message}")
+            true
+          }
+
+          handleResult {
+            println("Result:\n$it")
+          }
+        }
+    }
 
     runner.run("Get weather forecast for Paris")
 }
