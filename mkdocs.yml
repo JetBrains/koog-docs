@@ -18,13 +18,15 @@ nav:
           - Structured data: structured-data.md
           - Streaming API: streaming-api.md
           - Custom nodes: custom-nodes.md
+          - LLM sessions and manual history management: sessions.md
           - Subgraphs:
-              - Predefined sequential subgraphs: predefined-sequential-subgraphs.md
+              - Overview: subgraphs-overview.md
               - Custom subgraphs: custom-subgraphs.md
           - Embeddings: embeddings.md
           - Features:
+              - Overview: features-overview.md
               - Tracing: tracing.md
-              - Memory: memory.md
+              - Memory: agent-memory.md
       - Testing: testing.md
   - API reference: api-reference.md
 

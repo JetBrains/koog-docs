@@ -1,13 +1,13 @@
-# Memory
+# AgentMemory
 
 ## Feature overview
 
-The Memory feature is a component of the Kotlin Agentic Framework that lets AI agents store, retrieve, and use
+The AgentMemory feature is a component of the Koog framework that lets AI agents store, retrieve, and use
 information across conversations.
 
 ### Purpose
 
-The Memory Feature addresses the challenge of maintaining context in AI agent interactions by:
+The AgentMemory Feature addresses the challenge of maintaining context in AI agent interactions by:
 
 - Storing important facts extracted from conversations.
 - Organizing information by concepts, subjects, and scopes.
@@ -16,7 +16,7 @@ The Memory Feature addresses the challenge of maintaining context in AI agent in
 
 ### Architecture
 
-The Memory feature is built on a hierarchical structure:
+The AgentMemory feature is built on a hierarchical structure:
 
 **Facts**: individual pieces of information stored in memory
 
@@ -46,12 +46,12 @@ The Memory feature is built on a hierarchical structure:
 
 ## Configuration and initialization
 
-The feature integrates with the agent pipeline through the `MemoryFeature` class, which provides methods for saving and
+The feature integrates with the agent pipeline through the `AgentMemory` class, which provides methods for saving and
 loading facts, and can be installed as a feature in the agent configuration.
 
-### Class: `MemoryFeature.Config`
+### Configuration
 
-Configuration class for the Memory feature.
+The `AgentMemory.Config` class is the configuration class for the AgentMemory feature.
 
 ```kotlin
 class Config : FeatureConfig() {
@@ -67,13 +67,13 @@ class Config : FeatureConfig() {
 
 ### Installation
 
-To install the Memory feature in an agent:
+To install the AgentMemory feature in an agent, follow the pattern provided in the code sample below.
 
 ```kotlin
-val agent = KotlinAIAgent(
+val agent = AIAgent(
     // Other parameters
 ) {
-    install(MemoryFeature) {
+    install(AgentMemory) {
         memoryProvider = YourMemoryProvider()
         agentName = "your-agent-name"
         featureName = "your-feature-name"
@@ -83,134 +83,9 @@ val agent = KotlinAIAgent(
 }
 ```
 
-## API documentation
-
-### Class: `MemoryFeature`
-
-The main class that implements memory capabilities for a LocalAIAgent.
-
-#### Constructor
-
-```kotlin
-class MemoryFeature(
-    val agentMemory: AgentMemoryProvider,
-    val llm: LocalAgentLLMContext,
-    val scopesProfile: MemoryScopesProfile
-)
-```
-
-| Parameter     | Type                 | Description                                  |
-|---------------|----------------------|----------------------------------------------|
-| agentMemory   | AgentMemoryProvider  | Provider for storing and retrieving facts    |
-| llm           | LocalAgentLLMContext | Context for interacting with the LLM         |
-| scopesProfile | MemoryScopesProfile  | Profile defining the available memory scopes |
-
-Please note that `agentMemory` can have a custom value or use one of the existing implementations: `NoMemory`,
-`LocalFileMemoryProvider`, `SharedRemoteMemoryProvider`.
-
-#### Methods
-
-`saveFactsFromHistory`
-
-Extracts facts about a specific concept from the LLM chat history and saves them to memory.
-
-```kotlin
-suspend fun saveFactsFromHistory(
-    concept: Concept,
-    subject: MemorySubject,
-    scope: MemoryScope,
-    preserveQuestionsInLLMChat: Boolean = false
-)
-```
-
-| Parameter                  | Type          | Default  | Description                                                     |
-|----------------------------|---------------|----------|-----------------------------------------------------------------|
-| concept                    | Concept       | required | The concept to extract facts about                              |
-| subject                    | MemorySubject | required | The subject scope for the facts                                 |
-| scope                      | MemoryScope   | required | The memory scope for the facts                                  |
-| preserveQuestionsInLLMChat | Boolean       | false    | If true, keeps the fact extraction messages in the chat history |
-
-`loadFactsToAgent`
-
-Loads facts about a specific concept from memory and adds them to the LLM chat history.
-
-```kotlin
-suspend fun loadFactsToAgent(
-    concept: Concept,
-    scopes: List<MemoryScopeType> = MemoryScopeType.entries,
-    subjects: List<MemorySubject> = MemorySubject.entries,
-)
-```
-
-| Parameter | Type                  | Default      | Description                        |
-|-----------|-----------------------|--------------|------------------------------------|
-| concept   | Concept               | required     | The concept to load facts about    |
-| scopes    | List<MemoryScopeType> | all scopes   | List of memory scopes to search in |
-| subjects  | List<MemorySubject>   | all subjects | List of subjects to look for       |
-
-`loadAllFactsToAgent`
-
-Loads all available facts from memory and adds them to the LLM chat history.
-
-```kotlin
-suspend fun loadAllFactsToAgent(
-    scopes: List<MemoryScopeType> = MemoryScopeType.entries,
-    subjects: List<MemorySubject> = MemorySubject.entries,
-)
-```
-
-| Parameter | Type                  | Default      | Description                        |
-|-----------|-----------------------|--------------|------------------------------------|
-| scopes    | List<MemoryScopeType> | all scopes   | List of memory scopes to search in |
-| subjects  | List<MemorySubject>   | all subjects | List of subjects to look for       |
-
-### Extension functions
-
-`memory`
-
-An extension function to access the memory feature from a LocalAgentStageContext.
-
-```kotlin
-fun LocalAgentStageContext.memory(): MemoryFeature
-```
-
-`withMemory`
-
-Extension function to perform an action with the memory feature.
-
-```kotlin
-suspend fun <T> LocalAgentStageContext.withMemory(action: suspend MemoryFeature.() -> T)
-```
-
-### Memory nodes
-
-`nodeSaveToMemoryAutoDetectFacts`
-
-Creates a node that automatically detects and saves facts from the conversation history.
-
-```kotlin
-fun <I> nodeSaveToMemoryAutoDetectFacts(
-    subjects: List<MemorySubject> = listOf(MemorySubject.USER)
-): NodeBuilder<I, Unit>
-```
-
-| Parameter | Type                | Default | Description                          |
-|-----------|---------------------|---------|--------------------------------------|
-| subjects  | List<MemorySubject> | `USER`  | List of subjects to detect facts for |
-
-## Internal helpers and utilities
-
-`retrieveFactsFromHistory`
-
-A helper function that retrieves facts about a concept from the LLM chat history.
-
-```kotlin
-val facts = retrieveFactsFromHistory(concept, preserveQuestionsInLLMChat)
-```
-
 ## Error handling and edge cases
 
-The Memory feature includes several mechanisms to handle edge cases:
+The AgentMemory feature includes several mechanisms to handle edge cases:
 
 1. **NoMemory provider**: a default implementation that doesn't store anything, used when no memory provider is
    specified.
@@ -234,10 +109,10 @@ For example, USER over ORGANIZATION.
 val memoryProvider = YourMemoryProvider()
 
 // Install the memory feature
-val agent = KotlinAIAgent(
+val agent = AIAgent(
     // Other parameters
 ) {
-    install(MemoryFeature) {
+    install(AgentMemory) {
         memoryProvider = memoryProvider
         agentName = "example-agent"
     }
@@ -291,6 +166,23 @@ val strategy = strategy("example-agent") {
     }
 }
 ```
+
+## API documentation
+
+For a complete API reference related to the AgentMemory feature, see the reference documentation for the following packages:
+
+- [ai.grazie.code.agents.local.memory.feature](#): Includes the `AgentMemory` class and the core implementation of the
+  AI agents memory feature.
+- [ai.grazie.code.agents.local.memory.feature.nodes](#): Includes predefined memory-related nodes that can be used in
+  subgraphs.
+- [ai.grazie.code.agents.local.memory.config](#): Provides definitions of memory scopes used for memory operations.
+- [ai.grazie.code.agents.local.memory.model](#): Includes definitions of the core data structures and interfaces
+  that enable agents to store, organize, and retrieve information across different contexts and time periods.
+- [ai.grazie.code.agents.local.memory.feature.history](#): Provides the history compression strategy for retrieving and
+  incorporating factual knowledge about specific concepts from past session activity or stored memory.
+- [ai.grazie.code.agents.local.memory.providers](#): Provides the core interface that defines the fundamental operation
+  for storing and retrieving knowledge in a structured, context-aware manner and its implementations.
+- [ai.grazie.code.agents.local.memory.storage](#): Provides the core interface and specific implementations for file operations across different platforms and storage backends.
 
 ## FAQ and troubleshooting
 

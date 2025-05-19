@@ -138,8 +138,9 @@ val weatherForecastStructure = JsonStructuredData.createJsonStructure<WeatherFor
 
 ### Schema format options
 
-- `JsonSchema`: Standard JSON Schema format.
-- `SimpleSchema`: A simplified schema format that may work better with some models but has limitations such as no polymorphism support.
+- `JsonSchema`: standard JSON Schema format.
+- `SimpleSchema`: a simplified schema format that may work better with some models but has limitations such as no 
+polymorphism support.
 
 ### Schema type options
 
@@ -200,9 +201,10 @@ The `fixingModel` parameter specifies a model that will handle coercion if the o
 
 You can integrate structured data processing into your agent strategies:
 
+[//]: # (TODO: Replace with a proper part of the sample when the full sample is fixed)
 ```kotlin
-val agentStrategy = strategy("weather-forecast") {
-    stage("weather") {
+val agentStrategy = strategy("weather-forecast") { 
+    val forecastProcessing by subgraph<String, String>() {
         val setup by nodeLLMSendStageInput()
 
         val getStructuredForecast by node<Message.Response, String> { _ ->
@@ -230,6 +232,7 @@ val agentStrategy = strategy("weather-forecast") {
 
 Here is a full example of using the Structured Data Processing API:
 
+[//]: # (TODO: Replace when there is a full working sample)
 ```kotlin
 // Note: Import statements are omitted for brevity
 

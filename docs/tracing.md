@@ -1,17 +1,10 @@
-# Trace
+# Tracing
 
-Agent features provide a way to extend and enhance the functionality of AI agents. Features can:
-
-- Add new capabilities to agents
-- Intercept and modify agent behavior
-- Provide access to external systems and resources
-- Log and monitor agent execution
-
-This section includes details about the Trace feature, which provides comprehensive tracing capabilities for AI agents.
+This page includes details about the Tracing feature, which provides comprehensive tracing capabilities for AI agents.
 
 ## Feature overview
 
-The Trace feature is a powerful monitoring and debugging tool that captures detailed information about agent runs,
+The Tracing feature is a powerful monitoring and debugging tool that captures detailed information about agent runs,
 including:
 
 - Agent creation and initialization
@@ -26,7 +19,7 @@ filesystem, enabling developers to gain insights into agent behavior and trouble
 
 ### Event flow
 
-1. The Trace feature intercepts events in the agent pipeline.
+1. The Tracing feature intercepts events in the agent pipeline.
 2. Events are filtered based on the configured message filter.
 3. Filtered events are passed to registered message processors.
 4. Message processors format and output the events to their respective destinations.
@@ -35,10 +28,10 @@ filesystem, enabling developers to gain insights into agent behavior and trouble
 
 ### Basic setup
 
-To use the Trace feature, you need to:
+To use the Tracing feature, you need to:
 
 1. Have one or more message processors (you can use the existing ones or create your own).
-2. Install `TraceFeature` in your agent.
+2. Install `Tracing` in your agent.
 3. Configure the message filter (optional).
 4. Add the message processors to the feature.
 
@@ -51,10 +44,9 @@ val path = Paths.get("/path/to/trace.log")
 // Creating an agent
 val agent = createAgent(
     strategy = myStrategy,
-    coroutineScope = coroutineScope,
 ) {
-    // Installing the `TraceFeature` in your agent
-    install(TraceFeature) {
+    // Installing the `Tracing` in your agent
+    install(Tracing) {
 
         // Configuring message filter (optional)
         messageFilter = { message ->
@@ -95,190 +87,75 @@ messageFilter = { message ->
 }
 ```
 
-## API documentation
 
-### Architecture
+### Large trace volumes
 
-The Trace feature follows a modular architecture with these key components:
+For agents with complex strategies or long-running executions, the volume of trace events can be substantial. Consider:
 
-1. **TraceFeature**: the main feature class that intercepts events in the agent pipeline.
-2. **TraceFeatureConfig**: configuration class for customizing feature behavior.
-3. **Message Processors**: components that process and output trace events:
-   - **TraceFeatureMessageLogWriter**: writes trace events to a logger.
-   - **TraceFeatureMessageFileWriter**: writes trace events to a file.
+1. Using specific message filters to reduce the number of events.
+2. Implementing custom message processors with buffering or sampling.
+3. Using file rotation for log files to prevent them from growing too large.
 
-### Class: `TraceFeature`
+### Dependency graph
 
-The main feature class that intercepts events in the agent pipeline and forwards them to message
-processors.
+The Tracing feature has the following dependencies:
 
-**Usage**:
-
-```kotlin
-val agent = KotlinAIAgent(/*...*/) {
-    // Install the feature when initializing an agent
-    install(TraceFeature) {
-        // Add TraceFeatureConfig
-    }
-}
+```
+Tracing
+├── AIAgentPipeline (for intercepting events)
+├── TraceFeatureConfig
+│   └── FeatureConfig
+├── Message Processors
+│   ├── TraceFeatureMessageLogWriter
+│   │   └── FeatureMessageLogWriter
+│   ├── TraceFeatureMessageFileWriter
+│   │   └── FeatureMessageFileWriter
+│   └── TraceFeatureMessageRemoteWriter
+│       └── FeatureMessageRemoteWriter
+└── Event Types (from ai.koog.agents.core.feature.model)
+    ├── AIAgentStartedEvent
+    ├── AIAgentFinishedEvent
+    ├── AIAgentRunErrorEvent
+    ├── AIAgentStrategyStartEvent
+    ├── AIAgentStrategyFinishedEvent
+    ├── AIAgentNodeExecutionStartEvent
+    ├── AIAgentNodeExecutionEndEvent
+    ├── LLMCallStartEvent
+    ├── LLMCallWithToolsStartEvent
+    ├── LLMCallEndEvent
+    ├── LLMCallWithToolsEndEvent
+    ├── ToolCallEvent
+    ├── ToolValidationErrorEvent
+    ├── ToolCallFailureEvent
+    └── ToolCallResultEvent
 ```
 
-### Class: `TraceFeatureConfig`
+## Examples and quickstarts
 
-Configuration class for the Trace feature.
-
-**Properties**:
-
-| Name          | Type                        | Default  | Description                                                  |
-|---------------|-----------------------------|----------|--------------------------------------------------------------|
-| messageFilter | (FeatureMessage) -> Boolean | { true } | Filter function that determines which messages are processed |
-
-For more information on existing filtering options, see [Message filtering](#message-filtering).
-
-**Methods**:
-
-| Name                | Parameters                         | Return Type | Description                             |
-|---------------------|------------------------------------|-------------|-----------------------------------------|
-| addMessageProcessor | processor: FeatureMessageProcessor | Unit        | Adds a message processor to the feature |
-
-**Usage**:
-
-```kotlin
-val logger = LoggerFactory.create("my.trace.logger")
-
-val agent = KotlinAIAgent(/*...*/) {
-    install(TraceFeature) {
-        // The config of the Trace feature
-        // Set the messageFilter property
-        messageFilter = { message ->
-            message is LLMCallWithToolsStartEvent || message is LLMCallWithToolsEndEvent
-        }
-        // Call the addMessageProcessor method
-        addMessageProcessor(TraceFeatureMessageLogWriter(logger))
-    }
-}
-```
-
-### Class: `TraceFeatureMessageLogWriter`
-
-Writes trace events to a logger.
-
-**Constructor parameters**:
-
-| Name         | Type      | Description                   |
-|--------------|-----------|-------------------------------|
-| targetLogger | MPPLogger | The logger to write events to |
-
-**Usage**:
+### Basic tracing to logger
 
 ```kotlin
 // Create a logger
-val logger = LoggerFactory.create("my.trace.logger")
-// Set the created logger as the target for the TraceFeatureMessageLogWriter class
-val writer = TraceFeatureMessageLogWriter(logger)
+val logger = LoggerFactory.create("my.agent.trace")
 
-val agent = KotlinAIAgent(/*...*/) {
-    // Install TraceFeature
-    install(TraceFeature) {
-        // Pass TraceFeatureMessageLogWriter to the addMessageProcessor method
-        addMessageProcessor(writer)  // now events are passed to the logger
+// Create an agent with tracing
+val agent = createAgent(
+    strategy = myStrategy
+) {
+    install(Tracing) {
+        addMessageProcessor(TraceFeatureMessageLogWriter(logger))
     }
 }
-```
 
-### Class: `TraceFeatureMessageFileWriter`
-
-Writes trace events to a file.
-
-**Constructor Parameters**:
-
-| Name | Type                               | Description                            |
-|------|------------------------------------|----------------------------------------|
-| fs   | FileSystemProvider.ReadWrite<Path> | File system provider for writing files |
-| path | Path                               | Path to the file to write events to    |
-
-**Usage**:
-
-```kotlin
-// Open a file and allow reading from and writing to it
-val fs = JVMFileSystemProvider.ReadWrite
-val path = Paths.get("/path/to/trace.log")
-// Set the file as the target for the TraceFeatureMessageFileWriter class
-val writer = TraceFeatureMessageFileWriter(fs, path)
-
-// Use with TraceFeature
-install(TraceFeature) {
-    // Pass TraceFeatureMessageFileWriter to the addMessageProcessor method
-    addMessageProcessor(writer) // Events are written to the file
-}
-```
-
-### Class: `FeatureMessageRemoteWriter`
-
-Writes trace events to a remote endpoint, allowing for distributed tracing and monitoring.
-
-**Constructor Parameters**:
-
-| Name             | Type                   | Description                                                                                      |
-|------------------|------------------------|--------------------------------------------------------------------------------------------------|
-| connectionConfig | ServerConnectionConfig | The connection configuration for a local server that is used to broadcast agent execution events |
-
-**Usage**:
-
-```kotlin
-val port = 8080
-val serverConfig = ServerConnectionConfig(port = port)
-val writer = FeatureMessageRemoteWriter(
-    connectionConfig = serverConfig
-)
-
-// Use with TraceFeature
-install(TraceFeature) {
-    // Pass FeatureMessageRemoteWriter to the addMessageProcessor method
-    addMessageProcessor(writer) // Events are sent to the remote endpoint
-}
-```
-
-## Internal helpers and utilities
-
-### Event types
-
-The Trace feature works with the following event types:
-
-| Event Type                 | When Triggered                |
-|----------------------------|-------------------------------|
-| AgentCreateEvent           | An agent is created           |
-| StrategyStartEvent         | A strategy execution starts   |
-| LLMCallStartEvent          | Before a simple LLM call      |
-| LLMCallEndEvent            | After a simple LLM call       |
-| LLMCallWithToolsStartEvent | Before an LLM call with tools |
-| LLMCallWithToolsEndEvent   | After an LLM call with tools  |
-| ToolCallsStartEvent        | Before tool calls             |
-| ToolCallsEndEvent          | After tool calls              |
-| NodeExecutionStartEvent    | Before a node execution       |
-| NodeExecutionEndEvent      | After a node execution        |
-
-### Extension properties
-
-Both writer implementations provide extension properties for formatting events:
-
-```kotlin
-// Adding a new read-only property `agentCreateEventFormat` to the `AgentCreateEvent` class
-val AgentCreateEvent.agentCreateEventFormat
-get() = "${this.eventId} (strategy name: ${this.strategyName})"
-
-// Adding new read-only property `nodeExecutionStartEventFormat` to the `NodeExecutionStartEvent` class
-val NodeExecutionStartEvent.nodeExecutionStartEventFormat
-get() = "${this.eventId} (stage: ${this.stageName}, node: ${this.nodeName}, input: ${this.input})"
-
-// Each property returns a formatted string representation of the event
+// Run the agent
+agent.run("Hello, agent!")
 ```
 
 ## Error handling and edge cases
 
 ### No message processors
 
-If no message processors are added to the Trace feature, a warning will be logged:
+If no message processors are added to the Tracing feature, a warning will be logged:
 
 ```
 Tracing Feature. No feature out stream providers are defined. Trace streaming has no target.
@@ -294,7 +171,7 @@ function to ensure proper cleanup:
 ```kotlin
 TraceFeatureMessageFileWriter(fs, path).use { writer ->
     // Use the writer
-    install(TraceFeature) {
+    install(Tracing) {
         addMessageProcessor(writer)
     }
 
@@ -303,65 +180,6 @@ TraceFeatureMessageFileWriter(fs, path).use { writer ->
 
     // Writer will be automatically closed when the block exits
 }
-```
-
-### Large trace volumes
-
-For agents with complex strategies or long-running executions, the volume of trace events can be substantial. Consider:
-
-1. Using specific message filters to reduce the number of events.
-2. Implementing custom message processors with buffering or sampling.
-3. Using file rotation for log files to prevent them from growing too large.
-
-## Dependency graph
-
-The Trace feature has the following dependencies:
-
-```
-TraceFeature
-├── AIAgentPipeline (for intercepting events)
-├── TraceFeatureConfig
-│   └── FeatureConfig
-├── Message Processors
-│   ├── TraceFeatureMessageLogWriter
-│   │   └── FeatureMessageLogWriter
-│   ├── TraceFeatureMessageFileWriter
-│   │   └── FeatureMessageFileWriter
-│   └── TraceFeatureMessageRemoteWriter
-│       └── FeatureMessageRemoteWriter
-└── Event Types (from ai.jetbrains.code.agents.local.features.common.model)
-    ├── AgentCreateEvent
-    ├── StrategyStartEvent
-    ├── LLMCallStartEvent
-    ├── LLMCallEndEvent
-    ├── LLMCallWithToolsStartEvent
-    ├── LLMCallWithToolsEndEvent
-    ├── ToolCallsStartEvent
-    ├── ToolCallsEndEvent
-    ├── NodeExecutionStartEvent
-    └── NodeExecutionEndEvent
-```
-
-## Examples and quickstarts
-
-### Basic tracing to logger
-
-```kotlin
-// Create a logger
-val logger = LoggerFactory.create("my.agent.trace")
-
-// Create an agent with tracing
-val agent = createAgent(
-    strategy = myStrategy,
-    coroutineScope = coroutineScope,
-) {
-    install(TraceFeature) {
-        addMessageProcessor(TraceFeatureMessageLogWriter(logger))
-    }
-}
-
-// Run the agent
-agent.run("Hello, agent!")
 ```
 
 ### Tracing specific events to file
@@ -374,10 +192,9 @@ val writer = TraceFeatureMessageFileWriter(fs, path)
 
 // Create an agent with filtered tracing
 val agent = createAgent(
-    strategy = myStrategy,
-    coroutineScope = coroutineScope,
+    strategy = myStrategy
 ) {
-    install(TraceFeature) {
+    install(Tracing) {
         // Only trace LLM calls
         messageFilter = { message ->
             message is LLMCallWithToolsStartEvent || message is LLMCallWithToolsEndEvent
@@ -400,10 +217,9 @@ val writer = TraceFeatureMessageRemoteWriter(connectionConfig = serverConfig)
 
 // Create an agent with filtered tracing
 val agent = createAgent(
-    strategy = myStrategy,
-    coroutineScope = coroutineScope,
+    strategy = myStrategy
 ) {
-    install(TraceFeature) {
+    install(Tracing) {
         // Only trace LLM calls
         messageFilter = { message ->
             message is LLMCallWithToolsStartEvent || message is LLMCallWithToolsEndEvent
@@ -416,16 +232,29 @@ val agent = createAgent(
 agent.run("Generate a story about a robot.")
 ```
 
+## API documentation
+
+### Architecture
+
+The Tracing feature follows a modular architecture with these key components:
+
+1. [Tracing](#): the main feature class that intercepts events in the agent pipeline.
+2. [TraceFeatureConfig](#): configuration class for customizing feature behavior.
+3. [Message Processors](#): components that process and output trace events:
+    - [TraceFeatureMessageLogWriter](#): writes trace events to a logger.
+    - [TraceFeatureMessageFileWriter](#): writes trace events to a file.
+    - [TraceFeatureMessageRemoteWriter](#): sends trace events to a remote server.
+
 ## FAQ and troubleshooting
 
-The following section includes commonly asked questions and answers related to the Trace feature. 
+The following section includes commonly asked questions and answers related to the Tracing feature. 
 
 ### How do I trace only specific parts of my agent's execution?
 
 Use the `messageFilter` property to filter events. For example, to trace only node execution:
 
 ```kotlin
-install(TraceFeature) {
+install(Tracing) {
     messageFilter = { message ->
         message is NodeExecutionStartEvent || message is NodeExecutionEndEvent
     }
@@ -438,7 +267,7 @@ install(TraceFeature) {
 Yes, you can add multiple message processors to trace to different destinations simultaneously:
 
 ```kotlin
-install(TraceFeature) {
+install(Tracing) {
     addMessageProcessor(TraceFeatureMessageLogWriter(logger))
     addMessageProcessor(TraceFeatureMessageFileWriter(fs, path))
     addMessageProcessor(TraceFeatureMessageRemoteWriter(connectionConfig))
@@ -466,7 +295,7 @@ class CustomTraceProcessor : FeatureMessageProcessor {
 }
 
 // Use your custom processor
-install(TraceFeature) {
+install(Tracing) {
     addMessageProcessor(CustomTraceProcessor())
 }
 ```

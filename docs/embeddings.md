@@ -1,4 +1,4 @@
-# Code embeddings
+# Embeddings
 
 The `embeddings` module provides functionality for generating and comparing embeddings of text and code. Embeddings are vector representations that capture semantic meaning, allowing for efficient similarity comparisons.
 
@@ -7,43 +7,30 @@ The `embeddings` module provides functionality for generating and comparing embe
 This module consists of two main components:
 
 1. **embeddings-base**: core interfaces and data structures for embeddings.
-2. **embeddings-local**: implementation using Ollama for local embedding generation.
+2. **embeddings-llm**: implementation using Ollama for local embedding generation.
 
 ## Getting started
 
-### Installation
+The following sections include basic examples of how to use embeddings in the following ways:
 
-Add the following dependencies to your `build.gradle.kts`:
+- With a local embedding models through Ollama
+- Using an OpenAI embedding model
 
-```kotlin
-dependencies {
-    implementation("ai.jetbrains.code.embeddings:code-embeddings-base:VERSION")
-    implementation("ai.jetbrains.code.embeddings:code-embeddings-local:VERSION")
-}
-```
+### Local embeddings
 
-### Basic usage
-
-To use the embeddings functionality, you need to have Ollama installed and running on your system.
+To use the embedding functionality with a local model, you need to have Ollama installed and running on your system.
 For installation and running instructions, refer to the [official Ollama GitHub repository](https://github.com/ollama/ollama).
 
 ```kotlin
 fun main() {
-    // Initialize the Ollama embedder client
-    val baseUrl = "http://localhost:11434"
-    val model = OllamaEmbeddingModel.NOMIC_EMBED_TEXT
-    val client = OllamaEmbedderClient(baseUrl, model)
-
+    // Create an OllamaClient instance
+    val client = OllamaClient()
     // Create an embedder
-    val embedder = OllamaEmbedder(client)
-
-    try {
-        // Use the embedder
-        // ...
-    } finally {
-        // Clean up
-        client.close()
-    }
+    val embedder = LLMEmbedder(client, OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
+    // Create embeddings
+    val embedding = embedder.embed("This is the text to embed")
+    // Print embeddings to the output
+    println(embedding)
 }
 ```
 
@@ -55,179 +42,6 @@ ollama pull <ollama-model-id>
 
 Replace `<ollama-model-id>` with the Ollama identifier of the specific model. For more information about available
 models and their identifiers, see [Ollama models overview](#ollama-models-overview).
-
-## API documentation
-
-### Interface: `Embedder`
-
-The core interface for embedding operations. Implementations of this interface can convert text into 
-vector representations (embeddings) and calculate the difference between two embeddings.
-
-#### Methods
-
-`embed`
-
-```kotlin
-suspend fun embed(text: String): Vector
-```
-
-**Description:** Embeds the given text into a vector representation.
-
-**Parameters**:
-
-| Name | Type     | Description       |
-|------|----------|-------------------|
-| text | `String` | The text to embed |
-
-- **Returns**: A vector representation of the text.
-
-`diff`
-
-```kotlin
-fun diff(embedding1: Vector, embedding2: Vector): Double
-```
-**Description**: Calculates the difference between two embeddings. Lower values indicate more similar embeddings.
-
-**Parameters**:
-
-| Name       | Type     | Description                                        |
-|------------|----------|----------------------------------------------------|
-| embedding1 | `Vector` | The first embedding in the difference calculation  |
-| embedding2 | `Vector` | The second embedding in the difference calculation |
-
-- **Returns**: The measure of difference between the embeddings.
-
-### Data class: `Vector`
-
-A vector of floating-point values used for embeddings.
-
-**Properties**
-
-| Name  | Type           | Description                                       |
-|-------|----------------|---------------------------------------------------|
-| value | `List<Double>` | The floating-point values that make up the vector |
-
-#### Methods
-
-`cosineSimilarity`
-
-```kotlin
-fun cosineSimilarity(other: Vector): Double
-```
-
-**Description:** Calculates the cosine similarity between the vector and another vector. The result is a value between
--1 and 1, where 1 means the vectors are identical, 0 means they are orthogonal, and -1 means they are completely 
-opposite.
-
-**Parameters**:
-
-| Name  | Type     | Description                      |
-|-------|----------|----------------------------------|
-| other | `Vector` | The other vector to compare with |
-
-- **Returns**: The cosine similarity between the two vectors.
-
-**Exceptions**: `IllegalArgumentException` if the vectors have different dimensions.
-
-`euclideanDistance`
-
-```kotlin
-fun euclideanDistance(other: Vector): Double
-```
-
-**Description:** Calculates the Euclidean distance between this vector and another vector. The result is a non-negative value, where 0 means the vectors are identical.
-
-**Parameters**:
-
-| Name  | Type     | Description                      |
-|-------|----------|----------------------------------|
-| other | `Vector` | The other vector to compare with |
-
-- **Returns**: The Euclidean distance between the two vectors.
-
-### Class: `OllamaEmbedderClient`
-
-The client for interacting with the Ollama API.
-
-**Properties**:
-
-| Name       | Type                   | Description                             |
-|------------|------------------------|-----------------------------------------|
-| baseUrl    | `String`               | The base URL of the Ollama API          |
-| modelId    | `OllamaEmbeddingModel` | The ID of the model to use              |
-| httpClient | `HttpClient`           | The HTTP client to use for API requests |
-
-#### Methods
-
-`embed`
-
-```kotlin
-suspend fun embed(text: String): Vector
-```
-
-**Description:** Embeds the given text into a vector representation using an Ollama embedding model.
-
-**Parameters**:
-
-| Name | Type     | Description       |
-|------|----------|-------------------|
-| text | `String` | The text to embed |
-
-- **Returns**: A vector representation of the text.
-
-`close`
-
-```kotlin
-fun close()
-```
-
-**Description:** Closes the HTTP client.
-
-### Class: `OllamaEmbedder`
-
-Implementation of the `Embedder` interface hat uses Ollama models for embedding text.
-
-#### Properties
-
-| Name   | Type                   | Description                                       |
-|--------|------------------------|---------------------------------------------------|
-| client | `OllamaEmbedderClient` | The Ollama model client to use for embedding text |
-
-
-#### Methods
-
-`embed`
-
-```kotlin
-override suspend fun embed(text: String): Vector
-```
-
-**Description:** Embeds the given text into a vector representation using an Ollama embedding model.
-
-**Parameters**:
-
-| Name | Type     | Description       |
-|------|----------|-------------------|
-| text | `String` | The text to embed |
-
-- **Returns**: A vector representation of the text.
-
-`diff`
-
-```kotlin
-override fun diff(embedding1: Vector, embedding2: Vector): Double
-```
-**Description**: Calculates the difference between two embeddings using cosine distance. Cosine distance is defined as 
-1 - cosine similarity. The result is a value between 0 and 1, where 0 means the embeddings are identical.
-
-**Parameters**:
-
-| Name       | Type     | Description                                        |
-|------------|----------|----------------------------------------------------|
-| embedding1 | `Vector` | The first embedding in the difference calculation  |
-| embedding2 | `Vector` | The second embedding in the difference calculation |
-
-- **Returns**: The cosine distance between the embeddings.
 
 ## Ollama models overview
 
@@ -244,7 +58,7 @@ The following table provides an overview of the available Ollama embedding model
 For more information about these models, see Ollama's [Embedding Models](https://ollama.com/blog/embedding-models)
 blog post.
 
-## Choosing a model
+### Choosing a model
 
 Here are some general tips on which Ollama embedding model to select depending on your requirements:
 
@@ -253,6 +67,26 @@ Here are some general tips on which Ollama embedding model to select depending o
 - For maximum quality (at the cost of performance), use `BGE_LARGE`.
 - For maximum efficiency (at the cost of some quality), use `ALL_MINILM`.
 - For high-dimensional embeddings, use `MXBAI_EMBED_LARGE`.
+
+## OpenAI embeddings
+
+To create embeddings using an OpenAI embedding model, use the `embed` method of an `OpenAILLMClient` instance as shown
+in the example below.
+
+```kotlin
+fun main() {
+    // Get the OpenAI API token from the OPENAI_KEY environment variable
+    val token = System.getenv("OPENAI_KEY") ?: error("Environment variable OPENAI_KEY is not set")
+    // Create an OpenAILLMClient instance
+    val client = OpenAILLMClient(token)
+    // Create an embedder
+    val embedder = LLMEmbedder(client, OpenAIModels.Embeddings.TextEmbeddingAda3Small)
+    // Create embeddings
+    val embedding = embedder.embed("This is the text to embed")
+    // Print embeddings to the output
+    println(embedding)
+}
+```
 
 ## Examples
 
@@ -353,3 +187,11 @@ suspend fun compareCodeToCode(embedder: Embedder) { // Embedder type
     }
 }
 ```
+
+## API documentation
+
+For a complete API reference related to embeddings, see the reference documentation for the following packages:
+
+- [ai.jetbrains.embeddings.base](#): Provides core interfaces and data structures for representing and comparing text 
+and code embeddings.
+- [ai.jetbrains.embeddings.local](#): Includes implementations for working with local embedding models.
