@@ -34,7 +34,7 @@ fun main() = runBlocking {
     val apiToken = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleChatAgent(
-        apiToken = apiToken,
+        executor = simpleOpenAIExecutor(apiToken),
         systemPrompt = "You are a helpful assistant. Answer user questions concisely."
     )
     agent.run("Hello, how can you help me?")
@@ -55,7 +55,7 @@ fun main() = runBlocking {
     val apiToken = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleSingleRunAgent(
-        apiToken = apiToken,
+        executor = simpleOpenAIExecutor(apiToken),
         systemPrompt = "You are a code assistant. Provide concise code examples."
     )
 
@@ -85,7 +85,7 @@ fun main() = runBlocking {
     }
 
     val agent = simpleChatAgent(
-        apiToken = apiToken,
+        executor = simpleOpenAIExecutor(apiToken),
         toolRegistry = toolRegistry,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely."
     )

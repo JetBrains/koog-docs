@@ -113,7 +113,7 @@ fun main() = runBlocking {
   val apiToken = System.getenv("YOUR_API_TOKEN")
 
   val agent = simpleChatAgent(
-    apiToken = apiToken,
+    executor = simpleOpenAIExecutor(apiToken),
     systemPrompt = "You are a helpful assistant. Answer user questions concisely."
   )
   agent.run("Hello, how can you help me?")
