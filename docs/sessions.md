@@ -19,16 +19,16 @@ An LLM session represents a context for interacting with a language model. It en
 - Methods for updating the conversation history
 - Methods for executing tools
 
-Sessions are managed by the `LocalAgentLLMContext` class, which provides methods for creating read and write sessions.
+Sessions are managed by the `AIAgentLLMContext` class, which provides methods for creating read and write sessions.
 
 ### Session types
 
-The Kotlin Agentic Framework provides two types of sessions:
+The Koog framework provides two types of sessions:
 
-1. **Write Sessions** (`LocalAgentLLMWriteSession`): Allow modifying the prompt and tools, making LLM requests, and
+1. **Write Sessions** (`AIAgentLLMWriteSession`): Allow modifying the prompt and tools, making LLM requests, and
    running tools. Changes made in a write session are persisted back to the LLM context.
 
-2. **Read Sessions** (`LocalAgentLLMReadSession`): Provide read-only access to the prompt and tools. They are useful for
+2. **Read Sessions** (`AIAgentLLMReadSession`): Provide read-only access to the prompt and tools. They are useful for
    inspecting the current state without making changes.
 
 The key difference is that write sessions can modify the conversation history, while read sessions cannot.
@@ -47,7 +47,7 @@ Sessions implement the `AutoCloseable` interface, ensuring they are properly cle
 
 ### Creating sessions
 
-Sessions are created using extension functions on the `LocalAgentLLMContext` class:
+Sessions are created using extension functions on the `AIAgentLLMContext` class:
 
 ```kotlin
 // Creating a write session
@@ -105,12 +105,12 @@ llm.writeSession {
 
 The most common methods for making LLM requests are:
 
-1. `requestLLM()`: Makes a request to the LLM with the current prompt and tools, returning a single response.
+1. `requestLLM()`: makes a request to the LLM with the current prompt and tools, returning a single response.
 
-2. `requestLLMWithoutTools()`: Makes a request to the LLM with the current prompt but without any tools, returning a
+2. `requestLLMWithoutTools()`: makes a request to the LLM with the current prompt but without any tools, returning a
    single response.
 
-3. `requestLLMMultiple()`: Makes a request to the LLM with the current prompt and tools, returning multiple
+3. `requestLLMMultiple()`: makes a request to the LLM with the current prompt and tools, returning multiple
    responses.
 
 Example:
@@ -160,15 +160,15 @@ llm.writeSession {
 In practice, you typically do not need to check the response type manually, as the agent graph handles this routing
 automatically.
 
-### Structured and Streaming Requests
+### Structured and streaming requests
 
 For more advanced use cases, the platform provides methods for structured and streaming requests:
 
-1. `requestLLMStructured()`: Requests the LLM to provide a response in a specific structured format.
+1. `requestLLMStructured()`: requests the LLM to provide a response in a specific structured format.
 
-2. `requestLLMStructuredOneShot()`: Similar to `requestLLMStructured()` but without retries or corrections.
+2. `requestLLMStructuredOneShot()`: similar to `requestLLMStructured()` but without retries or corrections.
 
-3. `requestLLMStreaming()`: Makes a streaming request to the LLM, returning a flow of response chunks.
+3. `requestLLMStreaming()`: makes a streaming request to the LLM, returning a flow of response chunks.
 
 Example:
 
@@ -264,13 +264,13 @@ For more information about history compression and compression strategies, see [
 
 Write sessions provide several methods for calling tools:
 
-1. `callTool(tool, args)`: Calls a tool by reference.
+1. `callTool(tool, args)`: calls a tool by reference.
 
-2. `callTool(toolName, args)`: Calls a tool by name.
+2. `callTool(toolName, args)`: calls a tool by name.
 
-3. `callTool(toolClass, args)`: Calls a tool by class.
+3. `callTool(toolClass, args)`: calls a tool by class.
 
-4. `callToolRaw(toolName, args)`: Calls a tool by name and returns the raw string result.
+4. `callToolRaw(toolName, args)`: calls a tool by name and returns the raw string result.
 
 Example:
 
@@ -324,8 +324,7 @@ When working with LLM sessions, follow these best practices:
 
 4. **Manage history size**: For long-running conversations, use history compression to reduce token usage.
 
-5. **Prefer high-Level abstractions**: When possible, use the node-based API. For example, `nodeLLMSendStageInput` or
-   `nodeLLMRequest` instead of directly working with sessions.
+5. **Prefer high-Level abstractions**: When possible, use the node-based API. For example, `nodeLLMRequest` instead of directly working with sessions.
 
 6. **Be mindful of thread safety**: Remember that write sessions block other sessions, so keep write operations as short
    as possible.
@@ -340,8 +339,8 @@ When working with LLM sessions, follow these best practices:
 
 ### Session already closed
 
-If you see an error like "Cannot use session after it was closed", you're trying to use a session after its lambda block
-has completed. Make sure all session operations are performed within the session block.
+If you see an error like "Cannot use session after it was closed", you are trying to use a session after its lambda 
+block has completed. Make sure all session operations are performed within the session block.
 
 ### History too large
 
@@ -361,4 +360,7 @@ If you see errors about tools not being found, check that:
 
 - The tool is correctly registered in the tool registry.
 - You are using the correct tool name or class.
-- The stage has access to the tool.
+
+## API documentation
+
+For more information, see the full [AIAgentLLMContext](#) reference.
