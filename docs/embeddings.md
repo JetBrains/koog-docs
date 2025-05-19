@@ -58,7 +58,7 @@ The following table provides an overview of the available Ollama embedding model
 For more information about these models, see Ollama's [Embedding Models](https://ollama.com/blog/embedding-models)
 blog post.
 
-## Choosing a model
+### Choosing a model
 
 Here are some general tips on which Ollama embedding model to select depending on your requirements:
 
@@ -68,7 +68,7 @@ Here are some general tips on which Ollama embedding model to select depending o
 - For maximum efficiency (at the cost of some quality), use `ALL_MINILM`.
 - For high-dimensional embeddings, use `MXBAI_EMBED_LARGE`.
 
-### OpenAI embeddings
+## OpenAI embeddings
 
 To create embeddings using an OpenAI embedding model, use the `embed` method of an `OpenAILLMClient` instance as shown
 in the example below.
