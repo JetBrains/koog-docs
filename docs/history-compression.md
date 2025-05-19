@@ -68,6 +68,22 @@ val strategy = strategy("execute-with-history-compression") {
 private suspend fun AIAgentContextBase.historyIsTooLong(): Boolean = llm.readSession { prompt.messages.size > 100 }
 ```
 
+Or you can decide to compress the history between the logical steps (subgraphs) of your strategy:
+
+```kotlin
+val strategy = strategy("execute-with-history-compression") {
+    val collectInformation by subgraph<String, String> {
+        // some steps to collect the information
+    }
+    val compressHistory by nodeLLMCompressHistory<String>()
+    val makeTheDecision by subgraph<String, Decision> {
+        // some steps to make the decision based on the current compressed history + the collected information
+    }
+    
+    nodeStart then collectInformation then compressHistory then makeTheDecision
+}
+```
+
 ### 2. In a Custom Node
 
 If you are implementing your custom node, use:
