@@ -184,50 +184,6 @@ For a complete API reference related to the AgentMemory feature, see the referen
   for storing and retrieving knowledge in a structured, context-aware manner and its implementations.
 - [ai.grazie.code.agents.local.memory.storage](#): Provides the core interface and specific implementations for file operations across different platforms and storage backends.
 
-<!---
-### `AgentMemory`
-
-For a complete API reference related to the AgentMemory feature, follow the links below:
-
-* Class: [AgentMemory](#)
-  * Types:
-    * [Config](#)
-    * [Feature](#)
-  * Methods: 
-    * [saveFactsFromHistory](#)
-    * [loadFactsToAgent](#)
-    * [loadAllFactsToAgent](#)
-  * Extension functions:
-    * [memory](#)
-    * [withMemory](#)
-
-### `AgentMemory` nodes
-
-`nodeSaveToMemoryAutoDetectFacts`
-
-Creates a node that automatically detects and saves facts from the conversation history.
-
-```kotlin
-fun <I> nodeSaveToMemoryAutoDetectFacts(
-    subjects: List<MemorySubject> = listOf(MemorySubject.USER)
-): NodeBuilder<I, Unit>
-```
-
-| Parameter | Type                | Default | Description                          |
-|-----------|---------------------|---------|--------------------------------------|
-| subjects  | List<MemorySubject> | `USER`  | List of subjects to detect facts for |
-
-## Internal helpers and utilities
-
-`retrieveFactsFromHistory`
-
-A helper function that retrieves facts about a concept from the LLM chat history.
-
-```kotlin
-val facts = retrieveFactsFromHistory(concept, preserveQuestionsInLLMChat)
-```
--->
-
 ## FAQ and troubleshooting
 
 ### How do I implement a custom memory provider?

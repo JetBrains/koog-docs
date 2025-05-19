@@ -12,7 +12,6 @@ Before diving into implementation details, it is important to understand the arc
 Framework:
 
 - **AIAgentNode**: the abstract base class for all nodes. It defines the core structure and behavior of a node.
-<!--- - **SimpleLocalAgentNode**: a concrete implementation of `LocalAgentNode` that executes a provided function. -->
 - **AIAgentNodeDelegate**: a delegate class that handles lazy initialization of nodes.
 - **AIAgentSubgraphBuilderBase**: provides the `node` function for creating nodes in a DSL-like manner.
 
@@ -87,8 +86,7 @@ fun AIAgentSubgraphBuilderBase<*, *>.stringToIntNode(
 ```
 
 !!! note
-    The input and output types determine how the node can be connected to other nodes in the workflow. Nodes can only be
-    connected if the output type of the source node is compatible with the input type of the target node.
+    The input and output types determine how the node can be connected to other nodes in the workflow. Nodes can only be connected if the output type of the source node is compatible with the input type of the target node.
 
 ## Best practices
 
