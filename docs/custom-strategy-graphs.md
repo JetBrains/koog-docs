@@ -121,168 +121,11 @@ val myStrategy = simpleStrategy("my-strategy") {
     edge(sendToolResult forwardTo executeToolCall onToolCall { true })
 }
 ```
-
-
-## Common strategy patterns
-
-### Chat strategy
-
-A chat strategy is designed for interactive conversations with the user. It typically involves sending user input to the
-LLM, executing tools as needed, and returning the LLM's response to the user.
-
-Here's an example of a chat strategy:
-
-```kotlin
-fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-
-    val giveFeedbackToCallTools by node<String, Message.Response> { input ->
-        llm.writeSession {
-            updatePrompt {
-                user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
-            }
-
-            requestLLM()
-        }
-    }
-
-    edge(nodeStart forwardTo sendInput)
-
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo giveFeedbackToCallTools onAssistantMessage { true })
-    edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
-    edge(giveFeedbackToCallTools forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeExecuteTool forwardTo nodeSendToolResult)
-    edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeExecuteTool forwardTo nodeFinish onToolCall { tc -> tc.tool == "__exit__" } transformed { "Chat finished" })
-}
-```
-
-### Single run strategy
-
-A single run (or one-shot) strategy is designed for non-interactive use cases where the agent processes input once and
-returns a result. It's simpler than a chat strategy because it doesn't need to handle ongoing conversations.
-
-Here's an example of a single run strategy:
-
-```kotlin
-fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-
-    edge(nodeStart forwardTo sendInput)
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeExecuteTool forwardTo nodeSendToolResult)
-    edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
-}
-```
-
-### Tool-based strategy
-
-A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations. It typically
-involves executing tools based on the LLM's decisions and processing the results.
-
-Here's an example of a tool-based strategy:
-
-```kotlin
-fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry, stageName: String): LocalAgentStrategy {
-    return strategy(name) {
-        stage(
-            name = stageName,
-            tools = toolRegistry.stagesToolDescriptors.getValue(stageName)
-        ) {
-            val nodeSendInput by nodeLLMSendStageInput()
-            val nodeExecuteTool by nodeExecuteTool()
-            val nodeSendToolResult by nodeLLMSendToolResult()
-
-            // Define the flow of the agent
-            edge(nodeStart forwardTo nodeSendInput)
-
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendInput forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
-
-            // If the LLM calls a tool, execute it
-            edge(
-                (nodeSendInput forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
-
-            // Send the tool result back to the LLM
-            edge(nodeExecuteTool forwardTo nodeSendToolResult)
-
-            // If the LLM calls another tool, execute it
-            edge(
-                (nodeSendToolResult forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
-
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendToolResult forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
-        }
-    }
-}
-```
-
-### Streaming data strategy
-
-A streaming data strategy is designed for processing streaming data from the LLM. It typically involves requesting
-streaming data, processing it as it arrives, and potentially calling tools with the processed data.
-
-Here's an example of a streaming data strategy:
-
-```kotlin
-fun streamingDataStrategy(): LocalAgentStrategy = simpleStrategy("streaming-data") {
-    val processStreamingData by node<Unit, String> { _ ->
-        val books = mutableListOf<Book>()
-        val mdDefinition = markdownBookDefinition()
-
-        llm.writeSession {
-            val markdownStream = requestLLMStreaming(mdDefinition)
-            parseMarkdownStreamToBooks(markdownStream).collect { book ->
-                books.add(book)
-                println("Parsed Book: ${book.bookName} by ${book.author}")
-            }
-        }
-
-        formatOutput(books)
-    }
-
-    edge(nodeStart forwardTo processStreamingData)
-    edge(processStreamingData forwardTo nodeFinish)
-}
-```
-
 ## Advanced strategy techniques
 
 ### History compression
 
-For long-running conversations, the history can grow large and consume a lot of tokens. You can use the
-`nodeLLMCompressHistory` node to compress the history:
-
-```kotlin
-val compressHistory by nodeLLMCompressHistory<Message.Tool.Result>(
-    strategy = HistoryCompressionStrategy.FromLastNMessages(10),
-    preserveMemory = true
-)
-
-edge(
-    (nodeExecuteTool forwardTo compressHistory)
-            onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
-)
-edge(compressHistory forwardTo nodeSendToolResult)
-```
+For long-running conversations, the history can grow large and consume a lot of tokens. To learn how to compress the history, see [History compression](history-compression.md).
 
 ### Parallel tool execution
 
@@ -301,6 +144,8 @@ You can also use the `toParallelToolCallsRaw` extension function for streaming d
 ```kotlin
 parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
 ```
+
+To learn more, see [Tools](tools.md). 
 
 ### Conditional branching
 
@@ -329,96 +174,91 @@ edge(
 
 ## Best practices
 
-When creating custom strategy graphs, follow these best practices:
+When you create custom strategy graphs, follow these best practices:
 
-1. **Keep it simple**: Start with a simple graph and add complexity as needed.
-2. **Use descriptive names**: Give your nodes and edges descriptive names to make the graph easier to understand.
-3. **Handle edge cases**: Make sure your graph handles all possible paths and edge cases.
-4. **Test thoroughly**: Test your graph with various inputs to ensure it behaves as expected.
-5. **Document your graph**: Document the purpose and behavior of your graph for future reference.
-6. **Reuse common patterns**: Use predefined strategies or common patterns as a starting point.
-7. **Consider performance**: For long-running conversations, use history compression to reduce token usage.
-8. **Use stages appropriately**: Use stages to organize your graph and manage tool access.
+- Keep it simple. Start with a simple graph and add complexity as needed.
+- Give your nodes and edges descriptive names to make the graph easier to understand.
+- Handle all possible paths and edge cases.
+- Test your graph with various inputs to ensure it behaves as expected.
+- Document the purpose and behavior of your graph for future reference.
+- Use predefined strategies or common patterns as a starting point.
+- For long-running conversations, use history compression to reduce token usage.
+- Use subgraphs to organize your graph and manage tool access.
 
-## Usage Examples
+## Usage examples
 
 ### Tone analysis strategy
 
 The tone analysis strategy is a good example of a tool-based strategy that includes history compression:
 
 ```kotlin
-fun toneStrategy(name: String, toolRegistry: ToolRegistry, toneStageName: String): LocalAgentStrategy {
+fun toneStrategy(name: String, toolRegistry: ToolRegistry): AIAgentStrategy {
     return strategy(name) {
-        stage(
-            name = toneStageName,
-            tools = toolRegistry.stagesToolDescriptors.getValue(toneStageName)
-        ) {
-            val nodeSendInput by nodeLLMSendStageInput()
-            val nodeExecuteTool by nodeExecuteTool()
-            val nodeSendToolResult by nodeLLMSendToolResult()
-            val nodeCompressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
+        val nodeSendInput by nodeLLMRequest()
+        val nodeExecuteTool by nodeExecuteTool()
+        val nodeSendToolResult by nodeLLMSendToolResult()
+        val nodeCompressHistory by nodeLLMCompressHistory<Message.Tool.Result>()
 
-            // Define the flow of the agent
-            edge(nodeStart forwardTo nodeSendInput)
+        // Define the flow of the agent
+        edge(nodeStart forwardTo nodeSendInput)
 
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendInput forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendInput forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
 
-            // If the LLM calls a tool, execute it
-            edge(
-                (nodeSendInput forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
+        // If the LLM calls a tool, execute it
+        edge(
+            (nodeSendInput forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
 
-            // If the history gets too large, compress it
-            edge(
-                (nodeExecuteTool forwardTo nodeCompressHistory)
-                        onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
-            )
+        // If the history gets too large, compress it
+        edge(
+            (nodeExecuteTool forwardTo nodeCompressHistory)
+                    onCondition { _ -> llm.readSession { prompt.messages.size > 100 } }
+        )
 
-            edge(nodeCompressHistory forwardTo nodeSendToolResult)
+        edge(nodeCompressHistory forwardTo nodeSendToolResult)
 
-            // Otherwise, send the tool result directly
-            edge(
-                (nodeExecuteTool forwardTo nodeSendToolResult)
-                        onCondition { _ -> llm.readSession { prompt.messages.size <= 100 } }
-            )
+        // Otherwise, send the tool result directly
+        edge(
+            (nodeExecuteTool forwardTo nodeSendToolResult)
+                    onCondition { _ -> llm.readSession { prompt.messages.size <= 100 } }
+        )
 
-            // If the LLM calls another tool, execute it
-            edge(
-                (nodeSendToolResult forwardTo nodeExecuteTool)
-                        onToolCall { true }
-            )
+        // If the LLM calls another tool, execute it
+        edge(
+            (nodeSendToolResult forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
 
-            // If the LLM responds with a message, finish
-            edge(
-                (nodeSendToolResult forwardTo nodeFinish)
-                        onAssistantMessage { true }
-            )
-        }
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendToolResult forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
     }
 }
 ```
 
 This strategy does the following:
 
-1. Sends the input to the LLM
-2. If the LLM responds with a message, finishes
-3. If the LLM calls a tool, executes it
-4. If the history is too large (more than 100 messages), compresses it before sending the tool result
-5. Otherwise, sends the tool result directly
-6. If the LLM calls another tool, executes it
-7. If the LLM responds with a message, finishes
+1. Sends the input to the LLM.
+2. If the LLM responds with a message, the strategy finishes the process.
+3. If the LLM calls a tool, the strategy runs the tool.
+4. If the history is too large (more than 100 messages), the strategy compresses it before sending the tool result.
+5. Otherwise, the strategy sends the tool result directly.
+6. If the LLM calls another tool, the strategy runs it.
+7. If the LLM responds with a message, the strategy finishes the process.
 
 ### Markdown streaming strategy
 
-The Markdown Streaming Strategy is an example of a strategy that processes streaming data:
+The Markdown streaming strategy is an example of a strategy that processes streaming data:
 
 ```kotlin
-val agentStrategy = simpleStrategy("library-assistant") {
+val agentStrategy = strategy("library-assistant") {
     val getMdOutput by node<Unit, String> { _ ->
         val books = mutableListOf<Book>()
         val mdDefinition = markdownBookDefinition()
@@ -441,52 +281,50 @@ val agentStrategy = simpleStrategy("library-assistant") {
 
 This strategy:
 
-1. Defines a custom node that requests streaming data from the LLM
-2. Parses the streaming data into Book objects as it arrives
-3. Formats the output and returns it
-4. The flow is simple: start -> getMdOutput -> finish
+1. Defines a custom node that requests streaming data from the LLM.
+2. Parses the streaming data into Book objects.
+3. Formats the output and returns it.
 
 ## Troubleshooting
 
 When creating custom strategy graphs, you might encounter some common issues. Here are some troubleshooting tips:
 
-### Graph fails to reach finish node
+### Graph fails to reach the finish node
 
-If your graph doesn't reach the finish node, check:
+If your graph does not reach the finish node, check the following:
 
 - All paths from the start node eventually lead to the finish node.
 - Your conditions are not too restrictive, preventing edges from being followed.
-- There are no cycles in the graph that don't have an exit condition.
+- There are no cycles in the graph that do not have an exit condition.
 
 ### Tool calls are not running
 
-If tool calls are not running, check:
+If tool calls are not running, check the following:
 
 - The tools are properly registered in the tool registry.
-- The stage has access to the tools.
 - The edge from the LLM node to the tool execution node has the correct condition (`onToolCall { true }`).
 
 ### History gets too large
 
-If your history gets too large and consumes too many tokens, consider:
+If your history gets too large and consumes too many tokens, consider the following:
 
-- Adding a history compression node.
-- Using a condition to check the size of the history and compress it when it gets too large.
-- Using a more aggressive compression strategy (e.g., `FromLastNMessages` with a smaller N).
+- Add a history compression node.
+- Use a condition to check the size of the history and compress it when it gets too large.
+- Use a more aggressive compression strategy (e.g., `FromLastNMessages` with a smaller N value).
 
 ### Graph behaves unexpectedly
 
-If your graph takes unexpected branches, check that:
+If your graph takes unexpected branches, check the following:
 
 - Your conditions are correctly defined.
 - The conditions are evaluated in the expected order (edges are checked in the order they are defined).
-- You're not accidentally overriding conditions with more general ones.
+- You are not accidentally overriding conditions with more general ones.
 
 ### Performance issues occur
 
-If your graph has performance issues, consider:
+If your graph has performance issues, consider the following:
 
-- Simplifying the graph by removing unnecessary nodes and edges.
-- Using parallel tool execution for independent operations.
-- Compressing history more aggressively.
-- Using more efficient nodes and operations.
+- Simplify the graph by removing unnecessary nodes and edges.
+- Use parallel tool execution for independent operations.
+- Compress history.
+- Use more efficient nodes and operations.

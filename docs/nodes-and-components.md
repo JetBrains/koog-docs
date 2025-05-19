@@ -51,42 +51,6 @@ val setupContext by nodeUpdatePrompt("setupContext") {
 }
 ```
 
-### nodeLLMSendStageInput
-
-An LLM node that updates the prompt with the user stage input and triggers an LLM request within a writing session. This
-node is commonly used as the first step in an agent workflow to process the initial user input. For details, see API reference.<!--[TODO] Link to API reference-->
-
-You can use this node for the following purposes:
-
-- Process an initial user query in a conversation.
-- Start a new interaction with the LLM.
-- Handle a user input at the beginning of a workflow.
-
-Here is an example:
-
-```kotlin
-val sendInput by nodeLLMSendStageInput("sendInput")
-edge(nodeStart forwardTo sendInput)
-```
-
-### nodeLLMSendStageInputMultiple
-
-An LLM node that sends the current stage input to the LLM and gets multiple responses. This is useful when you need
-to generate multiple alternative responses to the same input. For details, see API reference.<!--[TODO] Link to API reference-->
-
-You can use this node for the following purposes:
-
-- Generate multiple alternative responses to a user query.
-- Create diverse suggestions or solutions.
-- Implement a response ranking or selection mechanism.
-
-Here is an example:
-
-```kotlin
-val generateAlternatives by nodeLLMSendStageInputMultiple("generateAlternatives")
-edge(nodeStart forwardTo generateAlternatives)
-```
-
 ### nodeLLMRequest
 
 An LLM node that processes user messages and returns a response from the LLM. The node configuration determines whether
@@ -225,16 +189,17 @@ val processMultipleToolResults by nodeLLMSendMultipleToolResults("processMultipl
 edge(executeMultipleTools forwardTo processMultipleToolResults)
 ```
 
-## Predefined components
+## Predefined strategies and common strategy patterns
 
 The framework provides predefined strategies that combine various nodes.
 The nodes are connected using edges to define the flow of operations, with conditions that specify when to follow each edge.
 
-You can integrate these strategies into your agent workflows.
+You can integrate these strategies into your agent workflows if needed.
 
 ### Chat agent strategy
 
-This predefined strategy runs a chat interaction process. It lets an agent interact with a user in a chat manner.
+A chat strategy runs interactive conversations with the user. It typically involves sending user input to the
+LLM, executing tools as needed, and returning the LLM response to the user.
 
 ```kotlin
 public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
@@ -268,7 +233,9 @@ public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
 
 ### Single run strategy
 
-This predefined strategy handles an agent workflow in a single iteration. 
+A single run strategy is designed for non-interactive use cases where the agent processes input once and
+returns a result. 
+
 You can use this strategy when you need to run straightforward processes that do not require complex logic.
 
 ```kotlin
@@ -285,4 +252,78 @@ public fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
     edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
 }
 ```
+
+### Tool-based strategy
+
+A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations.
+It typically executes tools based on the LLM decisions and processes the results.
+
+```kotlin
+fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry): AIAgentStrategy {
+    return strategy(name) {
+        val nodeSendInput by nodeLLMRequest()
+        val nodeExecuteTool by nodeExecuteTool()
+        val nodeSendToolResult by nodeLLMSendToolResult()
+
+        // Define the flow of the agent
+        edge(nodeStart forwardTo nodeSendInput)
+
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendInput forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
+
+        // If the LLM calls a tool, execute it
+        edge(
+            (nodeSendInput forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
+
+        // Send the tool result back to the LLM
+        edge(nodeExecuteTool forwardTo nodeSendToolResult)
+
+        // If the LLM calls another tool, execute it
+        edge(
+            (nodeSendToolResult forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
+
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendToolResult forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
+    }
+}
+```
+
+### Streaming data strategy
+
+A streaming data strategy is designed for processing streaming data from the LLM. It typically requests
+streaming data, processes it, and potentially calls tools with the processed data.
+
+
+```kotlin
+fun streamingDataStrategy(): AIAgentStrategy = strategy("streaming-data") {
+    val processStreamingData by node<Unit, String> { _ ->
+        val books = mutableListOf<Book>()
+        val mdDefinition = markdownBookDefinition()
+
+        llm.writeSession {
+            val markdownStream = requestLLMStreaming(mdDefinition)
+            parseMarkdownStreamToBooks(markdownStream).collect { book ->
+                books.add(book)
+                println("Parsed Book: ${book.bookName} by ${book.author}")
+            }
+        }
+
+        formatOutput(books)
+    }
+
+    edge(nodeStart forwardTo processStreamingData)
+    edge(processStreamingData forwardTo nodeFinish)
+}
+```
+
 

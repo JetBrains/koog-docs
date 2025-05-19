@@ -30,11 +30,11 @@ Each tool consists of the following components:
 Here is an example of the custom tool implementation:
 
 <!--- INCLUDE
-import ai.grazie.code.agents.core.tools.SimpleTool
-import ai.grazie.code.agents.core.tools.Tool
-import ai.grazie.code.agents.core.tools.ToolDescriptor
-import ai.grazie.code.agents.core.tools.ToolParameterDescriptor
-import ai.grazie.code.agents.core.tools.ToolParameterType
+import ai.koog.agents.core.tools.SimpleTool
+import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolDescriptor
+import ai.koog.agents.core.tools.ToolParameterDescriptor
+import ai.koog.agents.core.tools.ToolParameterType
 import kotlinx.serialization.Serializable
 -->
 ```kotlin
@@ -118,7 +118,7 @@ For an agent to use a tool, you need to pass a tool registry containing the tool
 ```kotlin
 // Agent initialization
 val agent = simpleChatAgent(
-    apiToken = apiToken,
+    executor = simpleOpenAIExecutor(System.getenv("OPEN_AI_API_KEY")),
     systemPrompt = "You are a helpful assistant with strong mathematical skills.",
     // Pass your tool registry to the agent
     toolRegistry = toolRegistry

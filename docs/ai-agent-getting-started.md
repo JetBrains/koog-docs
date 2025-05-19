@@ -64,23 +64,14 @@ edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed
 
 Unlike agents created with the Simple API, agents built using the AI Agent require explicit configuration:
 
-```kotlin
-val agent = AIAgent(
-    promptExecutor = promptExecutor,
-    strategy = agentStrategy,
-    agentConfig = agentConfig,
-    toolRegistry = toolRegistry,
-    installFeatures = installFeatures
-)
-```
-
 To learn more about configuration options, see API reference.<!--[TODO] Link to API reference-->
 
 ### 1. Provide a prompt executor
 
 Prompt executors manage and run prompts.
-You can choose a prompt executor based on the LLM provider you plan to use or create a prompt executor that works with multiple LLM providers.
-To check all available prompt executors, see API reference.<!--[TODO] Link to API reference-->
+You can choose a prompt executor based on the LLM provider you plan to use.
+Also, you can create a custom prompt executor using one of the available LLM clients.
+To check all available LLM clients and prompt executors, see API reference.<!--[TODO] Link to API reference-->
 
 For example, to provide the OpenAI prompt executor, you need to call the `simpleOpenAIExecutor` function and provide it with the API key required for authentication with the OpenAI service:
 
@@ -269,7 +260,7 @@ To learn more about feature configuration, see the dedicated page.
 
 ### 6. Run the agent
 
-Create the agent with the configuration option created on the previous stages and run it with an input:
+Create the agent with the configuration option created on the previous stages and run it with a provided input:
 
 ```kotlin
 val agent = AIAgent(

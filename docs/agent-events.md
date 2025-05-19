@@ -12,8 +12,7 @@ Agent events are actions or interactions that occur as part of an agent workflow
 
 You can monitor and respond to specific events during the agent workflow by using event handlers for logging, testing, debugging, and extending agent behavior.
 
-An event handler is a feature that lets you hook into various agent events.
-It serves as an event delegation mechanism that:
+The EventHandler feature lets you hook into various agent events. It serves as an event delegation mechanism that:
 
 - Manages the lifecycle of AI agent operations.
 - Provides hooks for monitoring and responding to different stages of the workflow.
@@ -33,7 +32,7 @@ The EventHandler entity consists of five main handler types:
 
 ### Installation and configuration
 
-The event handler feature integrates with the agent workflow through the `EventHandler` class,
+The EventHandler feature integrates with the agent workflow through the `EventHandler` class,
 which provides a way to register callbacks for different agent events, and can be installed as a feature in the agent configuration.
 
 To install the feature and configure event handlers for the agent, do the following:

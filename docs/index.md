@@ -45,14 +45,13 @@ Before you run the example, assign a corresponding API key as the `YOUR_API_TOKE
 
 ```kotlin
 fun main() = runBlocking {
-  val apiToken = System.getenv("YOUR_API_TOKEN")
+    val apiToken = System.getenv("YOUR_API_TOKEN")
 
-  val agent = simpleChatAgent(
-    apiToken = apiToken,
-    cs = this,
-    systemPrompt = "You are a helpful assistant. Answer user questions concisely."
-  )
-  agent.run("Hello, how can you help me?")
+    val agent = simpleChatAgent(
+        executor = simpleOpenAIExecutor(apiToken),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+    )
+    agent.run("Hello, how can you help me?")
 }
 ```
 
