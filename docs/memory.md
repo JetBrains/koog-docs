@@ -2,7 +2,7 @@
 
 ## Feature overview
 
-The Memory feature is a component of the Kotlin Agentic Framework that lets AI agents store, retrieve, and use
+The Memory feature is a component of Koog framework that lets AI agents store, retrieve, and use
 information across conversations.
 
 ### Purpose

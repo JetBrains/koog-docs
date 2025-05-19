@@ -23,7 +23,7 @@ Sessions are managed by the `AIAgentLLMContext` class, which provides methods fo
 
 ### Session types
 
-The Kotlin Agentic Framework provides two types of sessions:
+Koog framework provides two types of sessions:
 
 1. **Write Sessions** (`AIAgentLLMWriteSession`): Allow modifying the prompt and tools, making LLM requests, and
    running tools. Changes made in a write session are persisted back to the LLM context.

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Streaming API in the Kotlin Agentic Framework lets you process structured data from Large Language Models 
+The Streaming API in Koog framework lets you process structured data from Large Language Models 
 (LLMs) as it arrives, rather than waiting for the entire response.
 This page explains how to use the Streaming API to efficiently handle structured data in Markdown format.
 

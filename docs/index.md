@@ -1,6 +1,6 @@
 # Overview
 
-The Kotlin Agentic Framework is a Kotlin-based framework designed to create and run AI agents locally without external
+Koog is a Kotlin-based framework designed to create and run AI agents locally without external
 services. It provides a pure Kotlin implementation for building intelligent agents that can interact with
 tools, handle complex workflows, and communicate with users.
 
@@ -11,7 +11,7 @@ The framework offers two main approaches:
 
 ## Key features
 
-Key features of the Kotlin Agentic Framework include:
+Key features of Koog include:
 
 - A pure Kotlin implementation that lets you create and run AI agents entirely in Kotlin without relying on external service dependencies.
 - A modular and composable feature system that lets you extend AI agent capabilities.

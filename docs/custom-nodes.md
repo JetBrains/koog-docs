@@ -1,6 +1,6 @@
 # Custom node implementation
 
-This page provides detailed instructions on how to implement your own custom nodes in the Kotlin Agentic Framework. 
+This page provides detailed instructions on how to implement your own custom nodes in Koog framework. 
 Custom nodes let you extend the functionality of agent workflows by creating reusable components that perform specific
 operations.
 

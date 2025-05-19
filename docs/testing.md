@@ -3,7 +3,7 @@
 ## Overview
 
 The Testing Feature provides a comprehensive framework for testing AI agent pipelines, and tool interactions in
-the Kotlin Agentic Framework. It enables developers to create controlled test environments with mock LLM (Large Language
+Koog framework. It enables developers to create controlled test environments with mock LLM (Large Language
 Model) executors, tool registries, and agent environments.
 
 ### Purpose
