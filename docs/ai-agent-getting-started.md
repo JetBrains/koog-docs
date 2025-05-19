@@ -1,6 +1,7 @@
 # Getting started
 
-The AI Agent is a robust AI agent implementation that offers extensive flexibility and precise control for managing complex AI workflows.
+The AI Agent is a robust AI agent implementation that lets you build AI agents in Kotlin.
+By defining custom strategies, tools, and configurations, you can create agents that handle complex workflows.
 
 ## Prerequisites
 
@@ -15,14 +16,16 @@ The AI Agent is a robust AI agent implementation that offers extensive flexibili
 To use the AI Agent functionality, you need to add the following dependencies to your project:
 
 ```
-// Please add installation instructions here
+dependencies {
+    implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
+}
 ```
 
-## Understanding Nodes and Edges
+## Nodes and edges
 
-When creating a KotlinAIAgent, you define the workflow using nodes and edges.
+When creating an agent using the AI Agent, you define a workflow using nodes and edges.
 
-Nodes represent processing steps in your agent's workflow:
+Nodes represent processing steps in your agent workflow:
 
 ```kotlin
 val processNode by node<InputType, OutputType> { input ->
@@ -32,6 +35,8 @@ val processNode by node<InputType, OutputType> { input ->
     transformedOutput
 }
 ```
+!!! tip
+    There are also pre-defined nodes that you can use in your agent strategies. To learn more, see [Predefined nodes and components](nodes-and-components.md).
 
 Edges define the connections between nodes:
 
@@ -59,245 +64,373 @@ edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed
 
 Unlike agents created with the Simple API, agents built using the AI Agent require explicit configuration:
 
+To learn more about configuration options, see API reference.<!--[TODO] Link to API reference-->
+
+### 1. Provide a prompt executor
+
+Prompt executors manage and run prompts.
+You can choose a prompt executor based on the LLM provider you plan to use.
+Also, you can create a custom prompt executor using one of the available LLM clients.
+To check all available LLM clients and prompt executors, see API reference.<!--[TODO] Link to API reference-->
+
+For example, to provide the OpenAI prompt executor, you need to call the `simpleOpenAIExecutor` function and provide it with the API key required for authentication with the OpenAI service:
+
+```kotlin
+val promptExecutor = simpleOpenAIExecutor(token)
+```
+
+To create a prompt executor that works with multiple LLM providers, do the following:
+
+1. Configure clients for the required LLM providers with the corresponding API keys. For example:
+```kotlin
+val openAIClient = OpenAILLMClient(System.getenv("OPENAI_KEY"))
+val anthropicClient = AnthropicLLMClient(System.getenv("ANTHROPIC_KEY"))
+```
+2. Pass the configured clients to the `DefaultMultiLLMPromptExecutor` class constructor to create a prompt executor with multiple LLM providers:
+```kotlin
+val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient)
+```
+
+### 2. Create a strategy
+
+A strategy defines the workflow of your agent. To create the strategy, call the `strategy` function and define nodes and edges.
+For example:
+
+```kotlin
+val agentStrategy = strategy("Simple calculator") {
+    // Define nodes for the strategy
+    val nodeSendInput by nodeLLMRequest()
+    val nodeExecuteTool by nodeExecuteTool()
+    val nodeSendToolResult by nodeLLMSendToolResult()
+
+    // Define edges between nodes
+    // Start -> Send input
+    edge(nodeStart forwardTo nodeSendInput)
+
+    // Send input -> Finish
+    edge(
+        (nodeSendInput forwardTo nodeFinish)
+                transformed { it }
+                onAssistantMessage { true }
+    )
+
+    // Send input -> Execute tool
+    edge(
+        (nodeSendInput forwardTo nodeExecuteTool)
+                onToolCall { true }
+    )
+
+    // Execute tool -> Send the tool result
+    edge(nodeExecuteTool forwardTo nodeSendToolResult)
+
+    // Send the tool result -> finish
+    edge(
+        (nodeSendToolResult forwardTo nodeFinish)
+                transformed { it }
+                onAssistantMessage { true }
+    )
+}
+```
+!!! tip
+    The `strategy` function lets you define multiple subgraphs, each containing its own set of nodes and edges.
+    This approach offers more flexibility and functionality compared to using simplified strategy builders.
+    To learn more about subgraphs, see [Subgraphs](predefined-sequential-subgraphs.md).
+
+### 3. Configure the agent
+
+Define the agent behavior with a configuration:
+
+```kotlin
+val agentConfig = AIAgentConfig.withSystemPrompt(
+    prompt = """
+        You are a simple calculator assistant.
+        You can add two numbers together using the calculator tool.
+        When the user provides input, extract the numbers they want to add.
+        The input might be in various formats like "add 5 and 7", "5 + 7", or just "5 7".
+        Extract the two numbers and use the calculator tool to add them.
+        Always respond with a clear, friendly message showing the calculation and result.
+        """.trimIndent()
+)
+```
+
+For more advanced configuration, you can specify which LLM will be used by the agent and set the maximum number of iterations the agent can perform to respond:
+
+```kotlin
+val agentConfig = AIAgentConfig(
+    prompt = Prompt.build("simple-calculator") {
+        system(
+            """
+                You are a simple calculator assistant.
+                You can add two numbers together using the calculator tool.
+                When the user provides input, extract the numbers they want to add.
+                The input might be in various formats like "add 5 and 7", "5 + 7", or just "5 7".
+                Extract the two numbers and use the calculator tool to add them.
+                Always respond with a clear, friendly message showing the calculation and result.
+                """.trimIndent()
+        )
+    },
+    model = OpenAIModels.Chat.GPT4o,
+    maxAgentIterations = 10
+)
+```
+
+### 4. Implement tools and set up a tool registry
+
+Tools let your agent perform specific tasks. To make a tool available for the agent, you need to add it to a tool registry. For example:
+
+```kotlin
+// Implement s simple calculator tool that can add two numbers
+public object CalculatorTool : Tool<CalculatorTool.Args, ToolResult>() {
+    @Serializable
+    data class Args(
+        val num1: Int,
+        val num2: Int
+    ) : Tool.Args
+
+    @Serializable
+    data class Result(
+        val sum: Int
+    ) : ToolResult {
+        override fun toStringDefault(): String {
+            return "The sum is: $sum"
+        }
+    }
+
+    override val argsSerializer = Args.serializer()
+
+    override val descriptor = ToolDescriptor(
+        name = "calculator",
+        description = "Add two numbers together",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "num1",
+                description = "First number to add",
+                type = ToolParameterType.Integer
+            ),
+            ToolParameterDescriptor(
+                name = "num2",
+                description = "Second number to add",
+                type = ToolParameterType.Integer
+            )
+        )
+    )
+
+    override suspend fun execute(args: Args): Result {
+        // Perform a simple addition operation
+        val sum = args.num1 + args.num2
+        return Result(sum)
+    }
+}
+
+// Create the tool to the tool registry
+val toolRegistry = ToolRegistry {
+    tool(CalculatorTool)
+}
+```
+
+To learn more about tools, see [Tools](tools.md).
+
+### 5. Install features
+
+Agent features let you add new capabilities to the agent, modify its behavior, provide access to external systems and resources,
+and log and monitor events during the agent workflow.
+The following features are available:
+
+- Event handler
+- Memory
+- Tracing
+
+To install the feature, you need to call the `install` function and provide the feature as an argument.
+For example, to install the event handler feature, you need to do the following:
+
+```kotlin
+installFeatures = {
+    install(EventHandler) {
+        onBeforeAgentStarted = { strategy: AIAgentStrategy, agent: AIAgent ->
+            println("Starting strategy: ${strategy.name}")
+        }
+        onAgentFinished = { strategyName: String, result: String? ->
+            println("Result: $result")
+        }
+    }
+}
+```
+
+To learn more about feature configuration, see the dedicated page.
+
+### 6. Run the agent
+
+Create the agent with the configuration option created on the previous stages and run it with a provided input:
+
 ```kotlin
 val agent = AIAgent(
     promptExecutor = promptExecutor,
     strategy = agentStrategy,
     agentConfig = agentConfig,
     toolRegistry = toolRegistry,
-    installFeatures = installFeatures
+    installFeatures = {
+        install(EventHandler) {
+            onBeforeAgentStarted = { strategy: AIAgentStrategy, agent: AIAgent ->
+                println("Starting strategy: ${strategy.name}")
+            }
+            onAgentFinished = { strategyName: String, result: String? ->
+                println("Result: $result")
+            }
+        }
+    }
 )
+
+suspend fun main() {
+    println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
+    
+    // Read the user input and send it to the agent
+    val userInput = readlnOrNull() ?: ""
+    agent.run(userInput)
+}
 ```
 
-To learn more about available configuration options, see API reference.<!--[TODO] Link to API reference-->
+## Work with structured data
 
-### 1. Create a custom prompt executor
+The AI Agent can process structured data from LLM outputs. For more details, see [Streaming API](streaming-api.md).
 
-Prompt executors manage and run prompts. You can create a custom prompt executor as follows:
+## Use parallel tool calls
+
+The AI Agent supports parallel tool calls. This lets you process multiple tools concurrently, improving performance for independent operations.
+
+For more details, see [Parallel tool calls](tools.md#parallel-tool-calls).
+
+## Full code sample
+
+Here is the complete implementation of the agent:
 
 ```kotlin
-fun createPromptExecutor(apiToken: String): PromptExecutor {
-    val api = SuspendableAPIGatewayClient(
-        grazieEnvironment.url,
-        SuspendableHTTPClient.WithV5(
-            SuspendableClientWithBackoff(
-                GrazieKtorHTTPClient.Client.Default,
-            ), AuthData(
-                apiToken,
-                grazieAgent = GrazieAgent("custom-agent-app", "dev")
+// Use the OpenAI executor with an API key from an environment variable
+val promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_KEY"))
+
+// Create a simple strategy
+val agentStrategy = strategy("Simple calculator") {
+    // Define nodes for the strategy
+    val nodeSendInput by nodeLLMRequest()
+    val nodeExecuteTool by nodeExecuteTool()
+    val nodeSendToolResult by nodeLLMSendToolResult()
+
+    // Define edges between nodes
+    // Start -> Send input
+    edge(nodeStart forwardTo nodeSendInput)
+
+    // Send input -> Finish
+    edge(
+        (nodeSendInput forwardTo nodeFinish)
+                transformed { it }
+                onAssistantMessage { true }
+    )
+
+    // Send input -> Execute tool
+    edge(
+        (nodeSendInput forwardTo nodeExecuteTool)
+                onToolCall { true }
+    )
+
+    // Execute tool -> Send the tool result
+    edge(nodeExecuteTool forwardTo nodeSendToolResult)
+
+    // Send the tool result -> finish
+    edge(
+        (nodeSendToolResult forwardTo nodeFinish)
+                transformed { it }
+                onAssistantMessage { true }
+    )
+}
+
+// Configure the agent
+val agentConfig = AIAgentConfig(
+    prompt = Prompt.build("simple-calculator") {
+        system(
+            """
+                You are a simple calculator assistant.
+                You can add two numbers together using the calculator tool.
+                When the user provides input, extract the numbers they want to add.
+                The input might be in various formats like "add 5 and 7", "5 + 7", or just "5 7".
+                Extract the two numbers and use the calculator tool to add them.
+                Always respond with a clear, friendly message showing the calculation and result.
+                """.trimIndent()
+        )
+    },
+    model = OpenAIModels.Chat.GPT4o,
+    maxAgentIterations = 10
+)
+
+// Implement s simple calculator tool that can add two numbers
+public object CalculatorTool : Tool<CalculatorTool.Args, ToolResult>() {
+    @Serializable
+    data class Args(
+        val num1: Int,
+        val num2: Int
+    ) : Tool.Args
+
+    @Serializable
+    data class Result(
+        val sum: Int
+    ) : ToolResult {
+        override fun toStringDefault(): String {
+            return "The sum is: $sum"
+        }
+    }
+
+    override val argsSerializer = Args.serializer()
+
+    override val descriptor = ToolDescriptor(
+        name = "calculator",
+        description = "Add two numbers together",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "num1",
+                description = "First number to add",
+                type = ToolParameterType.Integer
+            ),
+            ToolParameterDescriptor(
+                name = "num2",
+                description = "Second number to add",
+                type = ToolParameterType.Integer
             )
         )
     )
 
-    return CodePromptExecutor(api, LLMParams())
+    override suspend fun execute(args: Args): Result {
+        // Perform a simple addition operation
+        val sum = args.num1 + args.num2
+        return Result(sum)
+    }
 }
-```
 
-### 2. Create a strategy
+// Create the tool to the tool registry
+val toolRegistry = ToolRegistry {
+    tool(CalculatorTool)
+}
 
-The strategy defines the workflow of your agent. Use the `strategy` function to create a custom multi-stage strategy:
-
-```kotlin
-val agentStrategy = strategy(
-    name = "custom-agent-name",
-    llmHistoryTransitionPolicy = ContextTransitionPolicy.PERSIST_LLM_HISTORY
-) {
-    // Define the main stage
-    stage {
-        // Define nodes for processing
-        val processInput by node<String, String> { input ->
-            // Process the input
-            "Processed: $input"
-        }
-
-        val generateResponse by node<String, String> { processed ->
-            // Generate a response using LLM
-            llm.writeSession {
-                requestLLM("Generate a response for: $processed")
+// Create the agent
+val agent = AIAgent(
+    promptExecutor = promptExecutor,
+    strategy = agentStrategy,
+    agentConfig = agentConfig,
+    toolRegistry = toolRegistry,
+    installFeatures = {
+        // install the EventHandler feature
+        install(EventHandler) {
+            onBeforeAgentStarted = { strategy: AIAgentStrategy, agent: AIAgent ->
+                println("Starting strategy: ${strategy.name}")
+            }
+            onAgentFinished = { strategyName: String, result: String? ->
+                println("Result: $result")
             }
         }
-
-        // Define the flow between nodes
-        edge(nodeStart forwardTo processInput)
-        edge(processInput forwardTo generateResponse)
-        edge(generateResponse forwardTo nodeFinish)
     }
-
-    // Optional: Define additional stages for different processing phases
-    stage("refinement") {
-        val refineOutput by node<String, String> { input ->
-            llm.writeSession {
-                requestLLM("Refine the following output: $input")
-            }
-        }
-
-        edge(nodeStart forwardTo refineOutput)
-        edge(refineOutput forwardTo nodeFinish)
-    }
-}
-```
-
-The `strategy` function allows you to define multiple stages, each with its own set of nodes and edges. This is more
-powerful than using simplified strategy builders.
-
-### 3. Set Up the Tool Registry
-
-Tools allow your agent to perform specific actions:
-
-```kotlin
-val toolRegistry = SimpleToolRegistry {
-    tool(YourCustomTool())
-    // Add more tools as needed
-}
-```
-
-For more complex scenarios, you can use multi-stage tool registries:
-
-```kotlin
-val toolRegistry = multiStageToolRegistry {
-    statelessStage("initialStage", initialStageToolDescriptors) {
-        tool("firstTool") { arguments: JsonObject ->
-            // Tool implementation
-            "Result of first tool"
-        }
-    }
-
-    statelessStage("finalStage", finalStageToolDescriptors) {
-        tool("secondTool") { arguments: JsonObject ->
-            // Tool implementation
-            "Result of second tool"
-        }
-    }
-}
-```
-
-### 4. Configure the Agent
-
-Define the agent's behavior with a configuration:
-
-```kotlin
-val agentConfig = LocalAgentConfig.withSystemPrompt(
-    prompt = """
-        You are an AI assistant with specific capabilities.
-        Your task is to help users by utilizing your tools and knowledge.
-        Always be concise and provide accurate information.
-    """.trimIndent()
 )
-```
 
-For more advanced configuration, you can pass the LLM parameters explicitly:
+suspend fun main() {
+    println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
 
-```kotlin
-val agentConfig = LocalAgentConfig(
-    systemPrompt = """
-        You are an AI assistant with specific capabilities.
-        Your task is to help users by utilizing your tools and knowledge.
-        Always be concise and provide accurate information.
-    """.trimIndent(),
-    llmParams = LLMParams(
-        temperature = 0.7,
-        topP = 0.95,
-        maxTokens = 2000
-    ),
-    historyCompressionStrategy = HistoryCompressionStrategy.NoCompression
-)
-```
-
-### 5. Run the Agent
-
-Execute the agent with an input:
-
-```kotlin
-agent.run("Your input or question here")
-```
-
-## Advanced Usage: Working with Structured Data
-
-KotlinAIAgent can process structured data from LLM outputs. Please refer to the [streaming API guide](streaming-api.md)
-for more information.
-
-## Advanced Usage: Parallel Tool Calls
-
-KotlinAIAgent supports parallel tool execution:
-
-```kotlin
-parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
-```
-
-This allows you to process multiple items concurrently, improving performance for independent operations.
-
-## Complete Example
-
-Here's a complete example of a KotlinAIAgent implementation:
-
-```kotlin
-fun main() = runBlocking {
-    // Create a custom prompt executor
-    val token = System.getenv("GRAZIE_TOKEN")
-        ?: error("Environment variable GRAZIE_TOKEN is not set")
-
-    val api = SuspendableAPIGatewayClient(
-        GrazieEnvironment.Production.url,
-        SuspendableHTTPClient.WithV5(
-            SuspendableClientWithBackoff(
-                GrazieKtorHTTPClient.Client.Default,
-            ), AuthData(
-                token,
-                grazieAgent = GrazieAgent("library-assistant", "dev")
-            )
-        )
-    )
-    val promptExecutor = CodePromptExecutor(api, LLMParams())
-
-    // Create a multi-stage strategy
-    val agentStrategy = strategy("library-assistant") {
-        stage {
-            val processQuery by node<String, String> { query ->
-                llm.writeSession {
-                    val markdownStream = requestLLMStreaming(
-                        "Generate information about books related to: $query"
-                    )
-
-                    parseMarkdownStreamToBooks(markdownStream).collect { book ->
-                        callToolRaw("book", book)
-                    }
-                }
-                "Query processed successfully"
-            }
-
-            edge(nodeStart forwardTo processQuery)
-            edge(processQuery forwardTo nodeFinish)
-        }
-    }
-
-    // Set up the tool registry
-    val toolRegistry = SimpleToolRegistry {
-        tool(BookTool())
-    }
-
-    // Configure the agent
-    val agentConfig = LocalAgentConfig.withSystemPrompt(
-        prompt = """
-            You're an AI library assistant. Provide users with comprehensive 
-            and structured information about books.
-        """.trimIndent()
-    )
-
-    // Create and run the agent
-    val agent = KotlinAIAgent(
-        promptExecutor = promptExecutor,
-        toolRegistry = toolRegistry,
-        strategy = agentStrategy,
-        agentConfig = agentConfig,
-        cs = this,
-    )
-
-    agent.run("Please recommend science fiction books about space exploration.")
+    val userInput = readlnOrNull() ?: ""
+    agent.run(userInput)
 }
 ```
-
-## Conclusion
-
-KotlinAIAgent provides a powerful framework for building AI agents in Kotlin. By defining custom
-strategies, tools, and configurations, you can create agents that handle complex workflows and provide rich, interactive
-experiences.

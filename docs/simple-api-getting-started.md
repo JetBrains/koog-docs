@@ -21,7 +21,7 @@ The tool result is returned if the tool registry is provided to the agent.
 To use the Simple API functionality, you need to add the following dependencies to your project:
 
 ```
-// Please add installation instructions here
+implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
 ```
 ## Create an agent
 
@@ -30,12 +30,13 @@ To use the Simple API functionality, you need to add the following dependencies 
 A chat agent maintains a conversation with the user until the session is explicitly terminated:
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleChatAgent(
-        apiToken = apiToken,
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+        executor = simpleOpenAIExecutor(apiToken),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
     agent.run("Hello, how can you help me?")
 }
@@ -51,12 +52,13 @@ For details, see [Configuration options](simple-api-configuration.md) and [Avail
 A single-run agent processes a single input and provides a response:
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleSingleRunAgent(
-        apiToken = apiToken,
-        systemPrompt = "You are a code assistant. Provide concise code examples."
+        executor = simpleOpenAIExecutor(apiToken),
+        systemPrompt = "You are a code assistant. Provide concise code examples.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
 
     agent.run("Write a Kotlin function to calculate factorial")
@@ -68,26 +70,27 @@ fun main() = runBlocking {
 You can configure the agent by passing optional parameters, such as tools or an event handler.
 For details, see [Configuration options](simple-api-configuration.md).
 
-### Pass tools
+### Provide tools
 
-The Simple API provides a set of built-in tools and lets you implement your own custom tools.
+The Simple API provides a set of built-in tools along with the ability to implement your own custom tools.
 
 The following example demonstrates how to pass the built-in `SayToUser` tool to the chat agent:
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("YOUR_API_TOKEN")
 
-    val toolRegistry = SimpleToolRegistry {
+    val toolRegistry = ToolRegistry {
         tools(
             listOf(SayToUser)
         )
     }
 
     val agent = simpleChatAgent(
-        apiToken = apiToken,
+        executor = simpleOpenAIExecutor(apiToken),
         toolRegistry = toolRegistry,
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
     agent.run("Hello, how can you help me?")
 }
@@ -100,4 +103,4 @@ For more details about tools, see [Available tools](simple-api-available-tools.m
 Simple agents support custom event handlers.
 While having an event handler is not required for creating an agent, it might be helpful for testing, debugging, or making hooks for chained agent interactions.
 
-For more information on how to use the `EventHandler` class for monitoring your agent interactions, see [Agent events](agent-events.md).
+For more information on how to use the `EventHandler` feature for monitoring your agent interactions, see [Agent events](agent-events.md).

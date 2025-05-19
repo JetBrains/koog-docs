@@ -1,7 +1,9 @@
 # Available tools
 
 Agents use tools to complete specific tasks.
-The Simple API provides a set of built-in tools and lets you implement your own custom tools.
+The Simple API provides a set of built-in tools, but you can also implement your own custom tools if needed.
+
+To learn more, see [Tools](tools.md).
 
 ## Built-in tools
 
@@ -16,15 +18,18 @@ The following built-in tools are available:
 ## Custom tools
 
 You can create custom tools by extending the `SimpleTool` class, register them in a tool registry, and pass it to the
-created agent. For more details, see [Creating tools](tools.md).
+created agent. For more details, see [Tools](tools.md).
 
-## Tool usage
+## Tool configuration
 
-The tools are provided during the agent creation
+Tools are configured during agent creation using the `toolRegistry` parameter, which defines the tools available to the agent.
+To learn more, see [Tool registry](tools.md).
 
-The `simpleChatAgent` always uses the `AskUser` and `ExitTool` built-in tools by default, whether custom tools are provided or not.
+When working with the Simple API, the behavior and default tools depend on the agent type:
+
+- The `simpleChatAgent` always uses the `AskUser` and `ExitTool` built-in tools by default, whether custom tools are provided or not.
 If the custom tools are provided, these built-in tools are combined with them.
 
-The `simpleSingleRunAgent` doesn't use any tools by default.
+- The `simpleSingleRunAgent` doesn't use any tools by default.
 If none of the built-in or custom tools are provided when creating the agent, only plain text responses are received.
 

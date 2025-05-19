@@ -1,74 +1,48 @@
-# Graph Nodes
+# Predefined nodes and components
 
-Nodes are the fundamental building blocks of agent workflows in the Kotlin AI platform. Each node represents a specific
-operation or transformation in the workflow, and they can be connected using edges to define the flow of execution.
+Nodes are the fundamental building blocks of agent workflows in the Koog framework.
+Each node represents a specific operation or transformation in the workflow, and they can be connected using edges to define the flow of execution.
 
-In general, they allow you to encapsulate complex logic into reusable components that can be easily integrated into
+In general, they let you encapsulate complex logic into reusable components that can be easily integrated into
 different agent workflows. This guide will walk you through the existing nodes that can be used in your agent
 strategies.
 
-## Utility Nodes
+For more detailed reference documentation, see API reference.<!--[TODO] Link to API reference-->
+
+## Utility nodes
 
 ### nodeDoNothing
 
-```kotlin
-fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeDoNothing(name: String? = null): LocalAgentNodeDelegate<T, T>
-```
+A simple pass-through node that performs no actions. The input is directly passed as the output without any processing. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Description:**  
-A simple pass-through node that performs no actions. The input is directly passed as the output without any processing.
+You can use this node for the following purposes:
+- Create a placeholder node in your graph.
+- Create a connection point without modifying the data.
+- To debug and test your workflow.
 
-**Parameters:**
-
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate for the created node, representing a no-operation transformation where the input is returned as output.
-
-**Use Cases:**
-
-- When you need a placeholder node in your graph
-- When you want to create a connection point without modifying the data
-- For debugging or testing purposes
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val passthrough by nodeDoNothing<String>("passthrough")
+
 edge(someNode forwardTo passthrough)
 edge(passthrough forwardTo anotherNode)
 ```
 
-## LLM Nodes
+## LLM nodes
 
 ### nodeUpdatePrompt
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeUpdatePrompt(
-    name: String? = null,
-    body: PromptBuilder.() -> Unit
-): LocalAgentNodeDelegate<Unit, Unit>
-```
-
-**Description:**  
 A node that updates the prompt without asking the LLM for a response. This is useful for modifying the conversation
-context before making an actual LLM request.
+context before making an actual LLM request. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Parameters:**
+You can use this node for the following purposes:
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-- `body`: A lambda block specifying the logic to update the prompt using the `PromptBuilder`.
+- Add system instructions to the prompt.
+- Insert user messages into the conversation.
+- Prepare the context for subsequent LLM requests.
 
-**Return Value:**  
-A delegate that represents the created node, which takes no input and produces no output.
-
-**Use Cases:**
-
-- Adding system instructions to the prompt
-- Inserting user messages into the conversation
-- Preparing the context for subsequent LLM requests
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val setupContext by nodeUpdatePrompt("setupContext") {
@@ -77,100 +51,18 @@ val setupContext by nodeUpdatePrompt("setupContext") {
 }
 ```
 
-### nodeLLMSendStageInput
-
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendStageInput(
-    name: String? = null
-): LocalAgentNodeDelegate<Unit, Message.Response>
-```
-
-**Description:**  
-An LLM node that updates the prompt with the user's stage input and triggers an LLM request within a write session. This
-node is commonly used as the first step in an agent workflow to process the initial user input.
-
-**Parameters:**
-
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the defined node, which takes no input (Unit) and produces a `Message.Response` from the LLM.
-
-**Use Cases:**
-
-- Processing the initial user query in a conversation
-- Starting a new interaction with the LLM
-- Handling user input at the beginning of a workflow
-
-**Example:**
-
-```kotlin
-val sendInput by nodeLLMSendStageInput("sendInput")
-edge(nodeStart forwardTo sendInput)
-```
-
-### nodeLLMSendStageInputMultiple
-
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendStageInputMultiple(
-    name: String? = null
-): LocalAgentNodeDelegate<Unit, List<Message.Response>>
-```
-
-**Description:**  
-Creates a node that sends the current stage input to the LLM and gets multiple responses. This is useful when you need
-to generate multiple alternative responses to the same input.
-
-**Parameters:**
-
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the defined node, which takes no input (Unit) and produces a list of `Message.Response` objects
-from the LLM.
-
-**Use Cases:**
-
-- Generating multiple alternative responses to a user query
-- Creating diverse suggestions or solutions
-- Implementing a response ranking or selection mechanism
-
-**Example:**
-
-```kotlin
-val generateAlternatives by nodeLLMSendStageInputMultiple("generateAlternatives")
-edge(nodeStart forwardTo generateAlternatives)
-```
-
 ### nodeLLMRequest
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMRequest(
-    name: String? = null,
-    allowToolCalls: Boolean = true
-): LocalAgentNodeDelegate<String, Message.Response>
-```
-
-**Description:**  
 An LLM node that processes user messages and returns a response from the LLM. The node configuration determines whether
-tool calls are allowed during the processing of the message.
+tool calls are allowed during the processing of the message. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Parameters:**
+You can use this node for the following purposes:
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-- `allowToolCalls`: A flag indicating whether tool calls are permitted during the execution of the LLM process. Defaults
-  to `true`.
+- Process user messages in the middle of a conversation.
+- Generate responses to specific questions or prompts.
+- Control whether the LLM can use tools in its response.
 
-**Return Value:**  
-A delegate that delegates the execution of an LLM call, processing an input message and returning a `Message.Response`.
-
-**Use Cases:**
-
-- Processing user messages in the middle of a conversation
-- Generating responses to specific questions or prompts
-- Controlling whether the LLM can use tools in its response
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val processQuery by nodeLLMRequest("processQuery", allowToolCalls = true)
@@ -179,31 +71,16 @@ edge(someNode forwardTo processQuery)
 
 ### nodeLLMRequestMultiple
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMRequestMultiple(
-    name: String? = null
-): LocalAgentNodeDelegate<String, List<Message.Response>>
-```
-
-**Description:**  
 An LLM node that sends a user message to the LLM and gets a response with tools enabled, potentially receiving multiple
-tool calls. This is useful when you expect the LLM to make multiple tool calls in response to a single message.
+tool calls. This is useful when you expect the LLM to make multiple tool calls in response to a single message. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Parameters:**
+You can use this node for the following purposes:
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
+- Handling complex queries that require multiple tool calls.
+- Generating multiple responses to a single input.
+- Implementing a workflow that requires multiple parallel actions.
 
-**Return Value:**  
-A delegate representing the defined node, which takes a string input and produces a list of `Message.Response` objects
-from the LLM.
-
-**Use Cases:**
-
-- Handling complex queries that require multiple tool calls
-- Generating multiple responses to a single input
-- Implementing a workflow that requires multiple parallel actions
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val processComplexQuery by nodeLLMRequestMultiple("processComplexQuery")
@@ -211,41 +88,24 @@ edge(someNode forwardTo processComplexQuery)
 ```
 
 ### nodeLLMCompressHistory
+ 
+An LLM node that rewrites message history, leaving only user messages and resulting summaries. This is useful for
+managing long conversations by compressing the history to reduce token usage. The following compression strategies are available:
 
-```kotlin
-fun <T> LocalAgentSubgraphBuilderBase<*, *>.nodeLLMCompressHistory(
-    name: String? = null,
-    strategy: HistoryCompressionStrategy = HistoryCompressionStrategy.WholeHistory,
-    preserveMemory: Boolean = true
-): LocalAgentNodeDelegate<T, T>
-```
+- **WholeHistory**: compresses the entire conversation history into a summary.
+- **FromLastNMessages**: retains only the last N messages and compresses them.
+- **Chunked**: splits the conversation into chunks of a specified size and compresses each chunk.
 
-**Description:**  
-An LLM node that rewrites message history, leaving only user messages and resulting TLDR summaries. This is useful for
-managing long conversations by compressing the history to reduce token usage.
+For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Parameters:**
+You can use this node for the following purposes:
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-- `strategy`: The strategy to use for compressing history. Defaults to `HistoryCompressionStrategy.WholeHistory`.
-- `preserveMemory`: A flag indicating whether to preserve memory messages during compression. Defaults to `true`.
+- Manage long conversations to reduce token usage.
+- Summarize conversation history to maintain context.
+- Implement memory management in long-running agents.
 
-**Return Value:**  
-A delegate representing the defined node, which takes an input of type T and returns the same input (pass-through).
 
-**Compression Strategies:**
-
-- `WholeHistory`: Compresses the entire conversation history into a TLDR summary
-- `FromLastNMessages(n)`: Retains only the last N messages and compresses them
-- `Chunked(chunkSize)`: Splits the conversation into chunks of a specified size and compresses each chunk
-
-**Use Cases:**
-
-- Managing long conversations to reduce token usage
-- Summarizing conversation history to maintain context
-- Implementing memory management in long-running agents
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<String>(
@@ -256,34 +116,19 @@ val compressHistory by nodeLLMCompressHistory<String>(
 edge(someNode forwardTo compressHistory)
 ```
 
-## Tool Nodes
+## Tool nodes
 
 ### nodeExecuteTool
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteTool(
-    name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Call, Message.Tool.Result>
-```
+A node that executes a single tool call and returns its result. This node is used to handle tool calls made by the LLM. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Description:**  
-A node that executes a single tool call and returns its result. This node is used to handle tool calls made by the LLM.
+You can use this node for the following purposes:
 
-**Parameters:**
+- Execute tools requested by the LLM.
+- Handle specific actions in response to LLM decisions.
+- Integrate external functionality into the agent workflow.
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the defined node, which takes a `Message.Tool.Call` as input and produces a
-`Message.Tool.Result`.
-
-**Use Cases:**
-
-- Executing tools requested by the LLM
-- Handling specific actions in response to LLM decisions
-- Integrating external functionality into the agent workflow
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val executeToolCall by nodeExecuteTool("executeToolCall")
@@ -292,30 +137,16 @@ edge(llmNode forwardTo executeToolCall onToolCall { true })
 
 ### nodeLLMSendToolResult
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendToolResult(
-    name: String? = null
-): LocalAgentNodeDelegate<Message.Tool.Result, Message.Response>
-```
+An LLM node that processes a tool call result and generates a response. The tool result is incorporated into
+the prompt, and a request is made to the LLM for a response. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Description:**  
-An LLM node that processes a `ToolCall.Result` and generates a `Message.Response`. The tool result is incorporated into
-the prompt, and a request is made to the LLM for a response.
+You can use this node for the following purposes:
 
-**Parameters:**
+- Process the results of tool executions.
+- Generate responses based on tool outputs.
+- Continue a conversation after tool execution.
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the node, handling the transformation from `ToolCall.Result` to `Message.Response`.
-
-**Use Cases:**
-
-- Processing the results of tool executions
-- Generating responses based on tool outputs
-- Continuing the conversation after tool execution
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val processToolResult by nodeLLMSendToolResult("processToolResult")
@@ -324,31 +155,16 @@ edge(executeToolCall forwardTo processToolResult)
 
 ### nodeExecuteMultipleTools
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeExecuteMultipleTools(
-    name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Call>, List<Message.Tool.Result>>
-```
-
-**Description:**  
 A node that executes multiple tool calls and returns their results. This is useful when you need to execute multiple
-tools in parallel.
+tools in parallel. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Parameters:**
+You can use this node for the following purposes:
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
+- Execute multiple tools in parallel.
+- Handle complex workflows that require multiple tool executions.
+- Optimize performance by batching tool calls.
 
-**Return Value:**  
-A delegate representing the defined node, which takes a list of `Message.Tool.Call` objects as input and produces a list
-of `Message.Tool.Result` objects.
-
-**Use Cases:**
-
-- Executing multiple tools in parallel
-- Handling complex workflows that require multiple tool executions
-- Optimizing performance by batching tool calls
-
-**Example:**
+Here is an example:
 
 ```kotlin
 val executeMultipleTools by nodeExecuteMultipleTools("executeMultipleTools")
@@ -357,63 +173,54 @@ edge(llmNode forwardTo executeMultipleTools)
 
 ### nodeLLMSendMultipleToolResults
 
-```kotlin
-fun LocalAgentSubgraphBuilderBase<*, *>.nodeLLMSendMultipleToolResults(
-    name: String? = null
-): LocalAgentNodeDelegate<List<Message.Tool.Result>, List<Message.Response>>
-```
-
-**Description:**  
 A node that sends multiple tool execution results to the LLM and gets multiple responses. This is useful when you need
-to process the results of multiple tool executions.
+to process the results of multiple tool executions. For details, see API reference.<!--[TODO] Link to API reference-->
 
-**Parameters:**
+You can use this node for the following purposes:
 
-- `name` (optional): A custom name for the node. If not provided, the property name of the delegate will be used.
-
-**Return Value:**  
-A delegate representing the defined node, which takes a list of `Message.Tool.Result` objects as input and produces a
-list of `Message.Response` objects.
-
-**Use Cases:**
-
-- Processing the results of multiple tool executions
-- Generating multiple responses based on tool outputs
-- Implementing complex workflows with multiple parallel actions
-
-**Example:**
+- Process the results of multiple tool executions.
+- Generate multiple responses based on tool outputs.
+- Implement complex workflows with multiple parallel actions.
+  
+Here is an example:
 
 ```kotlin
 val processMultipleToolResults by nodeLLMSendMultipleToolResults("processMultipleToolResults")
 edge(executeMultipleTools forwardTo processMultipleToolResults)
 ```
 
-## Usage Examples
+## Predefined strategies and common strategy patterns
 
-### Chat Agent Strategy
+The framework provides predefined strategies that combine various nodes.
+The nodes are connected using edges to define the flow of operations, with conditions that specify when to follow each edge.
 
-The following example shows how to use nodes to create a chat agent strategy:
+You can integrate these strategies into your agent workflows if needed.
+
+### Chat agent strategy
+
+A chat strategy runs interactive conversations with the user. It typically involves sending user input to the
+LLM, executing tools as needed, and returning the LLM response to the user.
 
 ```kotlin
-fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
+public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
+    val nodeCallLLM by nodeLLMRequest("sendInput")
     val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
     val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-
+  
     val giveFeedbackToCallTools by node<String, Message.Response> { input ->
-        llm.writeSession {
-            updatePrompt {
-                user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
-            }
-
-            requestLLM()
+      llm.writeSession {
+        updatePrompt {
+          user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
         }
+  
+        requestLLM()
+      }
     }
-
-    edge(nodeStart forwardTo sendInput)
-
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo giveFeedbackToCallTools onAssistantMessage { true })
+  
+    edge(nodeStart forwardTo nodeCallLLM)
+  
+    edge(nodeCallLLM forwardTo nodeExecuteTool onToolCall { true })
+    edge(nodeCallLLM forwardTo giveFeedbackToCallTools onAssistantMessage { true })
     edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
     edge(giveFeedbackToCallTools forwardTo nodeExecuteTool onToolCall { true })
     edge(nodeExecuteTool forwardTo nodeSendToolResult)
@@ -421,26 +228,102 @@ fun chatAgentStrategy(): LocalAgentStrategy = simpleStrategy("chat") {
     edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
     edge(nodeExecuteTool forwardTo nodeFinish onToolCall { tc -> tc.tool == "__exit__" } transformed { "Chat finished" })
 }
+
 ```
 
-### Single Run Strategy
+### Single run strategy
 
-The following example shows how to use nodes to create a single run (one-shot) strategy:
+A single run strategy is designed for non-interactive use cases where the agent processes input once and
+returns a result. 
+
+You can use this strategy when you need to run straightforward processes that do not require complex logic.
 
 ```kotlin
-fun singleRunStrategy(): LocalAgentStrategy = simpleStrategy("single_run") {
-    val sendInput by nodeLLMSendStageInput("sendInput")
+public fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
+    val nodeCallLLM by nodeLLMRequest("sendInput")
     val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
     val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-
-    edge(nodeStart forwardTo sendInput)
-    edge(sendInput forwardTo nodeExecuteTool onToolCall { true })
-    edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
+  
+    edge(nodeStart forwardTo nodeCallLLM)
+    edge(nodeCallLLM forwardTo nodeExecuteTool onToolCall { true })
+    edge(nodeCallLLM forwardTo nodeFinish onAssistantMessage { true })
     edge(nodeExecuteTool forwardTo nodeSendToolResult)
     edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
     edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
 }
 ```
 
-These examples demonstrate how to combine different nodes to create complete agent workflows. The nodes are connected
-using edges to define the flow of execution, with conditions specifying when to follow each edge.
+### Tool-based strategy
+
+A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations.
+It typically executes tools based on the LLM decisions and processes the results.
+
+```kotlin
+fun toolBasedStrategy(name: String, toolRegistry: ToolRegistry): AIAgentStrategy {
+    return strategy(name) {
+        val nodeSendInput by nodeLLMRequest()
+        val nodeExecuteTool by nodeExecuteTool()
+        val nodeSendToolResult by nodeLLMSendToolResult()
+
+        // Define the flow of the agent
+        edge(nodeStart forwardTo nodeSendInput)
+
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendInput forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
+
+        // If the LLM calls a tool, execute it
+        edge(
+            (nodeSendInput forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
+
+        // Send the tool result back to the LLM
+        edge(nodeExecuteTool forwardTo nodeSendToolResult)
+
+        // If the LLM calls another tool, execute it
+        edge(
+            (nodeSendToolResult forwardTo nodeExecuteTool)
+                    onToolCall { true }
+        )
+
+        // If the LLM responds with a message, finish
+        edge(
+            (nodeSendToolResult forwardTo nodeFinish)
+                    onAssistantMessage { true }
+        )
+    }
+}
+```
+
+### Streaming data strategy
+
+A streaming data strategy is designed for processing streaming data from the LLM. It typically requests
+streaming data, processes it, and potentially calls tools with the processed data.
+
+
+```kotlin
+fun streamingDataStrategy(): AIAgentStrategy = strategy("streaming-data") {
+    val processStreamingData by node<Unit, String> { _ ->
+        val books = mutableListOf<Book>()
+        val mdDefinition = markdownBookDefinition()
+
+        llm.writeSession {
+            val markdownStream = requestLLMStreaming(mdDefinition)
+            parseMarkdownStreamToBooks(markdownStream).collect { book ->
+                books.add(book)
+                println("Parsed Book: ${book.bookName} by ${book.author}")
+            }
+        }
+
+        formatOutput(books)
+    }
+
+    edge(nodeStart forwardTo processStreamingData)
+    edge(processStreamingData forwardTo nodeFinish)
+}
+```
+
+

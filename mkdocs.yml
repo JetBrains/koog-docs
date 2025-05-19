@@ -1,7 +1,8 @@
-site_name: Kotlin Agentic Framework
+site_name: Koog
 nav:
   - Documentation:
       - Overview: index.md
+      - Key concepts: key-concepts.md
       - Simple API:
           - Getting started: simple-api-getting-started.md
           - Configuration options: simple-api-configuration.md
@@ -10,7 +11,6 @@ nav:
           - Getting started: ai-agent-getting-started.md
       - Tools: tools.md
       - Agent events: agent-events.md
-      - Stages And History: stages-and-history.md
       - Custom strategy graphs: custom-strategy-graphs.md
       - Pre-defined nodes and components: nodes-and-components.md
       - History compression: history-compression.md
