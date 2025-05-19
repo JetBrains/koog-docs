@@ -1,10 +1,10 @@
-# AI Agents Testing Toolkit
+# AI Agents testing
 
 ## Overview
 
-The Testing Feature provides a comprehensive framework for testing AI agent pipelines, stages, and tool interactions in
-the Kotlin Agentic Framework. It enables developers to create controlled test environments with mock LLM (Large Language
-Model) executors, tool registries, and agent environments.
+The Testing feature provides a comprehensive framework for testing AI agent pipelines, subgraphs, and tool interactions 
+in the Koog framework. It enables developers to create controlled test environments with mock LLM (Large 
+Language Model) executors, tool registries, and agent environments.
 
 ### Purpose
 
@@ -12,7 +12,7 @@ The primary purpose of this feature is to facilitate testing of agent-based AI f
 
 - Mocking LLM responses to specific prompts
 - Simulating tool calls and their results
-- Testing agent pipeline stages and their graph structures
+- Testing agent pipeline subgraphs and their structures
 - Verifying the correct flow of data through agent nodes
 - Providing assertions for expected behaviors
 
@@ -20,21 +20,30 @@ The primary purpose of this feature is to facilitate testing of agent-based AI f
 
 ### Setting up a test environment
 
+Before setting up a test environment, make sure that you have added the following dependencies:
+   ```kotlin
+   // build.gradle.kts
+   dependencies {
+       testImplementation("ai.jetbrains.code.agents:agents-test:$version")
+       testImplementation("kotlin.testing")
+   }
+   ```
+
 To set up a test environment for an agent pipeline, follow the steps below:
 
-1. Create a testing configuration:
+2. Create a testing configuration:
    ```kotlin
    val testingConfig = Testing.createInitialConfig()
    ```
 
-2. Configure the testing environment:
+3. Configure the testing environment:
    ```kotlin
    testingConfig.apply {
-       // Configure assertions, stages, etc.
+       // Configure assertions, subgraphs, etc.
    }
    ```
 
-3. Install the testing configuration:
+4. Install the testing configuration:
    ```kotlin
    Testing.install(testingConfig, pipeline)
    ```
@@ -80,21 +89,156 @@ val mockEnvironment = MockEnvironment(toolRegistry, mockExecutor)
 
 ### Using the Testing API extensions
 
-To use the graph testing extensions:
+To use the `graph` testing extensions:
 
 ```kotlin
 suspend fun testMyFeature() = withTesting {
     graph {
         // Configure graph testing
-        stage("myStage") {
-            // Stage-specific assertions
+        val mySubgraph by subgraph<*, *>("my-subgraph") {
+            // Subgraph-specific assertions
         }
     }
 }
 ```
 
+## Error handling and edge cases
+
+The Testing feature includes several mechanisms for handling errors and edge cases.
+
+### Assertion handling
+
+- Custom assertion handlers can be registered using [handleAssertion()](#)`.
+- By default, assertions are mapped to Kotlin's test assertions.
+- Failed assertions provide detailed error messages.
+
+### Tool run errors
+
+- `MockEnvironment` throws exceptions directly via [reportProblem()](#).
+- Tool run errors can be simulated by configuring tool actions to throw exceptions.
+
+### LLM response fallbacks
+
+- `MockLLMExecutor` uses a priority-based approach to find responses:
+    1. Exact matches
+    2. Partial matches
+    3. Conditional matches
+    4. Default response
+
+### Edge cases
+
+- Empty tool calls: handled gracefully by returning empty results.
+- Missing tool registry: defaults to no tools available.
+- Null responses: treated as empty strings.
+- Circular graph references: detected and reported during graph traversal.
+
+## Dependency graph
+
+The Testing feature has the following component dependencies:
+
+```
+TestingFeature.kt
+├── Api.kt (extends Testing.Config)
+├── MockLLMBuilder.kt
+│   └── MockLLMExecutor.kt
+├── MockEnvironment.kt
+│   ├── MockLLMExecutor.kt
+│   └── ToolRegistry
+└── DummyTool.kt
+```
+
+## Examples and quickstarts
+
+### Basic example: Mocking LLM responses
+
+```kotlin
+// Create a mock executor
+val mockExecutor = getMockExecutor {
+    setDefaultResponse("I don't know how to help with that.")
+
+    // Configure specific responses
+    "Here's how to create a file" onUserRequestContains "create a file"
+    "The answer is 42" onUserRequestEquals "What is the meaning of life?"
+}
+
+// Use the mock executor in your tests
+val response = mockExecutor.execute(myPrompt)
+assertEquals("Expected response", response)
+```
+
+### Advanced example: Testing agent graph flow
+
+[//]: # (TODO: Check if this is OK)
+```kotlin
+class MyAgentTest {
+    @Test
+    fun testAgentFlow() = runTest {
+        // Set up the agent pipeline
+        val pipeline = createPipeline()
+
+        // Test the graph flow
+        testGraph {
+            // Get references to nodes
+            val startNode = startNode()
+            val processNode = assertNodeByName("process")
+            val finishNode = finishNode()
+
+            // Assert node connectivity
+            assertReachable(startNode, processNode)
+            assertReachable(processNode, finishNode)
+
+            // Assert node outputs
+            assertNodes {
+                processNode.withInput("test input") outputs "test output"
+            }
+        }
+    }
+}
+```
+
+### Quickstart: Setting up a test environment
+
+[//]: # (TODO: Check whether this is still a dependency)
+1. Add dependencies:
+   ```kotlin
+   // build.gradle.kts
+   dependencies {
+       testImplementation("ai.jetbrains.code:code-agents-test:1.0.0")
+       testImplementation("ai.koog:agents-test:0.1.0-alpha.6")
+   }
+   ```
+
+2. Create a test class:
+   ```kotlin
+   class MyTest {
+       @Test
+       fun testMyFeature() = runTest {
+           // Create mock components
+           val mockExecutor = getMockExecutor {
+               setDefaultResponse("Default response")
+           }
+
+           // Set up the feature
+           val feature = MyFeature(mockExecutor)
+
+           // Test with the testing framework
+           withTesting {
+               // Your test assertions here
+           }
+       }
+   }
+   ```
+
 ## API documentation
 
+For a complete API reference related to embeddings, see the reference documentation for the following packages:
+
+- [ai.jetbrains.code.agents.testing.feature](#): Provides comprehensive testing utilities for AI agents, with mocking
+capabilities and validation tools for agent behavior.
+- [ai.jetbrains.code.agents.testing.tools](#): Provides a framework for defining, describing, and executing tools that 
+can be used by AI agents to interact with the environment.
+
+<!---
 ### Class: `Testing`
 
 **Description**: The main class for configuring and running tests for agent pipelines and stages.
@@ -176,37 +320,6 @@ fun handleAssertion(block: (AssertionResult) -> Unit)
 | Name  | Type                        | Description          |
 |-------|-----------------------------|----------------------|
 | block | `(AssertionResult) -> Unit` | The handler function |
-
-`assertStagesOrder`
-
-```kotlin
-fun assertStagesOrder(vararg stages: String)
-```
-
-**Description**: Asserts the order of stages in the pipeline.
-
-**Parameters**:
-
-| Name   | Type            | Description                       |
-|--------|-----------------|-----------------------------------|
-| stages | `vararg String` | The expected stage names in order |
-
-`stage`
-
-```kotlin
-fun stage(name: String, function: StageAssertionsBuilder.() -> Unit)
-```
-
-**Description**: Configures assertions for a specific stage.
-
-**Parameters**:
-
-| Name     | Type                                | Description            |
-|----------|-------------------------------------|------------------------|
-| name     | `String`                            | The name of the stage  |
-| function | `StageAssertionsBuilder.() -> Unit` | Configuration function |
-
-#### Extension functions
 
 `Testing.Config.graph`
 
@@ -501,142 +614,7 @@ suspend fun handlePrompt(prompt: Prompt): Message.Response
 
 **Description**: Reference to a node in the agent graph for testing purposes.
 
-## Error handling and edge cases
-
-The Testing feature includes several mechanisms for handling errors and edge cases:
-
-### Assertion handling
-
-- Custom assertion handlers can be registered using `handleAssertion()`.
-- By default, assertions are mapped to Kotlin's test assertions.
-- Failed assertions provide detailed error messages.
-
-### Tool run errors
-
-- `MockEnvironment` throws exceptions directly via `reportProblem()`.
-- Tool run errors can be simulated by configuring tool actions to throw exceptions.
-
-### LLM response fallbacks
-
-- `MockLLMExecutor` uses a priority-based approach to find responses:
-    1. Exact matches
-    2. Partial matches
-    3. Conditional matches
-    4. Default response
-
-### Edge cases
-
-- Empty tool calls: handled gracefully by returning empty results.
-- Missing tool registry: defaults to no tools available.
-- Null responses: treated as empty strings.
-- Circular graph references: detected and reported during graph traversal.
-
-## Dependency graph
-
-The Testing feature has the following component dependencies:
-
-```
-TestingFeature.kt
-├── Api.kt (extends Testing.Config)
-├── MockLLMBuilder.kt
-│   └── MockLLMExecutor.kt
-├── MockEnvironment.kt
-│   ├── MockLLMExecutor.kt
-│   └── ToolRegistry
-└── DummyTool.kt
-```
-
-### External dependencies
-
-- `ai.jetbrains.code.agents.core.tools`: core tool interfaces and implementations
-- `ai.jetbrains.code.agents.local`: local agent implementation
-- `ai.jetbrains.code.prompt`: prompt execution framework
-- `kotlin.test`: testing utilities
-
-## Examples and quickstarts
-
-### Basic example: Mocking LLM responses
-
-```kotlin
-// Create a mock executor
-val mockExecutor = getMockExecutor {
-    setDefaultResponse("I don't know how to help with that.")
-
-    // Configure specific responses
-    "Here's how to create a file" onUserRequestContains "create a file"
-    "The answer is 42" onUserRequestEquals "What is the meaning of life?"
-}
-
-// Use the mock executor in your tests
-val response = mockExecutor.execute(myPrompt)
-assertEquals("Expected response", response)
-```
-
-### Advanced example: Testing agent graph flow
-
-```kotlin
-class MyAgentTest {
-    @Test
-    fun testAgentFlow() = runTest {
-        // Set up the agent pipeline
-        val pipeline = createPipeline()
-
-        // Test the graph flow
-        testGraph {
-            // Assert the order of stages
-            assertStagesOrder("input", "processing", "output")
-
-            // Configure stage assertions
-            stage("processing") {
-                // Get references to nodes
-                val startNode = startNode()
-                val processNode = assertNodeByName("process")
-                val finishNode = finishNode()
-
-                // Assert node connectivity
-                assertReachable(startNode, processNode)
-                assertReachable(processNode, finishNode)
-
-                // Assert node outputs
-                assertNodes {
-                    processNode.withInput("test input") outputs "test output"
-                }
-            }
-        }
-    }
-}
-```
-
-### Quickstart: Setting up a test environment
-
-1. Add dependencies:
-   ```kotlin
-   // build.gradle.kts
-   dependencies {
-       testImplementation("ai.jetbrains.code:code-agents-test:1.0.0")
-   }
-   ```
-
-2. Create a test class:
-   ```kotlin
-   class MyTest {
-       @Test
-       fun testMyFeature() = runTest {
-           // Create mock components
-           val mockExecutor = getMockExecutor {
-               setDefaultResponse("Default response")
-           }
-
-           // Set up the feature
-           val feature = MyFeature(mockExecutor)
-
-           // Test with the testing framework
-           withTesting {
-               // Your test assertions here
-           }
-       }
-   }
-   ```
+-->
 
 ## FAQ and troubleshooting
 
@@ -655,11 +633,14 @@ val mockExecutor = getMockExecutor {
 
 #### How can I test complex graph structures?
 
-Use the stage assertions and node references:
+Use the subgraph assertions, `verifySubgraph`, and node references:
 
+[//]: # (TODO: Check whether this example is rewritten properly)
 ```kotlin
-testGraph {
-    stage("myStage") {
+testGraph("test") {
+    val mySubgraph = assertSubgraphByName<Unit, String>("mySubgraph")
+
+    verifySubgraph(mySubgraph) {
         // Get references to nodes
         val nodeA = assertNodeByName("nodeA")
         val nodeB = assertNodeByName("nodeB")

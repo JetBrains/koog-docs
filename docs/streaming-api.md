@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Streaming API in the Kotlin Agentic Framework lets you process structured data from Large Language Models 
+The Streaming API in the Koog framework lets you process structured data from Large Language Models 
 (LLMs) as it arrives, rather than waiting for the entire response.
 This page explains how to use the Streaming API to efficiently handle structured data in Markdown format.
 
@@ -22,7 +22,7 @@ This approach is particularly useful as it provides the following benefits:
 - Processing large responses efficiently
 - Implementing real-time data processing pipelines
 
-The Streaming API allows parsing the output as **structured data** from the .md format or as a set of *plain text*
+The Streaming API allows parsing the output as *structured data* from the .md format or as a set of *plain text*
 chunks.
 
 ## Working with a raw string stream
@@ -195,7 +195,7 @@ fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
 ### 4. Use the parser in your agent strategy
 
 ```kotlin
-val agentStrategy = simpleStrategy("library-assistant") {
+val agentStrategy = strategy("library-assistant") {
     // Describe the node containing the output stream parsing 
     val getMdOutput by node<Unit, String> { _ ->
         val books = mutableListOf<Book>()
@@ -244,7 +244,7 @@ class BookTool() : SimpleTool<Book>() {
     override val descriptor: ToolDescriptor
         get() = ToolDescriptor(
             name = NAME,
-            description = "A tool to parse book information from markdown",
+            description = "A tool to parse book information from Markdown",
             requiredParameters = listOf(),
             optionalParameters = listOf()
         )
@@ -254,7 +254,7 @@ class BookTool() : SimpleTool<Book>() {
 ### 2. Use the tool with streaming data
 
 ```kotlin
-val agentStrategy = simpleStrategy("library-assistant") {
+val agentStrategy = strategy("library-assistant") {
     val getMdOutput by node<Unit, String> { _ ->
         val mdDefinition = markdownBookDefinition()
 
@@ -283,16 +283,15 @@ val agentStrategy = simpleStrategy("library-assistant") {
 ### 3. Register the tool in your agent configuration
 
 ```kotlin
-val toolRegistry = SimpleToolRegistry {
+val toolRegistry = ToolRegistry {
     tool(BookTool())
 }
 
-val runner = KotlinAIAgent(
-    promptExecutor = simpleGrazieExecutor(token),
+val runner = AIAgent(
+    promptExecutor = simpleOpenAIExecutor(token),
     toolRegistry = toolRegistry,
     strategy = agentStrategy,
     agentConfig = agentConfig,
-    cs = this,
 )
 ```
 
