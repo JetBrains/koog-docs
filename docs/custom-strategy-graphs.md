@@ -108,14 +108,14 @@ The basic strategy graph operates as follows:
 Here is an example of a basic strategy graph:
 
 ```kotlin
-val myStrategy = simpleStrategy("my-strategy") {
-    val sendInput by nodeLLMSendStageInput()
+val myStrategy = strategy("my-strategy") {
+    val nodeCallLLM by nodeLLMRequest()
     val executeToolCall by nodeExecuteTool()
     val sendToolResult by nodeLLMSendToolResult()
 
-    edge(nodeStart forwardTo sendInput)
-    edge(sendInput forwardTo nodeFinish onAssistantMessage { true })
-    edge(sendInput forwardTo executeToolCall onToolCall { true })
+    edge(nodeStart forwardTo nodeCallLLM)
+    edge(nodeCallLLM forwardTo nodeFinish onAssistantMessage { true })
+    edge(nodeCallLLM forwardTo executeToolCall onToolCall { true })
     edge(executeToolCall forwardTo sendToolResult)
     edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
     edge(sendToolResult forwardTo executeToolCall onToolCall { true })

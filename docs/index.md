@@ -34,22 +34,24 @@ We support the following LLM providers and platforms whose LLMs you can use to p
 # Installation
 
 ```
-// Please add installation instructions here
+implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
 ```
 
 # Quickstart example
 
 The [Simple API](simple-api-getting-started) provides the easiest way to get started with AI agents:
+
 !!! note
-Before you run the example, assign a corresponding API key as the `YOUR_API_TOKEN` environment variable. For details, see [Getting started](simple-api-getting-started.md).
+    Before you run the example, assign a corresponding API key as the `YOUR_API_TOKEN` environment variable. For details, see [Getting started](simple-api-getting-started.md).
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("YOUR_API_TOKEN")
 
     val agent = simpleChatAgent(
         executor = simpleOpenAIExecutor(apiToken),
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
     agent.run("Hello, how can you help me?")
 }

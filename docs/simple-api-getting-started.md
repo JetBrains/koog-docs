@@ -21,7 +21,7 @@ The tool result is returned if the tool registry is provided to the agent.
 To use the Simple API functionality, you need to add the following dependencies to your project:
 
 ```
-// Please add installation instructions here
+implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
 ```
 ## Create an agent
 
@@ -30,12 +30,13 @@ To use the Simple API functionality, you need to add the following dependencies 
 A chat agent maintains a conversation with the user until the session is explicitly terminated:
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleChatAgent(
         executor = simpleOpenAIExecutor(apiToken),
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
     agent.run("Hello, how can you help me?")
 }
@@ -51,12 +52,13 @@ For details, see [Configuration options](simple-api-configuration.md) and [Avail
 A single-run agent processes a single input and provides a response:
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleSingleRunAgent(
         executor = simpleOpenAIExecutor(apiToken),
-        systemPrompt = "You are a code assistant. Provide concise code examples."
+        systemPrompt = "You are a code assistant. Provide concise code examples.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
 
     agent.run("Write a Kotlin function to calculate factorial")
@@ -75,7 +77,7 @@ The Simple API provides a set of built-in tools along with the ability to implem
 The following example demonstrates how to pass the built-in `SayToUser` tool to the chat agent:
 
 ```kotlin
-fun main() = runBlocking {
+fun main() {
     val apiToken = System.getenv("YOUR_API_TOKEN")
 
     val toolRegistry = ToolRegistry {
@@ -87,7 +89,8 @@ fun main() = runBlocking {
     val agent = simpleChatAgent(
         executor = simpleOpenAIExecutor(apiToken),
         toolRegistry = toolRegistry,
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely."
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o
     )
     agent.run("Hello, how can you help me?")
 }
