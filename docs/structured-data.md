@@ -146,14 +146,14 @@ polymorphism support.
 
 The following schema types are supported
 
-* `SIMPLE`: A simplified schema type.
+* `SIMPLE`: a simplified schema type:
     - Supports only standard JSON fields
     - Does not support definitions, URL references, and recursive checks
     - **Does not support polymorphism**
     - Supported by a larger number of language models
     - Used for simpler data structures
 
-* `FULL`: A more comprehensive schema type.
+* `FULL`: a more comprehensive schema type:
     - Supports advanced JSON Schema capabilities, including definitions, URL references, and recursive checks
     - **Supports polymorphism**: can work with sealed classes or interfaces and their implementations
     - Supported by fewer language models
@@ -188,7 +188,7 @@ To request a structured response from an LLM, use the `requestLLMStructured` met
 val structuredResponse = llm.writeSession {
     this.requestLLMStructured(
         structure = weatherForecastStructure,
-        fixingModel = JetBrainsAIModels.OpenAI.GPT4o,
+        fixingModel = OpenAIModels.Chat.GPT4o,
     )
 }
 ```
@@ -201,23 +201,22 @@ The `fixingModel` parameter specifies a model that will handle coercion if the o
 
 You can integrate structured data processing into your agent strategies:
 
-[//]: # (TODO: Replace with a proper part of the sample when the full sample is fixed)
 ```kotlin
-val agentStrategy = strategy("weather-forecast") { 
-    val forecastProcessing by subgraph<String, String>() {
-        val setup by nodeLLMSendStageInput()
+val agentStrategy = strategy("weather-forecast") {
+    val weatherSubgraph by subgraph<String, String>("weather") {
+        val setup by nodeLLMRequest()
 
         val getStructuredForecast by node<Message.Response, String> { _ ->
             val structuredResponse = llm.writeSession {
                 this.requestLLMStructured(
-                    structure = weatherForecastStructure,
-                    fixingModel = JetBrainsAIModels.OpenAI.GPT4o,
+                    structure = forecastStructure,
+                    fixingModel = OpenAIModels.Chat.GPT4o,
                 )
             }
 
             """
             Response structure:
-            ${structuredResponse.structure}
+            $structuredResponse
             """.trimIndent()
         }
 
@@ -225,6 +224,7 @@ val agentStrategy = strategy("weather-forecast") {
         edge(setup forwardTo getStructuredForecast)
         edge(getStructuredForecast forwardTo nodeFinish)
     }
+    nodeStart then weatherSubgraph then nodeFinish
 }
 ```
 
@@ -232,10 +232,8 @@ val agentStrategy = strategy("weather-forecast") {
 
 Here is a full example of using the Structured Data Processing API:
 
-[//]: # (TODO: Replace when there is a full working sample)
 ```kotlin
 // Note: Import statements are omitted for brevity
-
 @Serializable
 @SerialName("SimpleWeatherForecast")
 @LLMDescription("Simple weather forecast for a location")
@@ -247,6 +245,8 @@ data class SimpleWeatherForecast(
     @LLMDescription("Weather conditions (e.g., sunny, cloudy, rainy)")
     val conditions: String
 )
+
+val token = System.getenv("OPENAI_KEY") ?: error("Environment variable OPENAI_KEY is not set")
 
 fun main(): Unit = runBlocking {
     // Create sample forecasts
@@ -270,22 +270,22 @@ fun main(): Unit = runBlocking {
         schemaType = JsonStructuredData.JsonSchemaType.SIMPLE
     )
 
-    // Define agent strategy
+    // Define the agent strategy
     val agentStrategy = strategy("weather-forecast") {
-        stage("weather") {
-            val setup by nodeLLMSendStageInput()
+        val weatherSubgraph by subgraph<String, String>("weather") {
+            val setup by nodeLLMRequest()
 
             val getStructuredForecast by node<Message.Response, String> { _ ->
                 val structuredResponse = llm.writeSession {
                     this.requestLLMStructured(
                         structure = forecastStructure,
-                        fixingModel = JetBrainsAIModels.OpenAI.GPT4o,
+                        fixingModel = OpenAIModels.Chat.GPT4o,
                     )
                 }
 
                 """
                 Response structure:
-                ${structuredResponse.structure}
+                $structuredResponse
                 """.trimIndent()
             }
 
@@ -293,13 +293,12 @@ fun main(): Unit = runBlocking {
             edge(setup forwardTo getStructuredForecast)
             edge(getStructuredForecast forwardTo nodeFinish)
         }
+        nodeStart then weatherSubgraph then nodeFinish
     }
 
     // Configure and run the agent
-    val token = System.getenv("GRAZIE_TOKEN") ?: error("Environment variable GRAZIE_TOKEN is not set")
-
-    val agentConfig = LocalAgentConfig(
-        prompt = prompt(JetBrainsAIModels.OpenAI.GPT4o, "weather-forecast") {
+    val agentConfig = AIAgentConfig(
+        prompt = prompt("weather-forecast-prompt") {
             system(
                 """
                 You are a weather forecasting assistant.
@@ -307,14 +306,15 @@ fun main(): Unit = runBlocking {
                 """.trimIndent()
             )
         },
+        model = OpenAIModels.Chat.GPT4o,
         maxAgentIterations = 5
     )
 
-    val runner = KotlinAIAgent(
-        promptExecutor = simpleGrazieExecutor(token),
+    val runner = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(token),
         toolRegistry = ToolRegistry.EMPTY,
         strategy = agentStrategy,
-        agentConfig = agentConfig,
+        agentConfig = agentConfig
     )
 
     runner.run("Get weather forecast for Paris")

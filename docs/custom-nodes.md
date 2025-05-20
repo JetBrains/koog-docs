@@ -15,9 +15,8 @@ Framework:
 - **AIAgentNodeDelegate**: a delegate class that handles lazy initialization of nodes.
 - **AIAgentSubgraphBuilderBase**: provides the `node` function for creating nodes in a DSL-like manner.
 
-Nodes are connected using edges, which define the flow of execution between nodes.
-Each node has an `execute` method that takes an input and produces an output, which is then passed to the next node in 
-the workflow.
+You connect nodes using edges, which define the flow of execution between nodes.
+Each node has an `execute` method that takes an input and produces an output, which is then passed to the next node in the workflow.
 
 ## Implementing a custom node
 
@@ -106,7 +105,7 @@ The following sections provide some common patterns for implementing custom node
 
 ### Pass-through nodes
 
-Nodes that perform an operation but return the input as the output:
+Nodes that perform an operation but return the input as the output.
 
 ```kotlin
 fun <T> AIAgentSubgraphBuilderBase<*, *>.loggingNode(
@@ -119,7 +118,7 @@ fun <T> AIAgentSubgraphBuilderBase<*, *>.loggingNode(
 
 ### Transformation nodes
 
-Nodes that transform the input into a different output:
+Nodes that transform the input into a different output.
 
 ```kotlin
 fun AIAgentSubgraphBuilderBase<*, *>.upperCaseNode(
@@ -131,7 +130,7 @@ fun AIAgentSubgraphBuilderBase<*, *>.upperCaseNode(
 
 ### LLM interaction nodes
 
-Nodes that interact with the LLM:
+Nodes that interact with the LLM.
 
 ```kotlin
 fun AIAgentSubgraphBuilderBase<*, *>.summarizeTextNode(

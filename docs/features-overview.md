@@ -4,7 +4,6 @@ Agent features provide a way to extend and enhance the functionality of AI agent
 
 - Add new capabilities to agents
 - Intercept and modify agent behavior
-- Provide access to external systems and resources
 - Log and monitor agent execution
 
 The Koog framework implements the following features:
