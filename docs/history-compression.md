@@ -1,4 +1,4 @@
-# History Compression
+# History compression
 
 AI agents maintain a message history that includes user messages, assistant responses, tool calls, and tool responses.
 This history grows with each interaction as the agent follows its strategy.
