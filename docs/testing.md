@@ -22,7 +22,7 @@ Before setting up a test environment, make sure that you have added the followin
    ```kotlin
    // build.gradle.kts
    dependencies {
-       testImplementation("ai.jetbrains.code.agents:agents-test:$version")
+       testImplementation("ai.koog:agents-test:$version")
        testImplementation("kotlin.testing")
    }
    ```
@@ -34,11 +34,11 @@ The most basic form of testing involves mocking LLM responses to ensure determin
 ```kotlin
 // Create a mock LLM executor
 val mockLLMApi = getMockExecutor(toolRegistry, eventHandler) {
-    // Mock a simple text response
-    mockLLMAnswer("Hello!") onRequestContains "Hello"
+  // Mock a simple text response
+  mockLLMAnswer("Hello!") onRequestContains "Hello"
 
-    // Mock a default response
-    mockLLMAnswer("I don't know how to answer that.").asDefaultResponse
+  // Mock a default response
+  mockLLMAnswer("I don't know how to answer that.").asDefaultResponse
 }
 ```
 
@@ -55,11 +55,11 @@ mockTool(PositiveToneTool) alwaysReturns "The text has a positive tone."
 
 // Using lambda when you need to perform extra actions
 mockTool(NegativeToneTool) alwaysTells {
-    // Perform some extra action
-    println("Negative tone tool called")
+  // Perform some extra action
+  println("Negative tone tool called")
 
-    // Return the result
-    "The text has a negative tone."
+  // Return the result
+  "The text has a negative tone."
 }
 
 // Mock tool behavior based on specific arguments
@@ -67,7 +67,7 @@ mockTool(AnalyzeTool) returns AnalyzeTool.Result("Detailed analysis") onArgument
 
 // Mock tool behavior with conditional argument matching
 mockTool(SearchTool) returns SearchTool.Result("Found results") onArgumentsMatching { args ->
-    args.query.contains("important")
+  args.query.contains("important")
 }
 ```
 
@@ -100,9 +100,9 @@ AIAgent(
 
 ### Testing Graph Structure
 
-Before diving into detailed node behavior and edge connections, it's important to verify the overall structure of your agent's graph. This includes checking that all required nodes exist and are properly connected in the expected stages.
+Before diving into detailed node behavior and edge connections, it's important to verify the overall structure of your agent's graph. This includes checking that all required nodes exist and are properly connected in the expected subgraphs.
 
-The `Testing` feature provides a comprehensive way to test your agent's graph structure. This approach is particularly valuable for complex agents with multiple stages and interconnected nodes.
+The `Testing` feature provides a comprehensive way to test your agent's graph structure. This approach is particularly valuable for complex agents with multiple subgraphs and interconnected nodes.
 
 #### Basic Structure Testing
 
@@ -117,11 +117,19 @@ AIAgent(
     agentConfig = agentConfig,
     promptExecutor = mockLLMApi,
 ) {
-    testGraph {
-        // Assert the order of stages
-        assertStagesOrder("first", "second")
+    testGraph("test") {
+        val firstSubgraph = assertSubgraphByName<String, String>("first")
+        val secondSubgraph = assertSubgraphByName<String, String>("second")
 
-        stage("first") {
+        // Assert subgraph connections
+        assertEdges {
+            startNode() alwaysGoesTo firstSubgraph
+            firstSubgraph alwaysGoesTo secondSubgraph
+            secondSubgraph alwaysGoesTo finishNode()
+        }
+
+        // Verify the first subgraph
+        verifySubgraph(firstSubgraph) {
             val start = startNode()
             val finish = finishNode()
 
@@ -282,7 +290,7 @@ These advanced edge tests help ensure that your agent makes the correct decision
 
 Here's a user story that demonstrates a complete testing scenario:
 
-Imagine you're developing a tone analysis agent that analyzes the tone of text and provides feedback. The agent has a single stage with tools for detecting positive, negative, and neutral tones.
+Imagine you're developing a tone analysis agent that analyzes the tone of text and provides feedback. The agent uses tools for detecting positive, negative, and neutral tones.
 
 Here's how you might test this agent:
 
@@ -294,22 +302,19 @@ fun testToneAgent() = runTest {
     var result: String? = null
 
     // Create a tool registry
-    val toneStageName = "tone_analysis"
     val toolRegistry = ToolRegistry {
-        stage(toneStageName) {
-            // Special tool, required with this type of agent
-            tool(SayToUser)
+        // Special tool, required with this type of agent
+        tool(SayToUser)
 
-            with(ToneTools) {
-                tools()
-            }
+        with(ToneTools) {
+            tools()
         }
     }
 
     // Create an event handler
     val eventHandler = EventHandler {
-        onToolCall { stage, tool, args ->
-            println("[DEBUG_LOG] Tool called: stage ${stage.name}, tool ${tool.name}, args $args")
+        onToolCall { tool, args ->
+            println("[DEBUG_LOG] Tool called: tool ${tool.name}, args $args")
             toolCalls.add(tool.name)
         }
 
@@ -361,7 +366,7 @@ fun testToneAgent() = runTest {
     }
 
     // Create strategy
-    val strategy = toneStrategy("tone_analysis", toolRegistry, toneStageName)
+    val strategy = toneStrategy("tone_analysis")
 
     // Create agent config
     val agentConfig = AIAgentConfig(
@@ -408,13 +413,16 @@ fun testToneAgent() = runTest {
 }
 ```
 
-For more complex agents with multiple stages, you can also test the graph structure:
+For more complex agents with multiple subgraphs, you can also test the graph structure:
 
 ```kotlin
 @Test
-fun testMultiStageAgentStructure() = runBlocking {
+fun testMultiSubgraphAgentStructure() = runTest {
     val strategy = strategy("test") {
-        stage("first") {
+        val firstSubgraph by subgraph(
+            "first",
+            tools = listOf(DummyTool, CreateTool, SolveTool)
+        ) {
             val callLLM by nodeLLMRequest(allowToolCalls = false)
             val executeTool by nodeExecuteTool()
             val sendToolResult by nodeLLMSendToolResult()
@@ -427,7 +435,7 @@ fun testMultiStageAgentStructure() = runBlocking {
                 input
             }
 
-            edge(nodeStart forwardTo callLLM transformed { stageInput })
+            edge(nodeStart forwardTo callLLM)
             edge(callLLM forwardTo executeTool onToolCall { true })
             edge(callLLM forwardTo giveFeedback onAssistantMessage { true })
             edge(giveFeedback forwardTo giveFeedback onAssistantMessage { true })
@@ -435,20 +443,19 @@ fun testMultiStageAgentStructure() = runBlocking {
             edge(executeTool forwardTo nodeFinish transformed { it.content })
         }
 
-        stage("second") {
-            edge(nodeStart forwardTo nodeFinish transformed { stageInput })
+        val secondSubgraph by subgraph<String, String>("second") {
+            edge(nodeStart forwardTo nodeFinish)
         }
+
+        edge(nodeStart forwardTo firstSubgraph)
+        edge(firstSubgraph forwardTo secondSubgraph)
+        edge(secondSubgraph forwardTo nodeFinish)
     }
 
     val toolRegistry = ToolRegistry {
-        stage("first") {
-            tool(DummyTool)
-            tool(CreateTool)
-            tool(SolveTool)
-        }
-        stage("second") {
-            tool(DummyTool)
-        }
+        tool(DummyTool)
+        tool(CreateTool)
+        tool(SolveTool)
     }
 
     val mockLLMApi = getMockExecutor(toolRegistry) {
@@ -465,15 +472,22 @@ fun testMultiStageAgentStructure() = runBlocking {
         agentConfig = AIAgentConfig(prompt = basePrompt, model = OpenAIModels.Chat.GPT4o, maxAgentIterations = 100),
         promptExecutor = mockLLMApi,
     ) {
-        testGraph {
-            assertStagesOrder("first", "second")
+        testGraph("test") {
+            val firstSubgraph = assertSubgraphByName<String, String>("first")
+            val secondSubgraph = assertSubgraphByName<String, String>("second")
 
-            stage("first") {
+            assertEdges {
+                startNode() alwaysGoesTo firstSubgraph
+                firstSubgraph alwaysGoesTo secondSubgraph
+                secondSubgraph alwaysGoesTo finishNode()
+            }
+
+            verifySubgraph(firstSubgraph) {
                 val start = startNode()
                 val finish = finishNode()
 
                 val askLLM = assertNodeByName<String, Message.Response>("callLLM")
-                val callTool = assertNodeByName<ToolCall.Signature, ToolCall.Result>("executeTool")
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
                 val giveFeedback = assertNodeByName<Any?, Any?>("giveFeedback")
 
                 assertReachable(start, askLLM)
@@ -498,10 +512,6 @@ fun testMultiStageAgentStructure() = runBlocking {
                     askLLM withOutput Message.Assistant("Hello!") goesTo giveFeedback
                     askLLM withOutput toolCallMessage(CreateTool, CreateTool.Args("solve")) goesTo callTool
                 }
-            }
-
-            stage("second") {
-                // Empty stage for demonstration
             }
         }
     }
