@@ -18,13 +18,16 @@ The tool result is returned if the tool registry is provided to the agent.
 
 ## Add dependencies
 
-To use the Simple API functionality, you need to add the following dependencies to your project:
+To use the Simple API functionality, you need to include all necessary dependencies in your build configuration. For example:
 
 ```
 dependencies {
-    implementation("ai.koog.agents:koog-agents:VERSION")
+    implementation("ai.koog:koog-agents:VERSION")
 }
 ```
+
+For all available methods of installation, refer to [Installation](index.md#installation).
+
 ## Create an agent
 
 ### Create a chat agent
@@ -33,10 +36,10 @@ A chat agent maintains a conversation with the user until the session is explici
 
 ```kotlin
 fun main() {
-    val apiToken = System.getenv("OPEN_AI_API_KEY")
+    val apiKey = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleChatAgent(
-        executor = simpleOpenAIExecutor(apiToken),
+        executor = simpleOpenAIExecutor(apiKey),
         systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
         llmModel = OpenAIModels.Chat.GPT4o
     )
@@ -55,10 +58,10 @@ A single-run agent processes a single input and provides a response:
 
 ```kotlin
 fun main() {
-    val apiToken = System.getenv("OPEN_AI_API_KEY")
+    val apiKey = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleSingleRunAgent(
-        executor = simpleOpenAIExecutor(apiToken),
+        executor = simpleOpenAIExecutor(apiKey),
         systemPrompt = "You are a code assistant. Provide concise code examples.",
         llmModel = OpenAIModels.Chat.GPT4o
     )
@@ -80,7 +83,7 @@ The following example demonstrates how to pass the built-in `SayToUser` tool to 
 
 ```kotlin
 fun main() {
-    val apiToken = System.getenv("YOUR_API_TOKEN")
+    val apiKey = System.getenv("YOUR_API_KEY")
 
     val toolRegistry = ToolRegistry {
         tools(
@@ -89,7 +92,7 @@ fun main() {
     }
 
     val agent = simpleChatAgent(
-        executor = simpleOpenAIExecutor(apiToken),
+        executor = simpleOpenAIExecutor(apiKey),
         toolRegistry = toolRegistry,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
         llmModel = OpenAIModels.Chat.GPT4o
