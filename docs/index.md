@@ -40,7 +40,9 @@ We support the following LLM providers and platforms whose LLMs you can use to p
 # Installation
 
 ```
-implementation("ai.koog:koog-agents:VERSION")
+dependencies {
+    implementation("ai.koog.agents:koog-agents:VERSION")
+}
 ```
 
 # Quickstart example

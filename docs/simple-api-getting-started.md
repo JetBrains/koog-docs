@@ -21,7 +21,9 @@ The tool result is returned if the tool registry is provided to the agent.
 To use the Simple API functionality, you need to add the following dependencies to your project:
 
 ```
-implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
+dependencies {
+    implementation("ai.koog.agents:koog-agents:VERSION")
+}
 ```
 ## Create an agent
 

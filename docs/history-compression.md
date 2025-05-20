@@ -1,114 +1,118 @@
-# History Compression
+# History compression
 
-## TLDR
+AI agents maintain a message history that includes user messages, assistant responses, tool calls, and tool responses.
+This history grows with each interaction as the agent follows its strategy.
 
-For long-running conversations, the history can grow large and consume a lot of tokens. You can use the
-`nodeLLMCompressHistory` node to compress the history.
+For long-running conversations, the history can become large and consume a lot of tokens.
+History compression helps reduce this by summarizing the full list of messages into one or several messages that contain only important information necessary for further agent operation.
 
-## What is History Compression?
+History compression addresses key challenges in agent systems:
 
-LLM-based AI agents maintain a message history that includes user messages, assistant responses, tool calls, and tool responses. This history naturally grows with each interaction as the agent progresses through its strategy. Each node in an AIAgent's strategy might add new messages or tool calls to the history.
+- Optimizes context usage. Focused and smaller contexts improve LLM performance and prevent failures from exceeding token limits.
+- Improves performance. Compressing history reduces the number of messages the LLM processes, resulting in faster responses.
+- Enhances accuracy. Focusing on relevant information helps the LLM remain focused and complete tasks without distractions.
+- Reduces costs. Reducing irrelevant messages lowers token usage, decreasing the overall cost of API calls.
 
-History compression allows changing the list of all messages (including tool calls) to one (or more) messages that contain only important information necessary for further agent execution. This condensed representation preserves the essential context while reducing the overall size of the message history.
+## When to compress history
 
-## Why Compress the History?
+History compression is performed at specific steps in the agent workflow:
 
-History compression addresses several key challenges in LLM-based agent systems:
+- Between logical steps (subgraphs) of the agent strategy.
+- When context becomes too long.
 
-1. **Context Window Limitations**: LLMs have finite context windows and perform much better with smaller, more focused contexts. Some LLMs won't work at all if the context exceeds their maximum token limit.
+## Implementing history compression
 
-2. **Performance Improvement**: With a compressed history, the LLM analyzes fewer messages to make each decision, resulting in faster response times.
+There are two main approaches to implementing history compression in your agent:
 
-3. **Accuracy Enhancement**: By operating with only specific and relevant information without distracting messages, the LLM can maintain focus on the current task.
+- In a strategy graph.
+- In a custom node.
 
-4. **Cost Efficiency**: You don't have to pay for extra tokens in irrelevant messages, reducing the overall cost of LLM API calls.
+### Compressing history in a strategy graph
 
-## When to Compress History
+To compress the history in a strategy graph, you need to use the `nodeLLMCompressHistory` node.
+Depending on which step you decide to perform compression, the following scenarios are available: 
 
-History compression is typically performed at specific points in an agent's execution:
-
-1. **Between Logical Stages**: Compress history between different logical stages or steps of an agent's strategy.
-
-2. **When Context Becomes Too Long**: Compress whenever the message history (i.e., context) in the current LLM prompt becomes too long.
-
-## How to Compress History
-
-There are two main ways to implement history compression in your agent:
-
-### 1. In a Strategy Graph
-
-When writing a strategy graph, use the `nodeLLMCompressHistory()` function:
+* To compress the history when it becomes too long, you can define a helper function and add the `nodeLLMCompressHistory` node to your strategy graph with the following logic:
 
 ```kotlin
+// Define that the history is too long if there are more than 100 messages
+private suspend fun AIAgentContextBase.historyIsTooLong(): Boolean = llm.readSession { prompt.messages.size > 100 }
+
 val strategy = strategy("execute-with-history-compression") {
     val callLLM by nodeLLMRequest()
     val executeTool by nodeExecuteTool()
     val sendToolResult by nodeLLMSendToolResult()
-    
-    // Compresses the LLM history and keeps the current ReceivedToolResult for the next node
-    val compressHistory by nodeLLMCompressHistory<ReceivedToolResult>() 
+
+    // Compress the LLM history and keep the current ReceivedToolResult for the next node
+    val compressHistory by nodeLLMCompressHistory<ReceivedToolResult>()
 
     edge(nodeStart forwardTo callLLM)
     edge(callLLM forwardTo nodeFinish onAssistantMessage { true })
     edge(callLLM forwardTo executeTool onToolCall { true })
-    
-    // Compressing history after executing any tool if the history is too long 
+
+    // Compress history after executing any tool if the history is too long 
     edge(executeTool forwardTo compressHistory onCondition { historyIsTooLong() })
     edge(compressHistory forwardTo sendToolResult)
-    // Otherwise, proceeding to the next LLM request
+    // Otherwise, proceed to the next LLM request
     edge(executeTool forwardTo sendToolResult onCondition { !historyIsTooLong() })
-    
+
     edge(sendToolResult forwardTo executeTool onToolCall { true })
     edge(sendToolResult forwardTo nodeFinish onAssistantMessage { true })
 }
 ```
+In this example, the strategy checks if the history is too long after each tool call.
+The history is compressed before sending the tool result back to the LLM. This prevents the context from growing during long conversations.
 
-```kotlin
-// Let's define that the history is too long if there's more than 100 messages
-private suspend fun AIAgentContextBase.historyIsTooLong(): Boolean = llm.readSession { prompt.messages.size > 100 }
-```
-
-Or you can decide to compress the history between the logical steps (subgraphs) of your strategy:
+* To compress the history between the logical steps (subgraphs) of your strategy, you can implement your strateg as follows:
 
 ```kotlin
 val strategy = strategy("execute-with-history-compression") {
     val collectInformation by subgraph<String, String> {
-        // some steps to collect the information
+        // Some steps to collect the information
     }
     val compressHistory by nodeLLMCompressHistory<String>()
     val makeTheDecision by subgraph<String, Decision> {
-        // some steps to make the decision based on the current compressed history + the collected information
+        // Some steps to make the decision based on the current compressed history and collected information
     }
     
     nodeStart then collectInformation then compressHistory then makeTheDecision
 }
 ```
+In this example, the history is compressed after completing the information collection phase, but before proceeding to the decision-making phase.
 
-### 2. In a Custom Node
+### Compressing history in a custom node
 
-If you are implementing your custom node, use:
+If you are implementing a custom node, you can compress history using the `replaceHistoryWithTLDR()` function as follows:
 
 ```kotlin
 llm.writeSession {
     replaceHistoryWithTLDR()
 }
 ```
+This approach gives you more flexibility to implement compression at any point in your custom node logic, based on your specific requirements.
 
-## History Compression Strategies
+To learn more about custom nodes, see [Custom nodes](custom-nodes.md).
 
-You can pass an optional `strategy` parameter to `nodeLLMCompressHistory(strategy=...)` or to `replaceHistoryWithTLDR(strategy=...)` that affects the history compression process.
+## History compression strategies
+
+You can customize the compression process by passing an optional `strategy` parameter to `nodeLLMCompressHistory(strategy=...)` or to `replaceHistoryWithTLDR(strategy=...)`.
+The framework provides several built-in strategies.
 
 ### WholeHistory (Default)
 
-Compresses the entire history into one TLDR message summarizing what has been achieved so far.
+The default strategy that compresses the entire history into one TLDR message that summarizes what has been achieved so far.
+This strategy works well for most general use cases where you want to maintain awareness of the entire conversation context while reducing token usage.
 
+You can use it as follows: 
+
+* In a strategy graph:
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
     strategy = HistoryCompressionStrategy.WholeHistory
 )
 ```
 
-Or in a custom node:
+* In a custom node:
 
 ```kotlin
 llm.writeSession {
@@ -118,15 +122,12 @@ llm.writeSession {
 
 ### FromLastNMessages
 
-Compresses only the last `n` messages into a TLDR message and completely drops the earlier messages.
-
-#### When to use
-
+The strategy compresses only the last `n` messages into a TLDR message and completely discards earlier messages.
 This is useful when only the latest achievements of the agent (or the latest discovered facts, the latest context) are relevant for solving the problem.
 
-#### Examples
+You can use it as follows:
 
-In the strategy graph:
+* In a strategy graph:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
@@ -134,7 +135,7 @@ val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
 )
 ```
 
-Or in a custom node:
+* In a custom node:
 
 ```kotlin
 llm.writeSession {
@@ -144,15 +145,12 @@ llm.writeSession {
 
 ### Chunked
 
-Splits the whole message history into chunks of a fixed size and compresses each chunk independently into a TLDR message.
-
-#### When to use
-
+The strategy splits the whole message history into chunks of a fixed size and compresses each chunk independently into a TLDR message.
 This is useful when you need not only the concise TLDR of what has been done so far but also want to keep track of the overall progress, and some older information might also be important.
 
-#### Examples
+You can use it as follows:
 
-In the strategy graph:
+* In a strategy graph:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
@@ -160,7 +158,7 @@ val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
 )
 ```
 
-Or in a custom node:
+* In a custom node:
 
 ```kotlin
 llm.writeSession {
@@ -170,14 +168,13 @@ llm.writeSession {
 
 ### RetrieveFactsFromHistory
 
-Searches for specific facts relevant to the provided list of concepts in the history and retrieves them. It changes the whole history to just these facts and leaves them as context for future LLM requests.
-#### When to use
-
+The strategy searches for specific facts relevant to the provided list of concepts in the history and retrieves them.
+It changes the whole history to just these facts and leaves them as context for future LLM requests.
 This is useful when you have an idea of what exact facts will be relevant for the LLM to perform better on the task.
 
-#### Examples
+You can use it as follows:
 
-In the strategy graph:
+* In a strategy graph:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
@@ -207,7 +204,7 @@ val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
 )
 ```
 
-Or in a custom node:
+* In a custom node:
 
 ```kotlin
 llm.writeSession {
@@ -239,9 +236,11 @@ llm.writeSession {
 }
 ```
 
-## Implementing Your Own History Compression Strategy
+## Implementing custom history compression strategy
 
-You can create your own history compression strategy by extending the `HistoryCompressionStrategy` abstract class and implementing the `compress` method:
+You can create your own history compression strategy by extending the `HistoryCompressionStrategy` abstract class and implementing the `compress` method.
+
+Here is an example:
 
 ```kotlin
 class MyCustomCompressionStrategy : HistoryCompressionStrategy() {
@@ -274,7 +273,11 @@ class MyCustomCompressionStrategy : HistoryCompressionStrategy() {
 }
 ```
 
-Then use your custom strategy:
+In this example, the custom strategy filters messages that contain the word "important" and keeps only those in the compressed history.
+
+Then you can use it as follows:
+
+* In a strategy graph:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
@@ -282,7 +285,7 @@ val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
 )
 ```
 
-Or in a custom node:
+* In a custom node:
 
 ```kotlin
 llm.writeSession {
@@ -290,9 +293,14 @@ llm.writeSession {
 }
 ```
 
-## Preserving Memory
+## Preserving memory during compression
 
-All history compression methods have a `preserveMemory` parameter (default: `true`) that determines whether memory-related messages should be preserved during compression. These are messages that contain facts retrieved from memory or indicate that the memory feature is not enabled.
+All history compression methods have the `preserveMemory` parameter that determines whether memory-related messages should be preserved during compression.
+These are messages that contain facts retrieved from memory or indicate that the memory feature is not enabled.
+
+You can use the `preserveMemory` parameter as follows:
+
+* In a strategy graph:
 
 ```kotlin
 val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
@@ -301,7 +309,7 @@ val compressHistory by nodeLLMCompressHistory<ProcessedInput>(
 )
 ```
 
-Or in a custom node:
+* In a custom node:
 
 ```kotlin
 llm.writeSession {
@@ -311,7 +319,3 @@ llm.writeSession {
     )
 }
 ```
-
-## Conclusion
-
-History compression is a powerful technique for managing the context window of LLM-based agents. By using the appropriate compression strategy, you can improve performance, accuracy, and cost-efficiency while ensuring that the agent has access to the most relevant information for its current task.
