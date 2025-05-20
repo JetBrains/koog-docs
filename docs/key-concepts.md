@@ -22,8 +22,8 @@
 ## Agent workflow
 
 - **Strategy**: a defined workflow for an agent that consists of sequential subgraphs.
-  The strategy defines how the agent processes input, interacts with tools, and generates output.
-  A strategy graph consists of nodes connected by edges that represent transitions between nodes.
+The strategy defines how the agent processes input, interacts with tools, and generates output.
+A strategy graph consists of nodes connected by edges that represent transitions between nodes.
 
 ### Strategy graphs
 
@@ -37,13 +37,13 @@
 - **Conditions**: rules that determine when to follow a particular edge.
 
 - **Subgraph**: a self-contained unit of processing within an agent strategy, with its own set of tools, context, and
-  responsibilities. Information about subgraph operations can be either encapsulated within the subgraph or transferred between
-  subgraphs using the Memory feature.
+responsibilities. Information about subgraph operations can be either encapsulated within the subgraph or transferred between
+subgraphs using the AgentMemory feature.
 
 ## Tools
 
 - **Tool**: a function that an agent can use to perform specific tasks or access external systems. The agent is aware of the
-  available tools and their arguments but lacks knowledge of their implementation details.
+available tools and their arguments but lacks knowledge of their implementation details.
 
 - **Tool call**: a request from an LLM to run a specific tool using the provided arguments. It functions similarly to a function call.
 
@@ -56,7 +56,7 @@
 ## History compression
 
 - **History compression**: the process of reducing the size of the conversation history to manage token usage by applying various compression strategies.
-  To learn more, see [History compression](history-compression.md).
+To learn more, see [History compression](history-compression.md).
 
 ## Features
 
@@ -64,24 +64,19 @@
 
 ### EventHandler feature
 
-- **Event handler**: a component that processes events generated during the operation of an agent, such as tool calls, LLM
-  responses, and errors.
+- **EventHandler**: a feature that enables monitoring and responding to various agent events, providing hooks for tracking agent lifecycle, handling errors, and processing tool invocations 
+  throughout the workflow.
 
-### Memory feature
+### AgentMemory feature
 
-- **Memory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see [Memory](memory.md).
+- **AgentMemory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see [AgentMemory](agent-memory.md).
 
-- **Concept**: a category of information with associated metadata in the Memory feature, including a keyword,
-  description, and fact type. Concepts are fundamental building blocks of the agent memory system that the agent can remember and recall.
-  To learn more, see [Memory](memory.md).
+- **Concept**: a category of information with associated metadata in the AgentMemory feature, including a keyword,
+description, and fact type. Concepts are fundamental building blocks of the AgentMemory system that the agent can remember and recall.
+To learn more, see [AgentMemory](agent-memory.md).
 
-- **Fact**: an individual piece of information stored in the agent memory system.
-  Facts are associated with concepts and can either have a single value or multiple values.
-  To learn more, see [Memory](memory.md).
+- **Fact**: an individual piece of information stored in the AgentMemory system.
+Facts are associated with concepts and can either have a single value or multiple values.
+To learn more, see [AgentMemory](agent-memory.md).
 
-- **Memory scope**: the context in which facts are relevant. To learn more, see [Memory](memory.md).
-
-
-
-
-
+- **Memory scope**: the context in which facts are relevant. To learn more, see [AgentMemory](agent-memory.md).

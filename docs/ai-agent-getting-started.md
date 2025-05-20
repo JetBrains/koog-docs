@@ -13,13 +13,15 @@ By defining custom strategies, tools, and configurations, you can create agents 
 
 ## Add dependencies
 
-To use the AI Agent functionality, you need to add the following dependencies to your project:
+To use the AI Agent functionality, you need to include all necessary dependencies in your build configuration. For example:
 
 ```
 dependencies {
-    implementation("ai.koog.agents:koog-agents:VERSION")
+    implementation("ai.koog:koog-agents:VERSION")
 }
 ```
+
+For all available methods of installation, refer to [Installation](index.md#installation).
 
 ## Nodes and edges
 
@@ -237,8 +239,8 @@ Agent features let you add new capabilities to the agent, modify its behavior, p
 and log and monitor events during the agent workflow.
 The following features are available:
 
-- Event handler
-- Memory
+- EventHandler
+- AgentMemory
 - Tracing
 
 To install the feature, you need to call the `install` function and provide the feature as an argument.
