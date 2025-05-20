@@ -13,12 +13,19 @@ The framework offers two main approaches:
 
 Key features of Koog include:
 
-- A pure Kotlin implementation that lets you create and run AI agents entirely in Kotlin without relying on external service dependencies.
-- A modular and composable feature system that lets you extend AI agent capabilities.
-- The ability to create custom tools that give agents access to external systems and resources.
-- Support for both conversational agents and single-query (one-shot) agents.
-- The ability to intercept and modify agent behavior at different stages of operation.
-- Optional persistent memory support for agents through a separate module.
+- **Pure Kotlin Implementation**: Build AI agents entirely in Kotlin with no external dependencies, giving you full control.
+- **MCP Integration**: Connect to Model Control Protocol for enhanced model management.
+- **Embedding Capabilities**: Use vector embeddings for semantic search and knowledge retrieval.
+- **Custom Tool Creation**: Extend your agents with tools that access external systems and APIs.
+- **Ready-to-Use Components**: Speed up development with pre-built solutions for common AI engineering challenges.
+- **Intelligent History Compression**: Optimize token usage while maintaining conversation context using various pre-built strategies.
+- **Powerful Streaming API**: Process responses in real-time with Markdown streams support and parallel tool calls.
+- **Persistent Agent Memory**: Enable knowledge retention across sessions and even different agents.
+- **Comprehensive Tracing**: Debug and monitor agent execution with detailed and configurable tracing.
+- **Flexible Graph Workflows**: Design complex agent behaviors using intuitive graph-based workflows.
+- **Modular Feature System**: Customize agent capabilities through a composable architecture.
+- **Scalable Architecture**: Handle workloads from simple chatbots to enterprise applications.
+- **Multiplatform**: Run agents on both JVM and JS targets with Kotlin Multiplatform.
 
 # Available LLM providers and platforms
 
@@ -29,12 +36,11 @@ We support the following LLM providers and platforms whose LLMs you can use to p
 - Anthropic
 - OpenRouter
 - Ollama
-- LightLLM
 
 # Installation
 
 ```
-implementation("ai.jetbrains.code.agents:koog-agents:VERSION")
+implementation("ai.koog:koog-agents:VERSION")
 ```
 
 # Quickstart example
@@ -56,4 +62,3 @@ fun main() {
     agent.run("Hello, how can you help me?")
 }
 ```
-
