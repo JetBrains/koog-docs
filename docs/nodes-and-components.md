@@ -13,7 +13,8 @@ For more detailed reference documentation, see API reference.<!--[TODO] Link to 
 
 ### nodeDoNothing
 
-A simple pass-through node that performs no actions. The input is directly passed as the output without any processing. For details, see API reference.<!--[TODO] Link to API reference-->
+A simple pass-through node that does nothing and returns the input as output. For details, see API reference.<!--[TODO] Link to API 
+reference-->
 
 You can use this node for the following purposes:
 - Create a placeholder node in your graph.
@@ -33,8 +34,8 @@ edge(passthrough forwardTo anotherNode)
 
 ### nodeUpdatePrompt
 
-A node that updates the prompt without asking the LLM for a response. This is useful for modifying the conversation
-context before making an actual LLM request. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that adds messages to the LLM prompt using the provided prompt builder.
+This is useful for modifying the conversation context before making an actual LLM request. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this node for the following purposes:
 
@@ -51,9 +52,17 @@ val setupContext by nodeUpdatePrompt("setupContext") {
 }
 ```
 
+### nodeLLMSendMessageOnlyCallingTools
+
+A node that appends a user message to the LLM prompt and gets a response where the LLM can only call tools. For details, see API reference.<!--[TODO] Link to API reference-->
+
+### nodeLLMSendMessageForceOneTool
+
+A node that that appends a user message to the LLM prompt and forces the LLM to use a specific tool. For details, see API reference.<!--[TODO] Link to API reference-->
+
 ### nodeLLMRequest
 
-An LLM node that processes user messages and returns a response from the LLM. The node configuration determines whether
+A node that appends a user message to the LLM prompt and gets a response with optional tool usage. The node configuration determines whether
 tool calls are allowed during the processing of the message. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this node for the following purposes:
@@ -69,10 +78,17 @@ val processQuery by nodeLLMRequest("processQuery", allowToolCalls = true)
 edge(someNode forwardTo processQuery)
 ```
 
+### nodeLLMRequestStructured
+
+A node that appends a user message to the LLM prompt and requests structured data from the LLM with error correction capabilities. For details, see API reference.<!--[TODO] Link to API reference-->
+
+### nodeLLMRequestStreaming
+
+A node that appends a user message to the LLM prompt and streams LLM response with or without stream data transformation. For details, see API reference.<!--[TODO] Link to API reference-->
+
 ### nodeLLMRequestMultiple
 
-An LLM node that sends a user message to the LLM and gets a response with tools enabled, potentially receiving multiple
-tool calls. This is useful when you expect the LLM to make multiple tool calls in response to a single message. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that appends a user message to the LLM prompt and gets multiple LLM responses with tool calls enabled. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this node for the following purposes:
 
@@ -88,22 +104,17 @@ edge(someNode forwardTo processComplexQuery)
 ```
 
 ### nodeLLMCompressHistory
- 
-An LLM node that rewrites message history, leaving only user messages and resulting summaries. This is useful for
-managing long conversations by compressing the history to reduce token usage. The following compression strategies are available:
 
-- **WholeHistory**: compresses the entire conversation history into a summary.
-- **FromLastNMessages**: retains only the last N messages and compresses them.
-- **Chunked**: splits the conversation into chunks of a specified size and compresses each chunk.
+A node that compresses the current LLM prompt (message history) into a summary, replacing messages with a TLDR. For details, see API reference.<!--[TODO] Link to API reference-->
+This is useful for managing long conversations by compressing the history to reduce token usage.
 
-For details, see API reference.<!--[TODO] Link to API reference-->
+To learn more about history compression, see [History compression](history-compression.md).
 
 You can use this node for the following purposes:
 
 - Manage long conversations to reduce token usage.
 - Summarize conversation history to maintain context.
 - Implement memory management in long-running agents.
-
 
 Here is an example:
 
@@ -137,8 +148,7 @@ edge(llmNode forwardTo executeToolCall onToolCall { true })
 
 ### nodeLLMSendToolResult
 
-An LLM node that processes a tool call result and generates a response. The tool result is incorporated into
-the prompt, and a request is made to the LLM for a response. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that adds a tool result to the prompt and requests an LLM response. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this node for the following purposes:
 
@@ -155,8 +165,7 @@ edge(executeToolCall forwardTo processToolResult)
 
 ### nodeExecuteMultipleTools
 
-A node that executes multiple tool calls and returns their results. This is useful when you need to execute multiple
-tools in parallel. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that executes multiple tool calls. These calls can optionally be executed in parallel. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this node for the following purposes:
 
@@ -173,8 +182,7 @@ edge(llmNode forwardTo executeMultipleTools)
 
 ### nodeLLMSendMultipleToolResults
 
-A node that sends multiple tool execution results to the LLM and gets multiple responses. This is useful when you need
-to process the results of multiple tool executions. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that adds multiple tool results to the prompt and gets multiple LLM responses. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this node for the following purposes:
 

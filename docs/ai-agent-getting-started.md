@@ -1,6 +1,6 @@
 # Getting started
 
-The AI Agent is a robust AI agent implementation that lets you build AI agents in Kotlin.
+The AI Agent is a robust implementation that lets you build AI agents in Kotlin.
 By defining custom strategies, tools, and configurations, you can create agents that handle complex workflows.
 
 ## Prerequisites

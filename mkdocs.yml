@@ -28,7 +28,7 @@ nav:
               - Tracing: tracing.md
               - Memory: agent-memory.md
       - Testing: testing.md
-  - API reference: api-reference.md
+  - API reference: https://api.koog.ai/
 
 markdown_extensions:
   - pymdownx.highlight:
