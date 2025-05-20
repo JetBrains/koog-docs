@@ -295,18 +295,6 @@ fun main(): Unit = runBlocking {
         }
     }
 
-    // Set up event handler
-    val eventHandler = EventHandler {
-        handleError {
-            println("An error occurred: ${it.message}")
-            true
-        }
-
-        handleResult {
-            println("Result:\n$it")
-        }
-    }
-
     // Configure and run the agent
     val token = System.getenv("GRAZIE_TOKEN") ?: error("Environment variable GRAZIE_TOKEN is not set")
 
@@ -326,9 +314,7 @@ fun main(): Unit = runBlocking {
         promptExecutor = simpleGrazieExecutor(token),
         toolRegistry = ToolRegistry.EMPTY,
         strategy = agentStrategy,
-        eventHandler = eventHandler,
         agentConfig = agentConfig,
-        cs = this,
     )
 
     runner.run("Get weather forecast for Paris")
