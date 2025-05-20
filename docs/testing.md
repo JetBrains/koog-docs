@@ -1,3 +1,5 @@
+# Testing
+
 ## Overview
 
 The Testing feature provides a comprehensive framework for testing AI agent pipelines, subgraphs, and tool interactions
@@ -22,14 +24,14 @@ Before setting up a test environment, make sure that you have added the followin
    ```kotlin
    // build.gradle.kts
    dependencies {
-       testImplementation("ai.koog:agents-test:$version")
-       testImplementation("kotlin.testing")
+       testImplementation("ai.koog:agents-test:LATEST_VERSION")
+       testImplementation(kotlin("test"))
    }
    ```
 
-### Mocking LLM Responses
+### Mocking LLM responses
 
-The most basic form of testing involves mocking LLM responses to ensure deterministic behavior. This is done using the `MockLLMBuilder` and related utilities.
+The basic form of testing involves mocking LLM responses to ensure deterministic behavior. You can do this using  `MockLLMBuilder` and related utilities.
 
 ```kotlin
 // Create a mock LLM executor
@@ -42,7 +44,7 @@ val mockLLMApi = getMockExecutor(toolRegistry, eventHandler) {
 }
 ```
 
-### Mocking Tool Calls
+### Mocking tool calls
 
 You can mock the LLM to call specific tools based on input patterns:
 
@@ -71,16 +73,16 @@ mockTool(SearchTool) returns SearchTool.Result("Found results") onArgumentsMatch
 }
 ```
 
-The examples above demonstrate different ways to mock tools, from simple to more complex:
+The examples above demonstrate different ways to mock tools, from simple to more complex ones:
 
-1. `alwaysReturns` - Simplest form, directly returns a value without a lambda
-2. `alwaysTells` - Uses a lambda when you need to perform additional actions
-3. `returns...onArguments` - Returns specific results for exact argument matches
-4. `returns...onArgumentsMatching` - Returns results based on custom argument conditions
+1. `alwaysReturns`: the simplest form, directly returns a value without a lambda.
+2. `alwaysTells`: uses a lambda when you need to perform additional actions.
+3. `returns...onArguments`: returns specific results for exact argument matches.
+4. `returns...onArgumentsMatching`: returns results based on custom argument conditions.
 
-### Enabling Testing Mode
+### Enabling testing mode
 
-To enable testing mode on an agent, use the `withTesting()` function within the AIAgent constructor block:
+To enable the testing mode on an agent, use the `withTesting()` function within the AIAgent constructor block:
 
 ```kotlin
 // Create the agent with testing enabled
@@ -96,21 +98,21 @@ AIAgent(
 }
 ```
 
-## Advanced Testing
+## Advanced testing
 
-### Testing Graph Structure
+### Testing the graph structure
 
-Before diving into detailed node behavior and edge connections, it's important to verify the overall structure of your agent's graph. This includes checking that all required nodes exist and are properly connected in the expected subgraphs.
+Before testing the detailed node behavior and edge connections, it is important to verify the overall structure of your agent's graph. This includes checking that all required nodes exist and are properly connected in the expected subgraphs.
 
-The `Testing` feature provides a comprehensive way to test your agent's graph structure. This approach is particularly valuable for complex agents with multiple subgraphs and interconnected nodes.
+The Testing feature provides a comprehensive way to test your agent's graph structure. This approach is particularly valuable for complex agents with multiple subgraphs and interconnected nodes.
 
-#### Basic Structure Testing
+#### Basic structure testing
 
 Start by validating the fundamental structure of your agent's graph:
 
 ```kotlin
 AIAgent(
-    // constructor arguments
+    // Constructor arguments
     toolRegistry = toolRegistry,
     strategy = strategy,
     eventHandler = eventHandler,
@@ -145,14 +147,14 @@ AIAgent(
 }
 ```
 
+### Testing node behavior
 
-### Testing Node Behavior
+Node behavior testing lets you verify that nodes in your agent's graph produce the expected outputs for the given inputs. 
+This is crucial for ensuring that your agent's logic works correctly under different scenarios.
 
-Node behavior testing allows you to verify that nodes in your agent's graph produce the expected outputs for given inputs. This is crucial for ensuring that your agent's logic works correctly under different scenarios.
+#### Basic node testing
 
-#### Basic Node Testing
-
-Start with simple input/output validations for individual nodes:
+Start with simple input and output validations for individual nodes:
 
 ```kotlin
 assertNodes {
@@ -164,17 +166,17 @@ assertNodes {
 }
 ```
 
-The example above shows how to test that:
-1. When the LLM node receives "Hello" as input, it responds with a simple text message
-2. When it receives "Solve task", it responds with a tool call
+The example above shows how to test the following behavior:
+1. When the LLM node receives `Hello` as the input, it responds with a simple text message.
+2. When it receives `Solve task`, it responds with a tool call.
 
-#### Testing Tool Execution Nodes
+#### Testing tool run nodes
 
-You can also test nodes that execute tools:
+You can also test nodes that run tools:
 
 ```kotlin
 assertNodes {
-    // Test tool execution with specific arguments
+    // Test tool runs with specific arguments
     callTool withInput toolCallSignature(
         SolveTool,
         SolveTool.Args("solve")
@@ -184,7 +186,7 @@ assertNodes {
 
 This verifies that when the tool execution node receives a specific tool call signature, it produces the expected tool result.
 
-#### Advanced Node Testing
+#### Advanced node testing
 
 For more complex scenarios, you can test nodes with structured inputs and outputs:
 
@@ -205,7 +207,7 @@ You can also test complex tool call scenarios with detailed result structures:
 
 ```kotlin
 assertNodes {
-    // Test complex tool call with structured result
+    // Test a complex tool call with a structured result
     callTool withInput toolCallSignature(
         AnalyzeTool,
         AnalyzeTool.Args(query = "complex", depth = 5)
@@ -219,11 +221,11 @@ assertNodes {
 
 These advanced tests help ensure that your nodes handle complex data structures correctly, which is essential for sophisticated agent behaviors.
 
-### Testing Edge Connections
+### Testing edge connections
 
 Edge connections testing allows you to verify that your agent's graph correctly routes outputs from one node to the appropriate next node. This ensures that your agent follows the intended workflow paths based on different outputs.
 
-#### Basic Edge Testing
+#### Basic edge testing
 
 Start with simple edge connection tests:
 
@@ -237,13 +239,13 @@ assertEdges {
 }
 ```
 
-This example verifies that:
-1. When the LLM node outputs a simple text message, the flow is directed to the `giveFeedback` node
-2. When it outputs a tool call, the flow is directed to the `callTool` node
+This example verifies the following behavior:
+1. When the LLM node outputs a simple text message, the flow is directed to the `giveFeedback` node.
+2. When it outputs a tool call, the flow is directed to the `callTool` node.
 
-#### Testing Conditional Routing
+#### Testing conditional routing
 
-You can test more complex routing logic based on the content of outputs:
+You can test a more complex routing logic based on the content of outputs:
 
 ```kotlin
 assertEdges {
@@ -253,7 +255,7 @@ assertEdges {
 }
 ```
 
-#### Advanced Edge Testing
+#### Advanced edge testing
 
 For sophisticated agents, you can test conditional routing based on structured data in tool results:
 
@@ -286,13 +288,13 @@ assertEdges {
 
 These advanced edge tests help ensure that your agent makes the correct decisions based on the content and structure of node outputs, which is essential for creating intelligent, context-aware workflows.
 
-## Complete Testing Example
+## Complete testing example
 
-Here's a user story that demonstrates a complete testing scenario:
+Here is a user story that demonstrates a complete testing scenario:
 
-Imagine you're developing a tone analysis agent that analyzes the tone of text and provides feedback. The agent uses tools for detecting positive, negative, and neutral tones.
+You are developing a tone analysis agent that analyzes the tone of the text and provides feedback. The agent uses tools for detecting positive, negative, and neutral tones.
 
-Here's how you might test this agent:
+Here is how you can test this agent:
 
 ```kotlin
 @Test
@@ -303,7 +305,7 @@ fun testToneAgent() = runTest {
 
     // Create a tool registry
     val toolRegistry = ToolRegistry {
-        // Special tool, required with this type of agent
+        // A special tool, required with this type of agent
         tool(SayToUser)
 
         with(ToneTools) {
@@ -343,14 +345,14 @@ fun testToneAgent() = runTest {
         mockLLMToolCall(PositiveToneTool, ToneTool.Args(positiveText)) onRequestEquals positiveText
         mockLLMToolCall(NegativeToneTool, ToneTool.Args(negativeText)) onRequestEquals negativeText
 
-        // Mock the behaviour that LLM responds just tool responses once the tools returned smth.
+        // Mock the behavior where the LLM responds with just tool responses when the tools return results
         mockLLMAnswer(positiveResponse) onRequestContains positiveResponse
         mockLLMAnswer(negativeResponse) onRequestContains negativeResponse
         mockLLMAnswer(neutralResponse) onRequestContains neutralResponse
 
         mockLLMAnswer(defaultText).asDefaultResponse
 
-        // Tool mocks:
+        // Tool mocks
         mockTool(PositiveToneTool) alwaysTells {
             toolCalls += "Positive tone tool called"
             positiveResponse
@@ -365,10 +367,10 @@ fun testToneAgent() = runTest {
         }
     }
 
-    // Create strategy
+    // Create a strategy
     val strategy = toneStrategy("tone_analysis")
 
-    // Create agent config
+    // Create an agent configuration
     val agentConfig = AIAgentConfig(
         prompt = prompt("test-agent") {
             system(
@@ -385,7 +387,7 @@ fun testToneAgent() = runTest {
         maxAgentIterations = 10
     )
 
-    // Create the agent with testing enabled
+    // Create an agent with testing enabled
     val agent = AIAgent(
         promptExecutor = mockLLMApi,
         toolRegistry = toolRegistry,
@@ -396,17 +398,17 @@ fun testToneAgent() = runTest {
         withTesting()
     }
 
-    // Test positive text
+    // Test the positive text
     agent.run(positiveText)
     assertEquals("The text has a positive tone.", result, "Positive tone result should match")
     assertEquals(1, toolCalls.size, "One tool is expected to be called")
 
-    // Test negative text
+    // Test the negative text
     agent.run(negativeText)
     assertEquals("The text has a negative tone.", result, "Negative tone result should match")
     assertEquals(2, toolCalls.size, "Two tools are expected to be called")
 
-    //Test neutral text
+    //Test the neutral text
     agent.run(defaultText)
     assertEquals("The text has a neutral tone.", result, "Neutral tone result should match")
     assertEquals(3, toolCalls.size, "Three tools are expected to be called")
@@ -518,6 +520,9 @@ fun testMultiSubgraphAgentStructure() = runTest {
 }
 ```
 
+## API reference
+
+For a complete API reference related to the Testing feature, see the reference documentation for the [agents-test](https://api.koog.ai/agents/agents-test/index.html) module.
 
 ## FAQ and troubleshooting
 
@@ -538,7 +543,6 @@ val mockExecutor = getMockExecutor {
 
 Use the subgraph assertions, `verifySubgraph`, and node references:
 
-[//]: # (TODO: Check whether this example is rewritten properly)
 ```kotlin
 testGraph("test") {
     val mySubgraph = assertSubgraphByName<Unit, String>("mySubgraph")
