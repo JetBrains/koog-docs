@@ -239,8 +239,8 @@ Agent features let you add new capabilities to the agent, modify its behavior, p
 and log and monitor events during the agent workflow.
 The following features are available:
 
-- Event handler
-- Memory
+- EventHandler
+- AgentMemory
 - Tracing
 
 To install the feature, you need to call the `install` function and provide the feature as an argument.

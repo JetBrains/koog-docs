@@ -1,6 +1,7 @@
 # Overview
 
-Koog is a Kotlin-based framework designed to build and run AI agents. It lets you create agents that can interact with tools, handle complex workflows, and communicate with users.
+Koog is a Kotlin-based framework designed to build and run AI agents entirely in idiomatic Kotlin.
+It lets you create agents that can interact with tools, handle complex workflows, and communicate with users.
 
 The framework offers two main approaches:
 
@@ -11,13 +12,13 @@ The framework offers two main approaches:
 
 Key features of Koog include:
 
-- **Pure Kotlin implementation**: Build AI agents in Kotlin with no external dependencies, giving you full control.
+- **Pure Kotlin implementation**: Build AI agents entirely in natural and idiomatic Kotlin.
 - **MCP integration**: Connect to Model Control Protocol for enhanced model management.
 - **Embedding capabilities**: Use vector embeddings for semantic search and knowledge retrieval.
 - **Custom tool creation**: Extend your agents with tools that access external systems and APIs.
 - **Ready-to-use components**: Speed up development with pre-built solutions for common AI engineering challenges.
 - **Intelligent history compression**: Optimize token usage while maintaining conversation context using various pre-built strategies.
-- **Powerful Streaming API**: Process responses in real-time with Markdown streams support and parallel tool calls.
+- **Powerful Streaming API**: Process responses in real-time with streaming support and parallel tool calls.
 - **Persistent agent memory**: Enable knowledge retention across sessions and even different agents.
 - **Comprehensive tracing**: Debug and monitor agent execution with detailed and configurable tracing.
 - **Flexible graph workflows**: Design complex agent behaviors using intuitive graph-based workflows.
@@ -66,11 +67,11 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
 
 ### Gradle (Groovy)
 
-1. Add dependencies to the `build.gradle.kts` file:
+1. Add dependencies to the `build.gradle` file:
 
     ```
     dependencies {
-        implementation('ai.koog:koog-agents:VERSION')
+        implementation 'ai.koog:koog-agents:VERSION'
     }
     ```
 
@@ -108,10 +109,10 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
 
 # Quickstart example
 
-The [Simple API](simple-api-getting-started) provides the easiest way to get started with AI agents:
+To help you get started with AI agents, here is a quick example:
 
 !!! note
-    Before you run the example, assign a corresponding API key as the `YOUR_API_KEY` environment variable. For details, see [Getting started](simple-api-getting-started.md).
+    Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](simple-api-getting-started.md).
 
 ```kotlin
 fun main() {

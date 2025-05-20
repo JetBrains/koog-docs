@@ -38,7 +38,7 @@ A strategy graph consists of nodes connected by edges that represent transitions
 
 - **Subgraph**: a self-contained unit of processing within an agent strategy, with its own set of tools, context, and
 responsibilities. Information about subgraph operations can be either encapsulated within the subgraph or transferred between
-subgraphs using the Memory feature.
+subgraphs using the AgentMemory feature.
 
 ## Tools
 
@@ -64,24 +64,19 @@ To learn more, see [History compression](history-compression.md).
 
 ### EventHandler feature
 
-- **Event handler**: a component that processes events generated during the operation of an agent, such as tool calls, LLM
-responses, and errors.
+- **EventHandler**: a feature that enables monitoring and responding to various agent events, providing hooks for tracking agent lifecycle, handling errors, and processing tool invocations 
+  throughout the workflow.
 
 ### AgentMemory feature
 
-- **Memory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see [Memory](memory.md).
+- **AgentMemory**: a feature that enables AI agents to store, retrieve, and use information across conversations. To learn more, see [AgentMemory](memory.md).
 
-- **Concept**: a category of information with associated metadata in the Memory feature, including a keyword,
-description, and fact type. Concepts are fundamental building blocks of the agent memory system that the agent can remember and recall.
-To learn more, see [Memory](memory.md).
+- **Concept**: a category of information with associated metadata in the AgentMemory feature, including a keyword,
+description, and fact type. Concepts are fundamental building blocks of the AgentMemory system that the agent can remember and recall.
+To learn more, see [AgentMemory](memory.md).
 
-- **Fact**: an individual piece of information stored in the agent memory system.
+- **Fact**: an individual piece of information stored in the AgentMemory system.
 Facts are associated with concepts and can either have a single value or multiple values.
-To learn more, see [Memory](memory.md).
+To learn more, see [AgentMemory](memory.md).
 
-- **Memory scope**: the context in which facts are relevant. To learn more, see [Memory](memory.md).
-
-
-
-
-
+- **Memory scope**: the context in which facts are relevant. To learn more, see [AgentMemory](memory.md).
