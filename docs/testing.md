@@ -1,9 +1,7 @@
-# AI Agents testing
-
 ## Overview
 
-The Testing feature provides a comprehensive framework for testing AI agent pipelines, subgraphs, and tool interactions 
-in the Koog framework. It enables developers to create controlled test environments with mock LLM (Large 
+The Testing feature provides a comprehensive framework for testing AI agent pipelines, subgraphs, and tool interactions
+in the Koog framework. It enables developers to create controlled test environments with mock LLM (Large
 Language Model) executors, tool registries, and agent environments.
 
 ### Purpose
@@ -18,225 +16,508 @@ The primary purpose of this feature is to facilitate testing of agent-based AI f
 
 ## Configuration and initialization
 
-### Setting up a test environment
+### Setting up test dependencies
 
 Before setting up a test environment, make sure that you have added the following dependencies:
    ```kotlin
    // build.gradle.kts
    dependencies {
-       testImplementation("ai.jetbrains.code.agents:agents-test:$version")
+       testImplementation("ai.koog:agents-test:$version")
        testImplementation("kotlin.testing")
    }
    ```
 
-To set up a test environment for an agent pipeline, follow the steps below:
+### Mocking LLM Responses
 
-1. Create a testing configuration:
-   ```kotlin
-   val testingConfig = Testing.createInitialConfig()
-   ```
-
-2. Configure the testing environment:
-   ```kotlin
-   testingConfig.apply {
-       // Configure assertions, subgraphs, etc.
-   }
-   ```
-
-3. Install the testing configuration:
-   ```kotlin
-   Testing.install(testingConfig, pipeline)
-   ```
-
-### Mocking LLM responses
-
-To create a mock LLM executor, use one of the following code templates:
-
-* Using the builder directly:
-   ```kotlin
-   val mockExecutor = MockLLMBuilder().apply {
-       setDefaultResponse("Default response")
-       "Custom response" onUserRequestContains "specific pattern"
-   }.build()
-   ```
-
-* Using the utility function:
-   ```kotlin
-   val mockExecutor = getMockExecutor {
-       setDefaultResponse("Default response")
-       "Custom response" onUserRequestContains "specific pattern"
-
-       // Mock tool behavior
-       mockTool(myTool) alwaysReturns myResult
-   }
-   ```
-
-* Using the helper function:
-   ```kotlin
-   val response = mockLLMAnswer("This is a response")
-       .onRequestContains("specific question")
-   ```
-
-### Creating a mock environment
-
-To create a mock environment for testing:
+The most basic form of testing involves mocking LLM responses to ensure deterministic behavior. This is done using the `MockLLMBuilder` and related utilities.
 
 ```kotlin
-val mockExecutor = getMockExecutor { /* configuration */ }
-val toolRegistry = ToolRegistry()
-val mockEnvironment = MockEnvironment(toolRegistry, mockExecutor)
+// Create a mock LLM executor
+val mockLLMApi = getMockExecutor(toolRegistry, eventHandler) {
+  // Mock a simple text response
+  mockLLMAnswer("Hello!") onRequestContains "Hello"
+
+  // Mock a default response
+  mockLLMAnswer("I don't know how to answer that.").asDefaultResponse
+}
 ```
 
-### Using the Testing API extensions
+### Mocking Tool Calls
 
-To use the `graph` testing extensions:
+You can mock the LLM to call specific tools based on input patterns:
 
 ```kotlin
-suspend fun testMyFeature() = withTesting {
-    graph {
-        // Configure graph testing
-        val mySubgraph by subgraph<*, *>("my-subgraph") {
-            // Subgraph-specific assertions
+// Mock a tool call response
+mockLLMToolCall(CreateTool, CreateTool.Args("solve")) onRequestEquals "Solve task"
+
+// Mock tool behavior - simplest form without lambda
+mockTool(PositiveToneTool) alwaysReturns "The text has a positive tone."
+
+// Using lambda when you need to perform extra actions
+mockTool(NegativeToneTool) alwaysTells {
+  // Perform some extra action
+  println("Negative tone tool called")
+
+  // Return the result
+  "The text has a negative tone."
+}
+
+// Mock tool behavior based on specific arguments
+mockTool(AnalyzeTool) returns AnalyzeTool.Result("Detailed analysis") onArguments AnalyzeTool.Args("analyze deeply")
+
+// Mock tool behavior with conditional argument matching
+mockTool(SearchTool) returns SearchTool.Result("Found results") onArgumentsMatching { args ->
+  args.query.contains("important")
+}
+```
+
+The examples above demonstrate different ways to mock tools, from simple to more complex:
+
+1. `alwaysReturns` - Simplest form, directly returns a value without a lambda
+2. `alwaysTells` - Uses a lambda when you need to perform additional actions
+3. `returns...onArguments` - Returns specific results for exact argument matches
+4. `returns...onArgumentsMatching` - Returns results based on custom argument conditions
+
+### Enabling Testing Mode
+
+To enable testing mode on an agent, use the `withTesting()` function within the AIAgent constructor block:
+
+```kotlin
+// Create the agent with testing enabled
+AIAgent(
+    promptExecutor = mockLLMApi,
+    toolRegistry = toolRegistry,
+    strategy = strategy,
+    eventHandler = eventHandler,
+    agentConfig = agentConfig,
+) {
+    // Enable testing mode
+    withTesting()
+}
+```
+
+## Advanced Testing
+
+### Testing Graph Structure
+
+Before diving into detailed node behavior and edge connections, it's important to verify the overall structure of your agent's graph. This includes checking that all required nodes exist and are properly connected in the expected subgraphs.
+
+The `Testing` feature provides a comprehensive way to test your agent's graph structure. This approach is particularly valuable for complex agents with multiple subgraphs and interconnected nodes.
+
+#### Basic Structure Testing
+
+Start by validating the fundamental structure of your agent's graph:
+
+```kotlin
+AIAgent(
+    // constructor arguments
+    toolRegistry = toolRegistry,
+    strategy = strategy,
+    eventHandler = eventHandler,
+    agentConfig = agentConfig,
+    promptExecutor = mockLLMApi,
+) {
+    testGraph("test") {
+        val firstSubgraph = assertSubgraphByName<String, String>("first")
+        val secondSubgraph = assertSubgraphByName<String, String>("second")
+
+        // Assert subgraph connections
+        assertEdges {
+            startNode() alwaysGoesTo firstSubgraph
+            firstSubgraph alwaysGoesTo secondSubgraph
+            secondSubgraph alwaysGoesTo finishNode()
+        }
+
+        // Verify the first subgraph
+        verifySubgraph(firstSubgraph) {
+            val start = startNode()
+            val finish = finishNode()
+
+            // Assert nodes by name
+            val askLLM = assertNodeByName<String, Message.Response>("callLLM")
+            val callTool = assertNodeByName<ToolCall.Signature, ToolCall.Result>("executeTool")
+
+            // Assert node reachability
+            assertReachable(start, askLLM)
+            assertReachable(askLLM, callTool)
         }
     }
 }
 ```
 
-## Error handling and edge cases
 
-The Testing feature includes several mechanisms for handling errors and edge cases.
+### Testing Node Behavior
 
-### Assertion handling
+Node behavior testing allows you to verify that nodes in your agent's graph produce the expected outputs for given inputs. This is crucial for ensuring that your agent's logic works correctly under different scenarios.
 
-- Custom assertion handlers can be registered using [handleAssertion()](#)`.
-- By default, assertions are mapped to Kotlin's test assertions.
-- Failed assertions provide detailed error messages.
+#### Basic Node Testing
 
-### Tool run errors
-
-- `MockEnvironment` throws exceptions directly via [reportProblem()](#).
-- Tool run errors can be simulated by configuring tool actions to throw exceptions.
-
-### LLM response fallbacks
-
-- `MockLLMExecutor` uses a priority-based approach to find responses:
-    1. Exact matches
-    2. Partial matches
-    3. Conditional matches
-    4. Default response
-
-### Edge cases
-
-- Empty tool calls: handled gracefully by returning empty results.
-- Missing tool registry: defaults to no tools available.
-- Null responses: treated as empty strings.
-- Circular graph references: detected and reported during graph traversal.
-
-## Dependency graph
-
-The Testing feature has the following component dependencies:
-
-```
-TestingFeature.kt
-├── Api.kt (extends Testing.Config)
-├── MockLLMBuilder.kt
-│   └── MockLLMExecutor.kt
-├── MockEnvironment.kt
-│   ├── MockLLMExecutor.kt
-│   └── ToolRegistry
-└── DummyTool.kt
-```
-
-## Examples and quickstarts
-
-### Basic example: Mocking LLM responses
+Start with simple input/output validations for individual nodes:
 
 ```kotlin
-// Create a mock executor
-val mockExecutor = getMockExecutor {
-    setDefaultResponse("I don't know how to help with that.")
+assertNodes {
+    // Test basic text responses
+    askLLM withInput "Hello" outputs Message.Assistant("Hello!")
 
-    // Configure specific responses
-    "Here's how to create a file" onUserRequestContains "create a file"
-    "The answer is 42" onUserRequestEquals "What is the meaning of life?"
+    // Test tool call responses
+    askLLM withInput "Solve task" outputs toolCallMessage(CreateTool, CreateTool.Args("solve"))
 }
-
-// Use the mock executor in your tests
-val response = mockExecutor.execute(myPrompt)
-assertEquals("Expected response", response)
 ```
 
-### Advanced example: Testing agent graph flow
+The example above shows how to test that:
+1. When the LLM node receives "Hello" as input, it responds with a simple text message
+2. When it receives "Solve task", it responds with a tool call
 
-[//]: # (TODO: Check if this is OK)
+#### Testing Tool Execution Nodes
+
+You can also test nodes that execute tools:
+
 ```kotlin
-class MyAgentTest {
-    @Test
-    fun testAgentFlow() = runTest {
-        // Set up the agent pipeline
-        val pipeline = createPipeline()
+assertNodes {
+    // Test tool execution with specific arguments
+    callTool withInput toolCallSignature(
+        SolveTool,
+        SolveTool.Args("solve")
+    ) outputs toolResult(SolveTool, "solved")
+}
+```
 
-        // Test the graph flow
-        testGraph {
-            // Get references to nodes
-            val startNode = startNode()
-            val processNode = assertNodeByName("process")
-            val finishNode = finishNode()
+This verifies that when the tool execution node receives a specific tool call signature, it produces the expected tool result.
 
-            // Assert node connectivity
-            assertReachable(startNode, processNode)
-            assertReachable(processNode, finishNode)
+#### Advanced Node Testing
 
-            // Assert node outputs
-            assertNodes {
-                processNode.withInput("test input") outputs "test output"
+For more complex scenarios, you can test nodes with structured inputs and outputs:
+
+```kotlin
+assertNodes {
+    // Test with different inputs to the same node
+    askLLM withInput "Simple query" outputs Message.Assistant("Simple response")
+
+    // Test with complex parameters
+    askLLM withInput "Complex query with parameters" outputs toolCallMessage(
+        AnalyzeTool, 
+        AnalyzeTool.Args(query = "parameters", depth = 3)
+    )
+}
+```
+
+You can also test complex tool call scenarios with detailed result structures:
+
+```kotlin
+assertNodes {
+    // Test complex tool call with structured result
+    callTool withInput toolCallSignature(
+        AnalyzeTool,
+        AnalyzeTool.Args(query = "complex", depth = 5)
+    ) outputs toolResult(AnalyzeTool, AnalyzeTool.Result(
+        analysis = "Detailed analysis",
+        confidence = 0.95,
+        metadata = mapOf("source" to "database", "timestamp" to "2023-06-15")
+    ))
+}
+```
+
+These advanced tests help ensure that your nodes handle complex data structures correctly, which is essential for sophisticated agent behaviors.
+
+### Testing Edge Connections
+
+Edge connections testing allows you to verify that your agent's graph correctly routes outputs from one node to the appropriate next node. This ensures that your agent follows the intended workflow paths based on different outputs.
+
+#### Basic Edge Testing
+
+Start with simple edge connection tests:
+
+```kotlin
+assertEdges {
+    // Test text message routing
+    askLLM withOutput Message.Assistant("Hello!") goesTo giveFeedback
+
+    // Test tool call routing
+    askLLM withOutput toolCallMessage(CreateTool, CreateTool.Args("solve")) goesTo callTool
+}
+```
+
+This example verifies that:
+1. When the LLM node outputs a simple text message, the flow is directed to the `giveFeedback` node
+2. When it outputs a tool call, the flow is directed to the `callTool` node
+
+#### Testing Conditional Routing
+
+You can test more complex routing logic based on the content of outputs:
+
+```kotlin
+assertEdges {
+    // Different text responses can route to different nodes
+    askLLM withOutput Message.Assistant("Need more information") goesTo askForInfo
+    askLLM withOutput Message.Assistant("Ready to proceed") goesTo processRequest
+}
+```
+
+#### Advanced Edge Testing
+
+For sophisticated agents, you can test conditional routing based on structured data in tool results:
+
+```kotlin
+assertEdges {
+    // Test routing based on tool result content
+    callTool withOutput toolResult(
+        AnalyzeTool, 
+        AnalyzeTool.Result(analysis = "Needs more processing", confidence = 0.5)
+    ) goesTo processResult
+}
+```
+
+You can also test complex decision paths based on different result properties:
+
+```kotlin
+assertEdges {
+    // Route to different nodes based on confidence level
+    callTool withOutput toolResult(
+        AnalyzeTool, 
+        AnalyzeTool.Result(analysis = "Complete", confidence = 0.9)
+    ) goesTo finish
+
+    callTool withOutput toolResult(
+        AnalyzeTool, 
+        AnalyzeTool.Result(analysis = "Uncertain", confidence = 0.3)
+    ) goesTo verifyResult
+}
+```
+
+These advanced edge tests help ensure that your agent makes the correct decisions based on the content and structure of node outputs, which is essential for creating intelligent, context-aware workflows.
+
+## Complete Testing Example
+
+Here's a user story that demonstrates a complete testing scenario:
+
+Imagine you're developing a tone analysis agent that analyzes the tone of text and provides feedback. The agent uses tools for detecting positive, negative, and neutral tones.
+
+Here's how you might test this agent:
+
+```kotlin
+@Test
+fun testToneAgent() = runTest {
+    // Create a list to track tool calls
+    var toolCalls = mutableListOf<String>()
+    var result: String? = null
+
+    // Create a tool registry
+    val toolRegistry = ToolRegistry {
+        // Special tool, required with this type of agent
+        tool(SayToUser)
+
+        with(ToneTools) {
+            tools()
+        }
+    }
+
+    // Create an event handler
+    val eventHandler = EventHandler {
+        onToolCall { tool, args ->
+            println("[DEBUG_LOG] Tool called: tool ${tool.name}, args $args")
+            toolCalls.add(tool.name)
+        }
+
+        handleError {
+            println("[DEBUG_LOG] An error occurred: ${it.message}\n${it.stackTraceToString()}")
+            true
+        }
+
+        handleResult {
+            println("[DEBUG_LOG] Result: $it")
+            result = it
+        }
+    }
+
+    val positiveText = "I love this product!"
+    val negativeText = "Awful service, hate the app."
+    val defaultText = "I don't know how to answer this question."
+
+    val positiveResponse = "The text has a positive tone."
+    val negativeResponse = "The text has a negative tone."
+    val neutralResponse = "The text has a neutral tone."
+
+    val mockLLMApi = getMockExecutor(toolRegistry, eventHandler) {
+        // Set up LLM responses for different input texts
+        mockLLMToolCall(NeutralToneTool, ToneTool.Args(defaultText)) onRequestEquals defaultText
+        mockLLMToolCall(PositiveToneTool, ToneTool.Args(positiveText)) onRequestEquals positiveText
+        mockLLMToolCall(NegativeToneTool, ToneTool.Args(negativeText)) onRequestEquals negativeText
+
+        // Mock the behaviour that LLM responds just tool responses once the tools returned smth.
+        mockLLMAnswer(positiveResponse) onRequestContains positiveResponse
+        mockLLMAnswer(negativeResponse) onRequestContains negativeResponse
+        mockLLMAnswer(neutralResponse) onRequestContains neutralResponse
+
+        mockLLMAnswer(defaultText).asDefaultResponse
+
+        // Tool mocks:
+        mockTool(PositiveToneTool) alwaysTells {
+            toolCalls += "Positive tone tool called"
+            positiveResponse
+        }
+        mockTool(NegativeToneTool) alwaysTells {
+            toolCalls += "Negative tone tool called"
+            negativeResponse
+        }
+        mockTool(NeutralToneTool) alwaysTells {
+            toolCalls += "Neutral tone tool called"
+            neutralResponse
+        }
+    }
+
+    // Create strategy
+    val strategy = toneStrategy("tone_analysis")
+
+    // Create agent config
+    val agentConfig = AIAgentConfig(
+        prompt = prompt("test-agent") {
+            system(
+                """
+                You are an question answering agent with access to the tone analysis tools.
+                You need to answer 1 question with the best of your ability.
+                Be as concise as possible in your answers.
+                DO NOT ANSWER ANY QUESTIONS THAT ARE BESIDES PERFORMING TONE ANALYSIS!
+                DO NOT HALLUCINATE!
+            """.trimIndent()
+            )
+        },
+        model = mockk<LLModel>(relaxed = true),
+        maxAgentIterations = 10
+    )
+
+    // Create the agent with testing enabled
+    val agent = AIAgent(
+        promptExecutor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        strategy = strategy,
+        eventHandler = eventHandler,
+        agentConfig = agentConfig,
+    ) {
+        withTesting()
+    }
+
+    // Test positive text
+    agent.run(positiveText)
+    assertEquals("The text has a positive tone.", result, "Positive tone result should match")
+    assertEquals(1, toolCalls.size, "One tool is expected to be called")
+
+    // Test negative text
+    agent.run(negativeText)
+    assertEquals("The text has a negative tone.", result, "Negative tone result should match")
+    assertEquals(2, toolCalls.size, "Two tools are expected to be called")
+
+    //Test neutral text
+    agent.run(defaultText)
+    assertEquals("The text has a neutral tone.", result, "Neutral tone result should match")
+    assertEquals(3, toolCalls.size, "Three tools are expected to be called")
+}
+```
+
+For more complex agents with multiple subgraphs, you can also test the graph structure:
+
+```kotlin
+@Test
+fun testMultiSubgraphAgentStructure() = runTest {
+    val strategy = strategy("test") {
+        val firstSubgraph by subgraph(
+            "first",
+            tools = listOf(DummyTool, CreateTool, SolveTool)
+        ) {
+            val callLLM by nodeLLMRequest(allowToolCalls = false)
+            val executeTool by nodeExecuteTool()
+            val sendToolResult by nodeLLMSendToolResult()
+            val giveFeedback by node<String, String> { input ->
+                llm.writeSession {
+                    updatePrompt {
+                        user("Call tools! Don't chat!")
+                    }
+                }
+                input
+            }
+
+            edge(nodeStart forwardTo callLLM)
+            edge(callLLM forwardTo executeTool onToolCall { true })
+            edge(callLLM forwardTo giveFeedback onAssistantMessage { true })
+            edge(giveFeedback forwardTo giveFeedback onAssistantMessage { true })
+            edge(giveFeedback forwardTo executeTool onToolCall { true })
+            edge(executeTool forwardTo nodeFinish transformed { it.content })
+        }
+
+        val secondSubgraph by subgraph<String, String>("second") {
+            edge(nodeStart forwardTo nodeFinish)
+        }
+
+        edge(nodeStart forwardTo firstSubgraph)
+        edge(firstSubgraph forwardTo secondSubgraph)
+        edge(secondSubgraph forwardTo nodeFinish)
+    }
+
+    val toolRegistry = ToolRegistry {
+        tool(DummyTool)
+        tool(CreateTool)
+        tool(SolveTool)
+    }
+
+    val mockLLMApi = getMockExecutor(toolRegistry) {
+        mockLLMAnswer("Hello!") onRequestContains "Hello"
+        mockLLMToolCall(CreateTool, CreateTool.Args("solve")) onRequestEquals "Solve task"
+    }
+
+    val basePrompt = prompt("test") {}
+
+    AIAgent(
+        toolRegistry = toolRegistry,
+        strategy = strategy,
+        eventHandler = EventHandler {},
+        agentConfig = AIAgentConfig(prompt = basePrompt, model = OpenAIModels.Chat.GPT4o, maxAgentIterations = 100),
+        promptExecutor = mockLLMApi,
+    ) {
+        testGraph("test") {
+            val firstSubgraph = assertSubgraphByName<String, String>("first")
+            val secondSubgraph = assertSubgraphByName<String, String>("second")
+
+            assertEdges {
+                startNode() alwaysGoesTo firstSubgraph
+                firstSubgraph alwaysGoesTo secondSubgraph
+                secondSubgraph alwaysGoesTo finishNode()
+            }
+
+            verifySubgraph(firstSubgraph) {
+                val start = startNode()
+                val finish = finishNode()
+
+                val askLLM = assertNodeByName<String, Message.Response>("callLLM")
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
+                val giveFeedback = assertNodeByName<Any?, Any?>("giveFeedback")
+
+                assertReachable(start, askLLM)
+                assertReachable(askLLM, callTool)
+
+                assertNodes {
+                    askLLM withInput "Hello" outputs Message.Assistant("Hello!")
+                    askLLM withInput "Solve task" outputs toolCallMessage(CreateTool, CreateTool.Args("solve"))
+
+                    callTool withInput toolCallSignature(
+                        SolveTool,
+                        SolveTool.Args("solve")
+                    ) outputs toolResult(SolveTool, "solved")
+
+                    callTool withInput toolCallSignature(
+                        CreateTool,
+                        CreateTool.Args("solve")
+                    ) outputs toolResult(CreateTool, "created")
+                }
+
+                assertEdges {
+                    askLLM withOutput Message.Assistant("Hello!") goesTo giveFeedback
+                    askLLM withOutput toolCallMessage(CreateTool, CreateTool.Args("solve")) goesTo callTool
+                }
             }
         }
     }
 }
 ```
 
-### Quickstart: Setting up a test environment
-
-[//]: # (TODO: Check whether this is still a dependency)
-1. Add dependencies:
-   ```kotlin
-   // build.gradle.kts
-   dependencies {
-       testImplementation("ai.jetbrains.code:code-agents-test:1.0.0")
-       testImplementation("ai.koog:agents-test:0.1.0-alpha.6")
-   }
-   ```
-
-2. Create a test class:
-   ```kotlin
-   class MyTest {
-       @Test
-       fun testMyFeature() = runTest {
-           // Create mock components
-           val mockExecutor = getMockExecutor {
-               setDefaultResponse("Default response")
-           }
-
-           // Set up the feature
-           val feature = MyFeature(mockExecutor)
-
-           // Test with the testing framework
-           withTesting {
-               // Your test assertions here
-           }
-       }
-   }
-   ```
-
-## API documentation
-
-For a complete API reference related to embeddings, see the reference documentation for the following packages:
-
-- [ai.jetbrains.code.agents.testing.feature](#): Provides comprehensive testing utilities for AI agents, with mocking
-capabilities and validation tools for agent behavior.
-- [ai.jetbrains.code.agents.testing.tools](#): Provides a framework for defining, describing, and executing tools that 
-can be used by AI agents to interact with the environment.
 
 ## FAQ and troubleshooting
 
@@ -284,10 +565,10 @@ Use pattern matching methods:
 
 ```kotlin
 getMockExecutor {
-    "Response A" onUserRequestContains "topic A"
-    "Response B" onUserRequestContains "topic B"
-    "Exact response" onUserRequestEquals "exact question"
-    "Conditional response" onCondition { it.contains("keyword") && it.length > 10 }
+    mockLLMAnswer("Response A") onRequestContains "topic A"
+    mockLLMAnswer("Response B") onRequestContains "topic B"
+    mockLLMAnswer("Exact response") onRequestEquals "exact question"
+    mockLLMAnswer("Conditional response") onCondition { it.contains("keyword") && it.length > 10 }
 }
 ```
 
