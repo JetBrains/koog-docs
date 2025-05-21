@@ -199,7 +199,13 @@ edge(executeMultipleTools forwardTo processMultipleToolResults)
 
 ## Predefined subgraphs
 
-The framework provides predefined subgraphs that encapsulate common patterns and workflows. These subgraphs can be used to simplify the creation of complex agent strategies by providing reusable components.
+The framework provides predefined subgraphs that encapsulate commonly used patterns and workflows. These subgraphs simplify the development of complex agent strategies by handling the creation of base nodes and edges automatically.
+
+By using the predefined subgraphs, you can implement varoius popular pipelines. Here is an example:
+
+1. Prepare the data.
+2. Run the task.
+3. Validate the task results. If the results are incorrect, return to step 2 with a feedback message to make adjustments.
 
 ### subgraphWithTask
 
