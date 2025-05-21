@@ -115,7 +115,7 @@ To help you get started with AI agents, here is a quick example:
     Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](simple-api-getting-started.md).
 
 ```kotlin
-fun main() {
+fun main() = runBlocking {
     val apiKey = System.getenv("OPENAI_API_KEY") // or Anthropic, Google, OpenRouter, etc.
 
     val agent = simpleSingleRunAgent(

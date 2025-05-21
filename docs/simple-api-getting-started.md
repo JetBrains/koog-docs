@@ -37,7 +37,7 @@ For details, see [Configuration options](simple-api-configuration.md) and [Avail
 A single-run agent processes a single input and provides a response:
 
 ```kotlin
-fun main() {
+fun main() = runBlocking {
     val apiKey = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleSingleRunAgent(
@@ -62,7 +62,7 @@ The Simple API provides a set of built-in tools along with the ability to implem
 The following example demonstrates how to pass the built-in `SayToUser` tool to the chat agent:
 
 ```kotlin
-fun main() {
+fun main() = runBlocking {
     val apiKey = System.getenv("YOUR_API_KEY")
 
     val toolRegistry = ToolRegistry {
