@@ -237,7 +237,7 @@ val processQuery by subgraphWithTask<String>(
 
 ### subgraphWithVerification
 
-A specialized version of subgraphWithTask that returns a verification result indicating whether a task was performed correctly and describing any problems. This subgraph is useful for workflows that require validation or quality checks. For details, see API reference.<!--[TODO] Link to API reference-->
+A special version of `subgraphWithTask` that verifies whether a task was performed correctly and provides details about any issues encountered. This subgraph is useful for workflows that require validation or quality checks. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this subgraph for the following purposes:
 - Verify the correctness of task execution
