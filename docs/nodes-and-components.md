@@ -212,10 +212,12 @@ By using the predefined subgraphs, you can implement varoius popular pipelines. 
 A subgraph that performs a specific task using provided tools and returns a structured result. This subgraph is designed to handle self-contained tasks within a larger workflow. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this subgraph for the following purposes:
-- Create specialized components that handle specific tasks within a larger workflow
-- Encapsulate complex logic with a clear input and output interface
-- Configure task-specific tools, models, and prompts
-- Manage conversation history with automatic compression (TLDR)
+- Create special components that handle specific tasks within a larger workflow.
+- Encapsulate complex logic with clear input and output interfaces.
+- Configure task-specific tools, models, and prompts.
+- Manage conversation history with automatic compression.
+- Develop structured agent workflows and task execution pipelines.
+- Generate structured results from LLM task execution.
 
 Here is an example:
 
