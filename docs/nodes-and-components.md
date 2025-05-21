@@ -19,7 +19,6 @@ You can use this node for the following purposes:
 
 - Create a placeholder node in your graph.
 - Create a connection point without modifying the data.
-- To debug and test your workflow.
 
 Here is an example:
 
@@ -67,9 +66,7 @@ tool calls are allowed during the processing of the message. For details, see [A
 
 You can use this node for the following purposes:
 
-- Process user messages in the middle of a conversation.
-- Generate responses to specific questions or prompts.
-- Control whether the LLM can use tools in its response.
+- Generate LLM response for the current prompt, controlling if the LLM is allowed to generate tool calls.
 
 Here is an example:
 
@@ -92,9 +89,9 @@ A node that appends a user message to the LLM prompt and gets multiple LLM respo
 
 You can use this node for the following purposes:
 
-- Handling complex queries that require multiple tool calls.
-- Generating multiple responses to a single input.
-- Implementing a workflow that requires multiple parallel actions.
+- Handle complex queries that require multiple tool calls.
+- Generate multiple tool calls.
+- Implement a workflow that requires multiple parallel actions.
 
 Here is an example:
 
@@ -187,7 +184,7 @@ A node that adds multiple tool results to the prompt and gets multiple LLM respo
 You can use this node for the following purposes:
 
 - Process the results of multiple tool executions.
-- Generate multiple responses based on tool outputs.
+- Generate multiple tool calls.
 - Implement complex workflows with multiple parallel actions.
 
 Here is an example:
