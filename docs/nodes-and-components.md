@@ -189,12 +189,79 @@ You can use this node for the following purposes:
 - Process the results of multiple tool executions.
 - Generate multiple responses based on tool outputs.
 - Implement complex workflows with multiple parallel actions.
-  
+
 Here is an example:
 
 ```kotlin
 val processMultipleToolResults by nodeLLMSendMultipleToolResults("processMultipleToolResults")
 edge(executeMultipleTools forwardTo processMultipleToolResults)
+```
+
+## Predefined subgraphs
+
+The framework provides predefined subgraphs that encapsulate commonly used patterns and workflows. These subgraphs simplify the development of complex agent strategies by handling the creation of base nodes and edges automatically.
+
+By using the predefined subgraphs, you can implement varoius popular pipelines. Here is an example:
+
+1. Prepare the data.
+2. Run the task.
+3. Validate the task results. If the results are incorrect, return to step 2 with a feedback message to make adjustments.
+
+### subgraphWithTask
+
+A subgraph that performs a specific task using provided tools and returns a structured result. This subgraph is designed to handle self-contained tasks within a larger workflow. For details, see API reference.<!--[TODO] Link to API reference-->
+
+You can use this subgraph for the following purposes:
+- Create special components that handle specific tasks within a larger workflow.
+- Encapsulate complex logic with clear input and output interfaces.
+- Configure task-specific tools, models, and prompts.
+- Manage conversation history with automatic compression.
+- Develop structured agent workflows and task execution pipelines.
+- Generate structured results from LLM task execution.
+
+You can provide a task to the subgraph as text, configure the LLM if needed, and provide the necessary tools, and the subgraph will process and solve the task. Here is an example:
+
+```kotlin
+val processQuery by subgraphWithTask<String>(
+    tools = listOf(searchTool, calculatorTool, weatherTool),
+    model = OpenAIModels.Chat.GPT4o,
+    shouldTLDRHistory = true
+) { userQuery ->
+    """
+    You are a helpful assistant that can answer questions about various topics.
+    Please help with the following query:
+    $userQuery
+    """
+}
+```
+
+### subgraphWithVerification
+
+A special version of `subgraphWithTask` that verifies whether a task was performed correctly and provides details about any issues encountered. This subgraph is useful for workflows that require validation or quality checks. For details, see API reference.<!--[TODO] Link to API reference-->
+
+You can use this subgraph for the following purposes:
+- Verify the correctness of task execution.
+- Implement quality control processes in your workflows.
+- Create self-validating components.
+- Generate structured verification results with success/failure status and detailed feedback.
+The subgraph ensures that the LLM calls a verification tool at the end of the workflow to check whether the task was successfully completed. It guarantees this verification is performed as the final step and returns a `VerifiedSubgraphResult` that indicates whether a task was completed successfully and provides detailed feedback. 
+Here is an example:
+
+```kotlin
+val verifyCode by subgraphWithVerification(
+    tools = listOf(runTestsTool, analyzeTool, readFileTool),
+    model = AnthropicModels.Sonnet_3_7
+) { codeToVerify ->
+    """
+    You are a code reviewer. Please verify that the following code meets all requirements:
+    1. It compiles without errors
+    2. All tests pass
+    3. It follows the project's coding standards
+
+    Code to verify:
+    $codeToVerify
+    """
+}
 ```
 
 ## Predefined strategies and common strategy patterns
@@ -214,19 +281,19 @@ public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
     val nodeCallLLM by nodeLLMRequest("sendInput")
     val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
     val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-  
+
     val giveFeedbackToCallTools by node<String, Message.Response> { input ->
       llm.writeSession {
         updatePrompt {
           user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
         }
-  
+
         requestLLM()
       }
     }
-  
+
     edge(nodeStart forwardTo nodeCallLLM)
-  
+
     edge(nodeCallLLM forwardTo nodeExecuteTool onToolCall { true })
     edge(nodeCallLLM forwardTo giveFeedbackToCallTools onAssistantMessage { true })
     edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
@@ -242,7 +309,7 @@ public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
 ### Single run strategy
 
 A single run strategy is designed for non-interactive use cases where the agent processes input once and
-returns a result. 
+returns a result.
 
 You can use this strategy when you need to run straightforward processes that do not require complex logic.
 
@@ -251,7 +318,7 @@ public fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
     val nodeCallLLM by nodeLLMRequest("sendInput")
     val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
     val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-  
+
     edge(nodeStart forwardTo nodeCallLLM)
     edge(nodeCallLLM forwardTo nodeExecuteTool onToolCall { true })
     edge(nodeCallLLM forwardTo nodeFinish onAssistantMessage { true })
@@ -333,5 +400,3 @@ fun streamingDataStrategy(): AIAgentStrategy = strategy("streaming-data") {
     edge(processStreamingData forwardTo nodeFinish)
 }
 ```
-
-
