@@ -1,11 +1,9 @@
 # Getting started
 
 The Simple API provides an easy way to create and run AI agents.
-It offers an interface that lets you create chat agents and single-run agents with customizable tools and configurations:
+It offers an interface that lets you create single-run agents with customizable tools and configurations.
 
-- A chat agent maintains a conversation until the session ends. This agent uses tools instead of plain text responses.
-
-- A single-run agent processes a single input and provides a response. This agent can return either a message or a tool result.
+A single-run agent processes a single input and provides a response. This agent can return either a message or a tool result.
 The tool result is returned if the tool registry is provided to the agent.
 
 ## Prerequisites
@@ -22,17 +20,13 @@ To use the Simple API functionality, you need to include all necessary dependenc
 
 ```
 dependencies {
-    implementation("ai.koog:koog-agents:VERSION")
+    implementation("ai.koog:koog-agents:LATEST_VERSION")
 }
 ```
 
 For all available methods of installation, refer to [Installation](index.md#installation).
 
-## Create an agent
-
-For details, see [Configuration options](simple-api-configuration.md) and [Available tools](simple-api-available-tools.md).
-
-### Create a single-run agent
+## Create a single-run agent
 
 A single-run agent processes a single input and provides a response:
 
@@ -59,7 +53,7 @@ For details, see [Configuration options](simple-api-configuration.md).
 
 The Simple API provides a set of built-in tools along with the ability to implement your own custom tools.
 
-The following example demonstrates how to pass the built-in `SayToUser` tool to the chat agent:
+The following example demonstrates how to pass the built-in `SayToUser` tool to the agent:
 
 ```kotlin
 fun main() = runBlocking {
@@ -81,7 +75,7 @@ fun main() = runBlocking {
 }
 ```
 
-For more details about tools, see [Available tools](simple-api-available-tools.md).
+For more details, see [Available tools](simple-api-available-tools.md).
 
 ### Handle events during agent runtime
 

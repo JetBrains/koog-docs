@@ -5,7 +5,7 @@ It lets you create agents that can interact with tools, handle complex workflows
 
 The framework offers two main approaches:
 
-* [Simple API](simple-api-getting-started): A high-level, user-friendly interface that lets you quickly create chat agents and single-run agents with minimal configuration.
+* [Simple API](simple-api-getting-started): A high-level, user-friendly interface that lets you quickly create single-run agents with minimal configuration.
 * [AI Agent](ai-agent-getting-started): A more flexible, full-featured framework for building custom agents with advanced capabilities.
 
 ## Key features
@@ -53,7 +53,7 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
 
     ```
     dependencies {
-        implementation("ai.koog:koog-agents:VERSION")
+        implementation("ai.koog:koog-agents:LATEST_VERSION")
     }
     ```
 
@@ -71,7 +71,7 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
 
     ```
     dependencies {
-        implementation 'ai.koog:koog-agents:VERSION'
+        implementation 'ai.koog:koog-agents:LATEST_VERSION'
     }
     ```
 
@@ -93,7 +93,7 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
     <dependency>
         <groupId>ai.koog</groupId>
         <artifactId>koog-agents</artifactId>
-        <version>VERSION</version>
+        <version>LATEST_VERSION</version>
     </dependency>
     ```
 
@@ -124,7 +124,7 @@ fun main() = runBlocking {
         llmModel = OpenAIModels.Chat.GPT4o
     )
    
-    val result = agent.runAndGetResult("Hello, how can you help me?")
+    val result = agent.runAndGetResult("Hello! How can you help me?")
     println(result)
 }
 ```
