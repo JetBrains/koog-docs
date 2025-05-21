@@ -203,28 +203,25 @@ You can integrate structured data processing into your agent strategies:
 
 ```kotlin
 val agentStrategy = strategy("weather-forecast") {
-    val weatherSubgraph by subgraph<String, String>("weather") {
-        val setup by nodeLLMRequest()
+    val setup by nodeLLMRequest()
 
-        val getStructuredForecast by node<Message.Response, String> { _ ->
-            val structuredResponse = llm.writeSession {
-                this.requestLLMStructured(
-                    structure = forecastStructure,
-                    fixingModel = OpenAIModels.Chat.GPT4o,
-                )
-            }
-
-            """
-            Response structure:
-            $structuredResponse
-            """.trimIndent()
+    val getStructuredForecast by node<Message.Response, String> { _ ->
+        val structuredResponse = llm.writeSession {
+            this.requestLLMStructured(
+                structure = forecastStructure,
+                fixingModel = OpenAIModels.Chat.GPT4o,
+            )
         }
 
-        edge(nodeStart forwardTo setup)
-        edge(setup forwardTo getStructuredForecast)
-        edge(getStructuredForecast forwardTo nodeFinish)
+        """
+        Response structure:
+        $structuredResponse
+        """.trimIndent()
     }
-    nodeStart then weatherSubgraph then nodeFinish
+
+    edge(nodeStart forwardTo setup)
+    edge(setup forwardTo getStructuredForecast)
+    edge(getStructuredForecast forwardTo nodeFinish)
 }
 ```
 
@@ -272,29 +269,27 @@ fun main(): Unit = runBlocking {
 
     // Define the agent strategy
     val agentStrategy = strategy("weather-forecast") {
-        val weatherSubgraph by subgraph<String, String>("weather") {
-            val setup by nodeLLMRequest()
-
-            val getStructuredForecast by node<Message.Response, String> { _ ->
-                val structuredResponse = llm.writeSession {
-                    this.requestLLMStructured(
-                        structure = forecastStructure,
-                        fixingModel = OpenAIModels.Chat.GPT4o,
-                    )
-                }
-
-                """
-                Response structure:
-                $structuredResponse
-                """.trimIndent()
+        val setup by nodeLLMRequest()
+  
+        val getStructuredForecast by node<Message.Response, String> { _ ->
+            val structuredResponse = llm.writeSession {
+                this.requestLLMStructured(
+                    structure = forecastStructure,
+                    fixingModel = OpenAIModels.Chat.GPT4o,
+                )
             }
-
-            edge(nodeStart forwardTo setup)
-            edge(setup forwardTo getStructuredForecast)
-            edge(getStructuredForecast forwardTo nodeFinish)
+  
+            """
+            Response structure:
+            $structuredResponse
+            """.trimIndent()
         }
-        nodeStart then weatherSubgraph then nodeFinish
+  
+        edge(nodeStart forwardTo setup)
+        edge(setup forwardTo getStructuredForecast)
+        edge(getStructuredForecast forwardTo nodeFinish)
     }
+
 
     // Configure and run the agent
     val agentConfig = AIAgentConfig(

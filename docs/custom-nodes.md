@@ -46,9 +46,11 @@ calls the `node` function:
 fun <T> AIAgentSubgraphBuilder<*, *>.myCustomNode(
     name: String? = null
 ): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
-    // Custom logic here
+    // Custom logic
     input // Return the input as output (pass-through)
 }
+
+val myCustomNode by myCustomNode("node_name")
 ```
 
 This creates a pass-through node that performs some custom logic but returns the input as the output without modification.
@@ -66,6 +68,8 @@ fun <T> AIAgentSubgraphBuilder<*, *>.myParameterizedNode(
     // Use param1 and param2 in your custom logic
     input // Return the input as the output
 }
+
+val myCustomNode by myParameterizedNode("node_name")
 ```
 
 ### Stateful nodes
@@ -73,12 +77,16 @@ fun <T> AIAgentSubgraphBuilder<*, *>.myParameterizedNode(
 If your node needs to maintain state between runs, you can use closure variables:
 
 ```kotlin
-val myStatefulNode by node<T, T>("node_name") { input ->
+fun <T> AIAgentSubgraphBuilder<*, *>.myStatefulNode(
+    name: String? = null
+): AIAgentNodeDelegateBase<T, T> {
     var counter = 0
-    
-    counter++
-    println("Node executed $counter times")
-    input
+
+    return node(name) { input ->
+        counter++
+        println("Node executed $counter times")
+        input
+    }
 }
 ```
 
@@ -147,40 +155,6 @@ val summarizeTextNode by node<String, String>("node_name") { input ->
 
         val response = requestLLMWithoutTools()
         response.content
-    }
-}
-```
-
-## Examples
-
-The following sections provide specific examples for common usage patterns in custom nodes.
-
-### Simple pass-through node
-
-```kotlin
-val nodeDoNothing by node<T, T>("node_name") { input ->
-    input // Return the input as the output
-}
-```
-
-### Data transformation node
-
-```kotlin
-val nodeJsonToMap by node<String, Map<String, Any>>("node_name") { jsonString ->
-    Json.decodeFromString<Map<String, Any>>(jsonString) // Decode and deserialize the given JSON string
-}
-```
-
-### LLM interaction node
-
-```kotlin
-val nodeGenerateResponse by node<String, Message.Response>("node_name") { input ->
-    llm.writeSession {
-        updatePrompt {
-            user("$prompt: $input") // Update the user message in the prompt
-        }
-
-        requestLLM()
     }
 }
 ```
