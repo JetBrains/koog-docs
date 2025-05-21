@@ -3,7 +3,7 @@
 If your goal is to build a simple agent to experiment with, you can provide only an API key when creating it.
 But if you want more flexibility and customization, you can pass optional parameters to configure the agent.
 
-Both the `simpleChatAgent` and `simpleSingleRunAgent` accept the following parameters:
+`simpleSingleRunAgent` accept the following parameters:
 
 | Parameter name    | Data type    | Default                   | Required | Description                                                                                                                                                                                           |
 |-------------------|--------------|---------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

@@ -118,7 +118,7 @@ To help you get started with AI agents, here is a quick example:
 fun main() {
     val apiKey = System.getenv("OPENAI_API_KEY") // or Anthropic, Google, OpenRouter, etc.
 
-    val agent = simpleChatAgent(
+    val agent = simpleSingleRunAgent(
         executor = simpleOpenAIExecutor(apiKey), // or Anthropic, Google, OpenRouter, etc.
         systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
         llmModel = OpenAIModels.Chat.GPT4o
