@@ -33,7 +33,7 @@ string parameter (`node_name`). In an actual example, here is a simple node that
 the input's length:
 
 ```kotlin
-val myNode by node<String, Int>("my_node") { input ->
+val myNode by node<String, Int>("node_name") { input ->
     // Processing
     input.length
 }
@@ -46,9 +46,11 @@ calls the `node` function:
 fun <T> AIAgentSubgraphBuilder<*, *>.myCustomNode(
     name: String? = null
 ): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
-    // Custom logic here
+    // Custom logic
     input // Return the input as output (pass-through)
 }
+
+val myCustomNode by myCustomNode("node_name")
 ```
 
 This creates a pass-through node that performs some custom logic but returns the input as the output without modification.
@@ -66,6 +68,8 @@ fun <T> AIAgentSubgraphBuilder<*, *>.myParameterizedNode(
     // Use param1 and param2 in your custom logic
     input // Return the input as the output
 }
+
+val myCustomNode by myParameterizedNode("node_name")
 ```
 
 ### Stateful nodes
@@ -91,9 +95,8 @@ fun <T> AIAgentSubgraphBuilder<*, *>.myStatefulNode(
 Nodes can have different input and output types, which are specified as generic parameters:
 
 ```kotlin
-fun AIAgentSubgraphBuilder<*, *>.stringToIntNode(
-    name: String? = null
-): AIAgentNodeDelegateBase<String, Int> = node(name) { input: String ->
+val stringToIntNode by node<String, Int>("node_name") { input: String ->
+    // Processing
     input.toInt() // Convert string to integer
 }
 ```
@@ -122,11 +125,9 @@ The following sections provide some common patterns for implementing custom node
 Nodes that perform an operation but return the input as the output.
 
 ```kotlin
-fun <T> AIAgentSubgraphBuilder<*, *>.loggingNode(
-    name: String? = null
-): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
+val loggingNode by node<T, T>("node_name") { input ->
     println("Processing input: $input")
-    input // Return the input as output
+    input // Return the input as the output
 }
 ```
 
@@ -135,9 +136,8 @@ fun <T> AIAgentSubgraphBuilder<*, *>.loggingNode(
 Nodes that transform the input into a different output.
 
 ```kotlin
-fun AIAgentSubgraphBuilder<*, *>.upperCaseNode(
-    name: String? = null
-): AIAgentNodeDelegateBase<String, String> = node(name) { input ->
+val upperCaseNode by node<String, String>("node_name") { input ->
+    println("Processing input: $input")
     input.uppercase() // Transform the input to uppercase
 }
 ```
@@ -147,9 +147,7 @@ fun AIAgentSubgraphBuilder<*, *>.upperCaseNode(
 Nodes that interact with the LLM.
 
 ```kotlin
-fun AIAgentSubgraphBuilder<*, *>.summarizeTextNode(
-    name: String? = null
-): AIAgentNodeDelegateBase<String, String> = node(name) { input ->
+val summarizeTextNode by node<String, String>("node_name") { input ->
     llm.writeSession {
         updatePrompt {
             user("Please summarize the following text: $input")
@@ -161,55 +159,11 @@ fun AIAgentSubgraphBuilder<*, *>.summarizeTextNode(
 }
 ```
 
-## Examples
-
-The following sections provide specific examples for common usage patterns in custom nodes.
-
-### Simple pass-through node
-
-```kotlin
-fun <T> AIAgentSubgraphBuilder<*, *>.nodeDoNothing(
-    name: String? = null
-): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
-    input // Return the input as the output
-}
-```
-
-### Data transformation node
-
-```kotlin
-fun AIAgentSubgraphBuilder<*, *>.nodeJsonToMap(
-    name: String? = null
-): AIAgentNodeDelegateBase<String, Map<String, Any>> = node(name) { jsonString ->
-    Json.decodeFromString<Map<String, Any>>(jsonString) // Decode and deserialize the given JSON string
-}
-```
-
-### LLM interaction node
-
-```kotlin
-fun AIAgentSubgraphBuilder<*, *>.nodeGenerateResponse(
-    name: String? = null,
-    prompt: String
-): AIAgentNodeDelegateBase<String, Message.Response> = node(name) { input ->
-    llm.writeSession {
-        updatePrompt {
-            user("$prompt: $input") // Update the user message in the prompt
-        }
-
-        requestLLM()
-    }
-}
-```
-
 ### Tool run node
 
 ```kotlin
-fun AIAgentSubgraphBuilder<*, *>.nodeExecuteCustomTool(
-    name: String? = null,
-    toolName: String
-): AIAgentNodeDelegateBase<String, String> = node(name) { input ->
-    val toolCall = Message.Tool.Call( 
+val nodeExecuteCustomTool by node<String, String>("node_name") { input ->
+    val toolCall = Message.Tool.Call(
         id = UUID.randomUUID().toString(),
         tool = toolName,
         args = mapOf("input" to input) // Use the input as tool arguments
