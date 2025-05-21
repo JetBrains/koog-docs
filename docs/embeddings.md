@@ -44,7 +44,7 @@ To use an Ollama embedding model, make sure to have the following prerequisites:
     Replace `<ollama-model-id>` with the Ollama identifier of the specific model. For more information about available
 embedding models and their identifiers, see [Ollama models overview](#ollama-models-overview).
 
-## Ollama models overview
+### Ollama models overview
 
 The following table provides an overview of the available Ollama embedding models.
 

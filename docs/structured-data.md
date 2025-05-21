@@ -195,7 +195,7 @@ val structuredResponse = llm.writeSession {
 
 ### Fixing model
 
-The `fixingModel` parameter specifies a model that will handle coercion if the output does not conform to the requested structure. This helps ensure that you always get a valid response.
+The `fixingModel` parameter specifies the language model to use for re-parsing or error correction during retries. This helps ensure that you always get a valid response.
 
 ## Integrating with agent strategies
 

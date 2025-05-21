@@ -291,6 +291,7 @@ In the example above, the LLM would search for the user-related facts and projec
        println("Oops! Couldn't save: ${e.message}")
    }
    ```
+   For more details on error handling, see [Error handling and edge cases](#error-handling-and-edge-cases).
 
 ## Error handling and edge cases
 
