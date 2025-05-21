@@ -240,10 +240,10 @@ val processQuery by subgraphWithTask<String>(
 A special version of `subgraphWithTask` that verifies whether a task was performed correctly and provides details about any issues encountered. This subgraph is useful for workflows that require validation or quality checks. For details, see API reference.<!--[TODO] Link to API reference-->
 
 You can use this subgraph for the following purposes:
-- Verify the correctness of task execution
-- Implement quality control checks in your workflows
-- Create self-validating components
-- Generate detailed error reports for failed tasks
+- Verify the correctness of task execution.
+- Implement quality control processes in your workflows.
+- Create self-validating components.
+- Generate structured verification results with success/failure status and detailed feedback.
 
 Here is an example:
 
