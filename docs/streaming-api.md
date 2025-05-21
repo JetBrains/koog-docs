@@ -44,7 +44,7 @@ llm.writeSession {
     // Access the raw string chunks directly
     stream.collect { chunk ->
         // Process each chunk of text as it arrives
-        println("Received chunk: $chunk") // the chunks together will be structured as a text following the mdDefinition scheme
+        println("Received chunk: $chunk") // The chunks together will be structured as a text following the mdDefinition schema
     }
 }
 ```
@@ -57,7 +57,7 @@ llm.writeSession {
     // Access the raw string chunks directly
     stream.collect { chunk ->
         // Process each chunk of text as it arrives
-        println("Received chunk: $chunk") // the chunks together won't be structured in a specific way
+        println("Received chunk: $chunk") // The chunks will not be structured in a specific way
     }
 }
 ```
@@ -229,7 +229,7 @@ step-by-step guide on how to define a tool and use it with streaming data.
 ### 1. Define a tool for your data structure
 
 ```kotlin
-class BookTool() : SimpleTool<Book>() {
+class BookTool(): SimpleTool<Book>() {
     companion object {
         const val NAME = "book"
     }
@@ -255,29 +255,31 @@ class BookTool() : SimpleTool<Book>() {
 
 ```kotlin
 val agentStrategy = strategy("library-assistant") {
-    val getMdOutput by node<Unit, String> { _ ->
-        val mdDefinition = markdownBookDefinition()
+     val getMdOutput by node<String, String> { input ->
+         val mdDefinition = markdownBookDefinition()
 
-        llm.writeSession {
-            val markdownStream = requestLLMStreaming(mdDefinition)
+         llm.writeSession {
+             updatePrompt { user(input) }
+             val markdownStream = requestLLMStreaming(mdDefinition)
 
-            parseMarkdownStreamToBooks(markdownStream).collect { book ->
-                callToolRaw(BookTool.NAME, book)
-                // Other possible options:
-                // callTool(BookTool::class, book)
-                // callTool<BookTool>(book)
-                // findTool(BookTool::class).execute(book)
-            }
+             parseMarkdownStreamToBooks(markdownStream).collect { book ->
+                 callToolRaw(BookTool.NAME, book)
+                 /* Other possible options:
+                     callTool(BookTool::class, book)
+                     callTool<BookTool>(book)
+                     findTool(BookTool::class).execute(book)
+                 */
+             }
 
-            // For parallel tool calls:
-            // parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
-        }
-        ""
-    }
+             // We can make parallel tool calls
+             parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
+         }
+         ""
+     }
 
-    edge(nodeStart forwardTo getMdOutput)
-    edge(getMdOutput forwardTo nodeFinish)
-}
+     edge(nodeStart forwardTo getMdOutput)
+     edge(getMdOutput forwardTo nodeFinish)
+ }
 ```
 
 ### 3. Register the tool in your agent configuration
@@ -291,7 +293,7 @@ val runner = AIAgent(
     promptExecutor = simpleOpenAIExecutor(token),
     toolRegistry = toolRegistry,
     strategy = agentStrategy,
-    agentConfig = agentConfig,
+    agentConfig = agentConfig
 )
 ```
 

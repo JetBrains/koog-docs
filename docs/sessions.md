@@ -17,7 +17,7 @@ An LLM session represents a context for interacting with a language model. It en
 - Available tools
 - Methods for making requests to the LLM
 - Methods for updating the conversation history
-- Methods for executing tools
+- Methods for running tools
 
 Sessions are managed by the `AIAgentLLMContext` class, which provides methods for creating read and write sessions.
 
@@ -37,9 +37,9 @@ The key difference is that write sessions can modify the conversation history, w
 
 Sessions have a defined lifecycle:
 
-1. **Creation**: A session is created using `llm.writeSession { ... }` or `llm.readSession { ... }`.
-2. **Active Phase**: The session is active while the lambda block is executing.
-3. **Termination**: The session is automatically closed when the lambda block completes.
+1. **Creation**: a session is created using `llm.writeSession { ... }` or `llm.readSession { ... }`.
+2. **Active phase**: the session is active while the lambda block is executing.
+3. **Termination**: the session is automatically closed when the lambda block completes.
 
 Sessions implement the `AutoCloseable` interface, ensuring they are properly cleaned up even if an exception occurs.
 
@@ -98,6 +98,7 @@ llm.writeSession {
     tools = newTools
 }
 ```
+For more information, see the detailed API reference for [AIAgentLLMReadSession](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.session/-a-i-agent-l-l-m-read-session/index.html) and [AIAgentLLMWriteSession](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.session/-a-i-agent-l-l-m-write-session/index.html).
 
 ## Making LLM requests
 
@@ -107,11 +108,15 @@ The most common methods for making LLM requests are:
 
 1. `requestLLM()`: makes a request to the LLM with the current prompt and tools, returning a single response.
 
-2. `requestLLMWithoutTools()`: makes a request to the LLM with the current prompt but without any tools, returning a
+2. `requestLLMMultiple()`: makes a request to the LLM with the current prompt and tools, returning multiple
+   responses.
+
+3. `requestLLMWithoutTools()`: makes a request to the LLM with the current prompt but without any tools, returning a
    single response.
 
-3. `requestLLMMultiple()`: makes a request to the LLM with the current prompt and tools, returning multiple
-   responses.
+4. `requestLLMForceOneTool`: makes a request to the LLM with the current prompt and tools, forcing the use of one tool.
+
+5. `requestLLMOnlyCallingTools`: makes a request to the LLM that should be processed by only using tools.
 
 Example:
 
@@ -132,12 +137,11 @@ llm.writeSession {
 
 LLM requests are made when you explicitly call one of the request methods. The key points to understand are:
 
-1. **Explicit invocation**: Requests only happen when you call methods like `requestLLM()`, `requestLLMWithoutTools()`,
-   and so on.
-2. **Immediate execution**: When you call a request method, the request is made immediately, and the method blocks until
-   a response is received.
-3. **Automatic history update**: In a write session, the response is automatically added to the conversation history.
-4. **No implicit requests**: The system does not make implicit requests; you need to explicitly call a request method.
+1. **Explicit invocation**: requests only happen when you call methods like `requestLLM()`, `requestLLMWithoutTools()` and so on.
+2. **Immediate execution**: when you call a request method, the request is made immediately, and the method blocks
+until a response is received.
+3. **Automatic history update**: in a write session, the response is automatically added to the conversation history.
+4. **No implicit requests**: the system does not make implicit requests; you need to explicitly call a request method.
 
 ### Request methods with tools
 
@@ -314,7 +318,7 @@ This is useful for processing large amounts of data efficiently.
 
 When working with LLM sessions, follow these best practices:
 
-1. **Use the right session type**: Use write sessions when you need to modify the conversation history, and read
+1. **Use the right session type**: Use write sessions when you need to modify the conversation history and read
    sessions when you only need to read it.
 
 2. **Keep sessions short**: Sessions should be focused on a specific task and closed as soon as possible to release
@@ -339,7 +343,7 @@ When working with LLM sessions, follow these best practices:
 
 ### Session already closed
 
-If you see an error like "Cannot use session after it was closed", you are trying to use a session after its lambda 
+If you see an error such as `Cannot use session after it was closed`, you are trying to use a session after its lambda 
 block has completed. Make sure all session operations are performed within the session block.
 
 ### History too large
@@ -363,4 +367,4 @@ If you see errors about tools not being found, check that:
 
 ## API documentation
 
-For more information, see the full [AIAgentLLMContext](#) reference.
+For more information, see the full [AIAgentLLMContext](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.context/-a-i-agent-l-l-m-context/index.html) reference.

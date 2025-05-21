@@ -6,6 +6,18 @@ The following sections provide code templates and common patterns in the creatio
 
 Custom subgraphs are typically created using the following patterns:
 
+* Subgraph with a specified tool selection strategy:
+```kotlin
+strategy("strategy-name") {
+   val subgraphIdentifier by subgraph<Input, Output>(
+       name = "subgraph-name",
+       toolSelectionStrategy = ToolSelectionStrategy.ALL
+   ) {
+        // Define nodes and edges for this subgraph
+    }
+}
+```
+
 * Subgraph with a specified list of tools (subset of tools from a defined tool registry):
 ```kotlin
 strategy("strategy-name") {
@@ -18,22 +30,10 @@ strategy("strategy-name") {
 }
 ```
 
-* Subgraph with a specified tool selection strategy. :
-```kotlin
-strategy("strategy-name") {
-   val subgraphIdentifier by subgraph<Input, Output>(
-       name = "subgraph-name",
-       toolSelectionStrategy = ToolSelectionStrategy.ALL
-   ) {
-        // Define nodes and edges for this subgraph
-    }
-}
-```
+For more information about parameters and parameter values, see the `subgraph` [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.builder/-a-i-agent-subgraph-builder-base/subgraph.html). For more
+information about tools, see [Tools](tools.md).
 
-[//]: # (TODO: Add links, agents-core/ai.grazie.code.agents.core.dsl.builder/AIAgentSubgraphBuilderBase/subgraph)
-For more information about parameters and parameter values, see the [detailed API reference](#).
-
-Here is an actual example of a custom subgraph:
+The following code sample shows an actual implementation of a custom subgraph:
 
 ```kotlin
 strategy("my-strategy") {
@@ -41,7 +41,7 @@ strategy("my-strategy") {
       tools = listOf(myTool1, myTool2)
    ) {
         // Define nodes and edges for this subgraph
-        val sendInput by nodeLLMReques()
+        val sendInput by nodeLLMRequest()
         val executeToolCall by nodeExecuteTool()
         val sendToolResult by nodeLLMSendToolResult()
 
@@ -123,42 +123,19 @@ strategy("complex-workflow") {
 }
 ```
 
-### Intermediate subgraphs
-
-You can insert intermediate subgraphs between main subgraphs for specific purposes such as logging:
-
-```kotlin
-strategy("graph-with-intermediate-subgraph") {
-    val firstSubgraph by subgraph<String, String>(
-        // Process the initial input
-    )
-
-    val loggingSubgraph by subgraph<String, String>(
-        // Perform logging
-    )
-
-    val secondSubgraph by subgraph<String, String>(
-        // Continue processing
-    )
-    
-    nodeStart then firstSubgraph then loggingSubgraph then secondSubgraph then nodeFinish
-    
-}
-```
-
 ## Best practices
 
 When working with subgraphs, follow these best practices:
 
-1. **Break complex workflows into subgraphs**: Each subgraph should have a clear, focused responsibility.
+1. **Break complex workflows into subgraphs**: each subgraph should have a clear, focused responsibility.
 
-2. **Pass only necessary context**: Only pass the information that subsequent subgraphs need to function correctly.
+2. **Pass only necessary context**: only pass the information that subsequent subgraphs need to function correctly.
 
-3. **Document subgraph dependencies**: Clearly document what each subgraph expects from previous subgraphs and what it provides to subsequent subgraphs.
+3. **Document subgraph dependencies**: clearly document what each subgraph expects from previous subgraphs and what it provides to subsequent subgraphs.
 
-4. **Test subgraphs in isolation**: Ensure that each subgraph works correctly with various inputs before integrating it into a strategy.
+4. **Test subgraphs in isolation**: ensure that each subgraph works correctly with various inputs before integrating it into a strategy.
 
-5. **Consider token usage**: Be mindful of token usage, especially when passing large histories between subgraphs.
+5. **Consider token usage**: be mindful of token usage, especially when passing large histories between subgraphs.
 
 ## Troubleshooting
 
@@ -179,8 +156,7 @@ If subgraphs are not executing in the defined order:
 ## Examples
 
 The following example shows how subgraphs are used to create an agent strategy in a real-world scenario.
-The code sample includes three defined subgraphs, `researchSubgraph`, `planSubgraph`, and `executeSubgraph`, where each
-of the subgraphs has a defined and distinct purpose within an assistant flow.
+The code sample includes three defined subgraphs, `researchSubgraph`, `planSubgraph`, and `executeSubgraph`, where each of the subgraphs has a defined and distinct purpose within the assistant flow.
 
 ```kotlin
 // Define the agent strategy

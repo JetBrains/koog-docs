@@ -34,14 +34,15 @@ fun main() {
 }
 ```
 
-To use an Ollama embedding model, make sure you download it locally using the following command:
+To use an Ollama embedding model, make sure to have the following prerequisites:
 
-```bash
-ollama pull <ollama-model-id>
-```
-
-Replace `<ollama-model-id>` with the Ollama identifier of the specific model. For more information about available
-models and their identifiers, see [Ollama models overview](#ollama-models-overview).
+- Have [Ollama](https://ollama.com/download) installed and running
+- Download an embedding model to your local machine using the following command:
+    ```bash
+    ollama pull <ollama-model-id>
+    ```
+    Replace `<ollama-model-id>` with the Ollama identifier of the specific model. For more information about available
+embedding models and their identifiers, see [Ollama models overview](#ollama-models-overview).
 
 ## Ollama models overview
 
@@ -74,7 +75,7 @@ To create embeddings using an OpenAI embedding model, use the `embed` method of 
 in the example below.
 
 ```kotlin
-fun main() {
+suspend fun openAIEmbed(text: String) {
     // Get the OpenAI API token from the OPENAI_KEY environment variable
     val token = System.getenv("OPENAI_KEY") ?: error("Environment variable OPENAI_KEY is not set")
     // Create an OpenAILLMClient instance
@@ -82,7 +83,7 @@ fun main() {
     // Create an embedder
     val embedder = LLMEmbedder(client, OpenAIModels.Embeddings.TextEmbeddingAda3Small)
     // Create embeddings
-    val embedding = embedder.embed("This is the text to embed")
+    val embedding = embedder.embed(text)
     // Print embeddings to the output
     println(embedding)
 }
@@ -190,8 +191,8 @@ suspend fun compareCodeToCode(embedder: Embedder) { // Embedder type
 
 ## API documentation
 
-For a complete API reference related to embeddings, see the reference documentation for the following packages:
+For a complete API reference related to embeddings, see the reference documentation for the following modules:
 
-- [ai.jetbrains.embeddings.base](#): Provides core interfaces and data structures for representing and comparing text 
+- [embeddings-base](https://api.koog.ai/embeddings/embeddings-base/ai.koog.embeddings.base/index.html): Provides core interfaces and data structures for representing and comparing text 
 and code embeddings.
-- [ai.jetbrains.embeddings.local](#): Includes implementations for working with local embedding models.
+- [embeddings-llm](https://api.koog.ai/embeddings/embeddings-llm/index.html): Includes implementations for working with local embedding models.

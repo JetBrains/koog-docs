@@ -42,21 +42,17 @@ val fs = JVMFileSystemProvider.ReadWrite
 val path = Paths.get("/path/to/trace.log")
 
 // Creating an agent
-val agent = createAgent(
-    strategy = myStrategy,
-) {
-    // Installing the `Tracing` in your agent
+val agent = AIAgent(...) {
     install(Tracing) {
-
-        // Configuring message filter (optional)
-        messageFilter = { message ->
-            // Accept only specific message types
-            message is NodeExecutionStartEvent || message is NodeExecutionEndEvent
-        }
-
-        // Adding message processors
+        // Configure message processors to handle trace events
         addMessageProcessor(TraceFeatureMessageLogWriter(logger))
-        addMessageProcessor(TraceFeatureMessageFileWriter(fs, path))
+        addMessageProcessor(TraceFeatureMessageFileWriter(outputPath, fileSystem::sink))
+
+        // Optionally filter messages
+        messageFilter = { message -> 
+            // Only trace LLM calls and tool calls
+            message is LLMCallStartEvent || message is ToolCallEvent 
+        }
     }
 }
 ```
@@ -78,23 +74,25 @@ messageFilter = { message ->
 
 // Filter for tool-related events only
 messageFilter = { message ->
-    message is ToolCallsStartEvent || message is ToolCallsEndEvent
+    message is ToolCallsEvent ||
+            message is ToolCallResultEvent ||
+            message is ToolValidationErrorEvent ||
+            message is ToolCallFailureEvent
 }
 
 // Filter for node execution events only
 messageFilter = { message ->
-    message is NodeExecutionStartEvent || message is NodeExecutionEndEvent
+    message is AIAgentNodeExecutionStartEvent || message is AIAgentNodeExecutionEndEvent
 }
 ```
 
-
 ### Large trace volumes
 
-For agents with complex strategies or long-running executions, the volume of trace events can be substantial. Consider:
+For agents with complex strategies or long-running executions, the volume of trace events can be substantial. Consider using the following methods to manage the volume of events:
 
-1. Using specific message filters to reduce the number of events.
-2. Implementing custom message processors with buffering or sampling.
-3. Using file rotation for log files to prevent them from growing too large.
+- Use specific message filters to reduce the number of events.
+- Implement custom message processors with buffering or sampling.
+- Use file rotation for log files to prevent them from growing too large.
 
 ### Dependency graph
 
@@ -139,9 +137,7 @@ Tracing
 val logger = LoggerFactory.create("my.agent.trace")
 
 // Create an agent with tracing
-val agent = createAgent(
-    strategy = myStrategy
-) {
+val agent = AIAgent(...) {
     install(Tracing) {
         addMessageProcessor(TraceFeatureMessageLogWriter(logger))
     }
@@ -191,9 +187,7 @@ val path = Paths.get("/path/to/llm-calls.log")
 val writer = TraceFeatureMessageFileWriter(fs, path)
 
 // Create an agent with filtered tracing
-val agent = createAgent(
-    strategy = myStrategy
-) {
+val agent = AIAgent(...) {
     install(Tracing) {
         // Only trace LLM calls
         messageFilter = { message ->
@@ -216,9 +210,7 @@ val serverConfig = ServerConnectionConfig(port = port)
 val writer = TraceFeatureMessageRemoteWriter(connectionConfig = serverConfig)
 
 // Create an agent with filtered tracing
-val agent = createAgent(
-    strategy = myStrategy
-) {
+val agent = AIAgent(...) {
     install(Tracing) {
         // Only trace LLM calls
         messageFilter = { message ->
@@ -234,16 +226,14 @@ agent.run("Generate a story about a robot.")
 
 ## API documentation
 
-### Architecture
-
 The Tracing feature follows a modular architecture with these key components:
 
-1. [Tracing](#): the main feature class that intercepts events in the agent pipeline.
-2. [TraceFeatureConfig](#): configuration class for customizing feature behavior.
-3. [Message Processors](#): components that process and output trace events:
-    - [TraceFeatureMessageLogWriter](#): writes trace events to a logger.
-    - [TraceFeatureMessageFileWriter](#): writes trace events to a file.
-    - [TraceFeatureMessageRemoteWriter](#): sends trace events to a remote server.
+1. [Tracing](https://api.koog.ai/agents/agents-features/agents-features-trace/ai.koog.agents.local.features.tracing.feature/-tracing/index.html): the main feature class that intercepts events in the agent pipeline.
+2. [TraceFeatureConfig](https://api.koog.ai/agents/agents-features/agents-features-trace/ai.koog.agents.local.features.tracing.feature/-trace-feature-config/index.html): configuration class for customizing feature behavior.
+3. Message Processors: components that process and output trace events:
+    - [TraceFeatureMessageLogWriter](https://api.koog.ai/agents/agents-features/agents-features-trace/ai.koog.agents.local.features.tracing.writer/-trace-feature-message-log-writer/index.html): writes trace events to a logger.
+    - [TraceFeatureMessageFileWriter](https://api.koog.ai/agents/agents-features/agents-features-trace/ai.koog.agents.local.features.tracing.writer/-trace-feature-message-file-writer/index.html): writes trace events to a file.
+    - [TraceFeatureMessageRemoteWriter](https://api.koog.ai/agents/agents-features/agents-features-trace/ai.koog.agents.local.features.tracing.writer/-trace-feature-message-remote-writer/index.html): sends trace events to a remote server.
 
 ## FAQ and troubleshooting
 
@@ -256,7 +246,7 @@ Use the `messageFilter` property to filter events. For example, to trace only no
 ```kotlin
 install(Tracing) {
     messageFilter = { message ->
-        message is NodeExecutionStartEvent || message is NodeExecutionEndEvent
+        message is AIAgentNodeExecutionStartEvent || message is AIAgentNodeExecutionEndEvent
     }
     addMessageProcessor(writer)
 }
@@ -283,7 +273,7 @@ class CustomTraceProcessor : FeatureMessageProcessor {
     override suspend fun onMessage(message: FeatureMessage) {
         // Custom processing logic
         when (message) {
-            is NodeExecutionStartEvent -> {
+            is AIAgentNodeExecutionStartEvent -> {
                 // Process node start event
             }
             is LLMCallWithToolsEndEvent -> {
