@@ -57,13 +57,7 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
     }
     ```
 
-2. Add the address of the Maven repository where the package takes from:
-
-    ```
-    repositories {
-        maven("https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public/")
-    }
-    ```
+2. Make sure that you have `mavenCentral()` in the list of repositories.
 
 ### Gradle (Groovy)
 
@@ -75,15 +69,7 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
     }
     ```
 
-2. Add the address of the Maven repository where the package takes from:
-
-    ```
-    repositories {
-        maven {
-            url 'https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public/'
-        }
-    }
-    ```
+2. Make sure that you have `mavenCentral()` in the list of repositories.
 
 ## Maven
 
@@ -97,14 +83,7 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
     </dependency>
     ```
 
-2. Add the address of the Maven repository where the package takes from:
-
-    ```
-    <repository>
-        <id>mavenCustom</id>
-        <url>https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public/</url>
-    </repository>
-    ```
+2. Make sure that you have `mavenCentral` in the list of repositories.
 
 
 # Quickstart example

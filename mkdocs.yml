@@ -4,6 +4,7 @@ nav:
       - Overview: index.md
       - Key concepts: key-concepts.md
       - Examples: examples.md
+      - Prompt API: prompt-api.md
       - Simple API:
           - Getting started: simple-api-getting-started.md
           - Configuration options: simple-api-configuration.md
