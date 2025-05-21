@@ -274,42 +274,6 @@ The nodes are connected using edges to define the flow of operations, with condi
 
 You can integrate these strategies into your agent workflows if needed.
 
-### Chat agent strategy
-
-A chat strategy runs interactive conversations with the user. It typically involves sending user input to the
-LLM, executing tools as needed, and returning the LLM response to the user.
-
-```kotlin
-public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
-    val nodeCallLLM by nodeLLMRequest("sendInput")
-    val nodeExecuteTool by nodeExecuteTool("nodeExecuteTool")
-    val nodeSendToolResult by nodeLLMSendToolResult("nodeSendToolResult")
-
-    val giveFeedbackToCallTools by node<String, Message.Response> { input ->
-      llm.writeSession {
-        updatePrompt {
-          user("Don't chat with plain text! Call one of the available tools, instead: ${tools.joinToString(", ") { it.name }}")
-        }
-
-        requestLLM()
-      }
-    }
-
-    edge(nodeStart forwardTo nodeCallLLM)
-
-    edge(nodeCallLLM forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeCallLLM forwardTo giveFeedbackToCallTools onAssistantMessage { true })
-    edge(giveFeedbackToCallTools forwardTo giveFeedbackToCallTools onAssistantMessage { true })
-    edge(giveFeedbackToCallTools forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeExecuteTool forwardTo nodeSendToolResult)
-    edge(nodeSendToolResult forwardTo nodeFinish onAssistantMessage { true })
-    edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
-    edge(nodeExecuteTool forwardTo nodeFinish onToolCall { tc -> tc.tool == "__exit__" } transformed { "Chat finished" })
-}
-
-```
-See also [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/chat-agent-strategy.html).
-
 ### Single run strategy
 
 A single run strategy is designed for non-interactive use cases where the agent processes input once and

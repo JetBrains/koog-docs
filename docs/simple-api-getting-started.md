@@ -30,26 +30,6 @@ For all available methods of installation, refer to [Installation](index.md#inst
 
 ## Create an agent
 
-### Create a chat agent
-
-A chat agent maintains a conversation with the user until the session is explicitly terminated:
-
-```kotlin
-fun main() {
-    val apiKey = System.getenv("OPEN_AI_API_KEY")
-
-    val agent = simpleChatAgent(
-        executor = simpleOpenAIExecutor(apiKey),
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-        llmModel = OpenAIModels.Chat.GPT4o
-    )
-    agent.run("Hello, how can you help me?")
-}
-```
-!!! note
-      The `simpleChatAgent` always uses the `AskUser` and `ExitTool` built-in tools by default, whether custom tools are provided or not when creating the agent.
-      If the custom tools are provided, they are combined with these built-in tools.
-
 For details, see [Configuration options](simple-api-configuration.md) and [Available tools](simple-api-available-tools.md).
 
 ### Create a single-run agent
@@ -57,7 +37,7 @@ For details, see [Configuration options](simple-api-configuration.md) and [Avail
 A single-run agent processes a single input and provides a response:
 
 ```kotlin
-fun main() {
+fun main() = runBlocking {
     val apiKey = System.getenv("OPEN_AI_API_KEY")
 
     val agent = simpleSingleRunAgent(
@@ -82,7 +62,7 @@ The Simple API provides a set of built-in tools along with the ability to implem
 The following example demonstrates how to pass the built-in `SayToUser` tool to the chat agent:
 
 ```kotlin
-fun main() {
+fun main() = runBlocking {
     val apiKey = System.getenv("YOUR_API_KEY")
 
     val toolRegistry = ToolRegistry {
@@ -91,7 +71,7 @@ fun main() {
         )
     }
 
-    val agent = simpleChatAgent(
+    val agent = simpleSingleRunAgent(
         executor = simpleOpenAIExecutor(apiKey),
         toolRegistry = toolRegistry,
         systemPrompt = "You are a helpful assistant. Answer user questions concisely.",

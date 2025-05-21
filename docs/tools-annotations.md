@@ -162,7 +162,7 @@ fun main() = runBlocking {
 
     // Create an agent with your tools
 
-    val agent = simpleChatAgent(
+    val agent = simpleSingleRunAgent(
         executor = simpleOpenAIExecutor(TokenService.openAIToken),
         llmModel = OpenAIModels.Reasoning.GPT4oMini,
         systemPrompt = "Provide weather information for a given location.",
