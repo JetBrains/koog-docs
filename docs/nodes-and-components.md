@@ -7,16 +7,16 @@ In general, they let you encapsulate complex logic into reusable components that
 different agent workflows. This guide will walk you through the existing nodes that can be used in your agent
 strategies.
 
-For more detailed reference documentation, see API reference.<!--[TODO] Link to API reference-->
+For more detailed reference documentation, see [API reference](https://api.koog.ai/index.html).
 
 ## Utility nodes
 
 ### nodeDoNothing
 
-A simple pass-through node that does nothing and returns the input as output. For details, see API reference.<!--[TODO] Link to API 
-reference-->
+A simple pass-through node that does nothing and returns the input as output. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-do-nothing.html).
 
 You can use this node for the following purposes:
+
 - Create a placeholder node in your graph.
 - Create a connection point without modifying the data.
 - To debug and test your workflow.
@@ -35,7 +35,7 @@ edge(passthrough forwardTo anotherNode)
 ### nodeUpdatePrompt
 
 A node that adds messages to the LLM prompt using the provided prompt builder.
-This is useful for modifying the conversation context before making an actual LLM request. For details, see API reference.<!--[TODO] Link to API reference-->
+This is useful for modifying the conversation context before making an actual LLM request. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-update-prompt.html).
 
 You can use this node for the following purposes:
 
@@ -54,16 +54,16 @@ val setupContext by nodeUpdatePrompt("setupContext") {
 
 ### nodeLLMSendMessageOnlyCallingTools
 
-A node that appends a user message to the LLM prompt and gets a response where the LLM can only call tools. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that appends a user message to the LLM prompt and gets a response where the LLM can only call tools. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-message-only-calling-tools.html).
 
 ### nodeLLMSendMessageForceOneTool
 
-A node that that appends a user message to the LLM prompt and forces the LLM to use a specific tool. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that that appends a user message to the LLM prompt and forces the LLM to use a specific tool. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-message-force-one-tool.html).
 
 ### nodeLLMRequest
 
 A node that appends a user message to the LLM prompt and gets a response with optional tool usage. The node configuration determines whether
-tool calls are allowed during the processing of the message. For details, see API reference.<!--[TODO] Link to API reference-->
+tool calls are allowed during the processing of the message. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-request.html).
 
 You can use this node for the following purposes:
 
@@ -80,15 +80,15 @@ edge(someNode forwardTo processQuery)
 
 ### nodeLLMRequestStructured
 
-A node that appends a user message to the LLM prompt and requests structured data from the LLM with error correction capabilities. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that appends a user message to the LLM prompt and requests structured data from the LLM with error correction capabilities. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-request-structured.html).
 
 ### nodeLLMRequestStreaming
 
-A node that appends a user message to the LLM prompt and streams LLM response with or without stream data transformation. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that appends a user message to the LLM prompt and streams LLM response with or without stream data transformation. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-request-streaming.html).
 
 ### nodeLLMRequestMultiple
 
-A node that appends a user message to the LLM prompt and gets multiple LLM responses with tool calls enabled. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that appends a user message to the LLM prompt and gets multiple LLM responses with tool calls enabled. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-request-multiple.html).
 
 You can use this node for the following purposes:
 
@@ -105,7 +105,7 @@ edge(someNode forwardTo processComplexQuery)
 
 ### nodeLLMCompressHistory
 
-A node that compresses the current LLM prompt (message history) into a summary, replacing messages with a TLDR. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that compresses the current LLM prompt (message history) into a summary, replacing messages with a concise summary (TL;DR). For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-compress-history.html).
 This is useful for managing long conversations by compressing the history to reduce token usage.
 
 To learn more about history compression, see [History compression](history-compression.md).
@@ -131,7 +131,7 @@ edge(someNode forwardTo compressHistory)
 
 ### nodeExecuteTool
 
-A node that executes a single tool call and returns its result. This node is used to handle tool calls made by the LLM. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that executes a single tool call and returns its result. This node is used to handle tool calls made by the LLM. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-tool.html).
 
 You can use this node for the following purposes:
 
@@ -148,7 +148,7 @@ edge(llmNode forwardTo executeToolCall onToolCall { true })
 
 ### nodeLLMSendToolResult
 
-A node that adds a tool result to the prompt and requests an LLM response. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that adds a tool result to the prompt and requests an LLM response. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-tool-result.html).
 
 You can use this node for the following purposes:
 
@@ -165,7 +165,7 @@ edge(executeToolCall forwardTo processToolResult)
 
 ### nodeExecuteMultipleTools
 
-A node that executes multiple tool calls. These calls can optionally be executed in parallel. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that executes multiple tool calls. These calls can optionally be executed in parallel. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-multiple-tools.html).
 
 You can use this node for the following purposes:
 
@@ -182,7 +182,7 @@ edge(llmNode forwardTo executeMultipleTools)
 
 ### nodeLLMSendMultipleToolResults
 
-A node that adds multiple tool results to the prompt and gets multiple LLM responses. For details, see API reference.<!--[TODO] Link to API reference-->
+A node that adds multiple tool results to the prompt and gets multiple LLM responses. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-multiple-tool-results.html).
 
 You can use this node for the following purposes:
 
@@ -201,7 +201,7 @@ edge(executeMultipleTools forwardTo processMultipleToolResults)
 
 The framework provides predefined subgraphs that encapsulate commonly used patterns and workflows. These subgraphs simplify the development of complex agent strategies by handling the creation of base nodes and edges automatically.
 
-By using the predefined subgraphs, you can implement varoius popular pipelines. Here is an example:
+By using the predefined subgraphs, you can implement various popular pipelines. Here is an example:
 
 1. Prepare the data.
 2. Run the task.
@@ -209,9 +209,10 @@ By using the predefined subgraphs, you can implement varoius popular pipelines. 
 
 ### subgraphWithTask
 
-A subgraph that performs a specific task using provided tools and returns a structured result. This subgraph is designed to handle self-contained tasks within a larger workflow. For details, see API reference.<!--[TODO] Link to API reference-->
+A subgraph that performs a specific task using provided tools and returns a structured result. This subgraph is designed to handle self-contained tasks within a larger workflow. For details, see [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/subgraph-with-task.html).
 
 You can use this subgraph for the following purposes:
+
 - Create special components that handle specific tasks within a larger workflow.
 - Encapsulate complex logic with clear input and output interfaces.
 - Configure task-specific tools, models, and prompts.
@@ -237,13 +238,15 @@ val processQuery by subgraphWithTask<String>(
 
 ### subgraphWithVerification
 
-A special version of `subgraphWithTask` that verifies whether a task was performed correctly and provides details about any issues encountered. This subgraph is useful for workflows that require validation or quality checks. For details, see API reference.<!--[TODO] Link to API reference-->
+A special version of `subgraphWithTask` that verifies whether a task was performed correctly and provides details about any issues encountered. This subgraph is useful for workflows that require validation or quality checks. For details, see [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/subgraph-with-verification.html).
 
 You can use this subgraph for the following purposes:
+
 - Verify the correctness of task execution.
 - Implement quality control processes in your workflows.
 - Create self-validating components.
 - Generate structured verification results with success/failure status and detailed feedback.
+
 The subgraph ensures that the LLM calls a verification tool at the end of the workflow to check whether the task was successfully completed. It guarantees this verification is performed as the final step and returns a `VerifiedSubgraphResult` that indicates whether a task was completed successfully and provides detailed feedback. 
 Here is an example:
 
@@ -305,6 +308,7 @@ public fun chatAgentStrategy(): AIAgentStrategy = strategy("chat") {
 }
 
 ```
+See also [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/chat-agent-strategy.html).
 
 ### Single run strategy
 
@@ -327,6 +331,8 @@ public fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
     edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
 }
 ```
+
+See also [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/simple-single-run-agent.html).
 
 ### Tool-based strategy
 
@@ -400,3 +406,5 @@ fun streamingDataStrategy(): AIAgentStrategy = strategy("streaming-data") {
     edge(processStreamingData forwardTo nodeFinish)
 }
 ```
+
+

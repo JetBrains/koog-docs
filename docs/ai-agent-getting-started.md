@@ -66,14 +66,14 @@ edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed
 
 Unlike agents created with the Simple API, agents built using the AI Agent require explicit configuration:
 
-To learn more about configuration options, see API reference.<!--[TODO] Link to API reference-->
+To learn more about configuration options, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.config/-a-i-agent-config/index.html).
 
 ### 1. Provide a prompt executor
 
 Prompt executors manage and run prompts.
 You can choose a prompt executor based on the LLM provider you plan to use.
 Also, you can create a custom prompt executor using one of the available LLM clients.
-To check all available LLM clients and prompt executors, see API reference.<!--[TODO] Link to API reference-->
+To check all available LLM clients and prompt executors, see [API reference](https://api.koog.ai/index.html).
 
 For example, to provide the OpenAI prompt executor, you need to call the `simpleOpenAIExecutor` function and provide it with the API key required for authentication with the OpenAI service:
 

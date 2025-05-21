@@ -16,12 +16,12 @@ This page explains how to implement a tool and use it in the agent. To learn mor
 
 Each tool consists of the following components:
 
-| Component        | Description                                                                                                                                                                                                                              |
-|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Args`           | The serializable data class that defines arguments required for the custom tool.                                                                                                                                                         |
-| `argsSerializer` | The overridden variable that defines how the arguments for the tool are serialized. See also SimpleTool.<!--[TODO] Link to API reference-->                                                                                              |
-| `descriptor`     | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default), - `optionalParameters` (empty by default). See also SimpleTool.<!--[TODO] Link to API reference--> |
-| `doExecute()`    | The overridden function that describes the main action performed by the tool. See also SimpleTool.<!--[TODO] Link to API reference-->                                                                                                    |
+| Component        | Description                                                                                                                                                                                                                                                                                        |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Args`           | The serializable data class that defines arguments required for the custom tool.                                                                                                                                                                                                                   |
+| `argsSerializer` | The overridden variable that defines how the arguments for the tool are serialized. See also [SimpleTool](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-simple-tool/index.html).                                                                                              |
+| `descriptor`     | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default), - `optionalParameters` (empty by default). See also [SimpleTool](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-simple-tool/index.html). |
+| `doExecute()`    | The overridden function that describes the main action performed by the tool. See also [SimpleTool](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-simple-tool/index.html).                                                                                                    |
 
 
 !!! tip
@@ -72,7 +72,7 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
 ```
 <!--- KNIT example-custom-tool-01.kt -->
 
-For more details, see API reference.<!--[TODO] Link to API reference-->
+For more details, see [API reference](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-simple-tool/index.html).
 
 ## Tool registry
 
@@ -85,7 +85,7 @@ The key features of the tool registry:
 - Supports merging of multiple tool registries.
 - Provides methods to retrieve tools by name or type.
 
-To learn more, see ToolRegistry.<!--[TODO] Link to API reference-->
+To learn more, see [ToolRegistry](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool-registry/index.html).
 
 Here is an example of how to create the tool registry and add the implemented tool to it:
 
@@ -135,33 +135,15 @@ agent environment.
     Ensure you have implemented proper [error handling](agent-events.md) in your tools to prevent agent failure.
 
 The tools are called within a specific session context represented by `AIAgentLLMWriteSession`.
-It provides several methods for calling tools:
+It provides several methods for calling tools so that you can:
 
-- Calling a tool with the given arguments:
-```kotlin
-// Add a code example here
-```
+- Call a tool with the given arguments.
+- Call a tool by its name and the given arguments.
+- Call a tool by the provided tool class and arguments.
+- Call a tool of the specified type with the given arguments.
+- Call a tool that returns a raw string result.
 
-- Calling a tool by its name and the given arguments:
-```kotlin
-// Add a code example here
-```
-
-- Calling a tool by the provided tool class and arguments:
-```kotlin
-// Add a code example here
-```
-
-- Calling a tool of the specified type with the given arguments:
-```kotlin
-// Add a code example here
-```
-
-- Calling a tool that returns a raw string result:
-```kotlin
-// Add a code example here
-```
-For more details, see API reference.<!--[TODO] Link to API reference-->
+For more details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.session/-a-i-agent-l-l-m-write-session/index.html).
 
 ### Parallel tool calls
 
@@ -190,32 +172,12 @@ val myNode by node<Unit, Unit> { _ ->
 
 When building agent workflows with nodes, you can use special nodes to call tools:
 
-* **nodeExecuteTool**: calls a single tool call and returns its result.
+* **nodeExecuteTool**: calls a single tool call and returns its result. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-tool.html).
+ 
+* **nodeExecuteSingleTool** that calls a specific tool with the provided arguments. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-single-tool.html).
 
-```kotlin
-val nodeExecuteTool by nodeExecuteTool()
-```
+* **nodeExecuteMultipleTools** that calls multiple tool calls and returns their results. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-multiple-tools.html).
 
-* **nodeExecuteSingleTool** that calls a specific tool with the provided arguments.
+* **nodeLLMSendToolResult** that sends a tool result to the LLM and gets a response. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-tool-result.html).
 
-```kotlin
-// Add a code example here
-```
-
-* **nodeExecuteMultipleTools** that calls multiple tool calls and returns their results.
-
-```kotlin
-// Add a code example here
-```
-
-* **nodeLLMSendToolResult** that sends a tool result to the LLM and gets a response.
-
-```kotlin
-val nodeLLMSendToolResult by nodeLLMSendToolResult()
-```
-
-* **nodeLLMSendMultipleToolResults** that sends multiple tool results to the LLM.
-
-```kotlin
-// Add a code example here
-```
+* **nodeLLMSendMultipleToolResults** that sends multiple tool results to the LLM. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-multiple-tool-results.html).

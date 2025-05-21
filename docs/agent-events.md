@@ -33,7 +33,8 @@ The EventHandler entity consists of five main handler types:
 ### Installation and configuration
 
 The EventHandler feature integrates with the agent workflow through the `EventHandler` class,
-which provides a way to register callbacks for different agent events, and can be installed as a feature in the agent configuration.
+which provides a way to register callbacks for different agent events, and can be installed as a feature in the agent configuration. For details, see [API reference](https://api.koog.
+ai/agents/agents-features/agents-features-event-handler/ai.koog.agents.local.features.eventHandler.feature/-event-handler/index.html).
 
 To install the feature and configure event handlers for the agent, do the following:
 
@@ -46,7 +47,7 @@ To install the feature and configure event handlers for the agent, do the follow
         }
 
         onAgentFinished = { strategyName, result ->
-            // Handle agent finished event
+            // Handle event triggered when the agent completes its execution
         }
 
         // Define other event handlers
@@ -54,27 +55,26 @@ To install the feature and configure event handlers for the agent, do the follow
 }
 ```
 
-For more details about event handler configuration, see API reference.<!--[TODO] Link to API reference-->
+For more details about event handler configuration, see [API reference](https://api.koog.ai/agents/agents-features/agents-features-event-handler/ai.koog.agents.local.features.eventHandler.feature/-event-handler-config/index.html).
 
 You can also set up event handlers using the `handleEvents` extension function when creating an agent.
 This function also installs the event handler feature and configures event handlers for the agent. Here is an example:
 
 ```kotlin
 val agent = AIAgent(
-    // configuration options
+    // Initialization options
 ){
     handleEvents {
         // Handle tool calls
         onToolCall = { stage, tool, toolArgs ->
             println("Tool called: ${tool.name} with args $toolArgs")
         }
-        // Handle errors
+        // Handle event triggered when the agent completes its execution
         onAgentFinished = { strategyName, result ->
             println("Agent finished with result: $result")
         }
-        
+
         // Other event handlers
     }
 }
 ```
-
