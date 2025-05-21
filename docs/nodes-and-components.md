@@ -219,7 +219,7 @@ You can use this subgraph for the following purposes:
 - Develop structured agent workflows and task execution pipelines.
 - Generate structured results from LLM task execution.
 
-Here is an example:
+You can provide a task to the subgraph as text, configure the LLM if needed, and provide the necessary tools, and the subgraph will process and solve the task. Here is an example:
 
 ```kotlin
 val processQuery by subgraphWithTask<String>(
