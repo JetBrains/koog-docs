@@ -14,8 +14,7 @@ At a high level, a strategy graph consists of the following components:
 - **Strategy**: the top-level container for the graph, created using the `strategy` function.
 - **Subgraphs**: sections of the graph that can have their own set of tools and context.
 - **Nodes**: individual operations or transformations in the workflow.
-- **Edges**: connections between nodes that define the flow of agent operations.
-- **Conditions**: rules that determine when to follow a particular edge.
+- **Edges**: connections between nodes that define transition conditions and transformations.
 
 The strategy graph begins at a special node called `nodeStart` and ends at `nodeFinish`.
 The path between these nodes is determined by the edges and conditions specified in the graph.
@@ -24,8 +23,7 @@ The path between these nodes is determined by the edges and conditions specified
 
 ### Nodes
 
-Nodes are building blocks of a strategy graph. Each node represents a specific operation or transformation in the
-workflow.
+Nodes are building blocks of a strategy graph. Each node represents a specific operation.
 
 The Koog framework provides predefined nodes and also lets you create custom nodes by using the `node` function.
 
@@ -83,7 +81,7 @@ However, you can specify a subset of tools from this registry that can be used i
 val strategy = strategy("strategy-name") {
     val firstSubgraph by subgraph(
         name = "first",
-        tools = listOf(ToolName)
+        tools = listOf(someTool)
     ) {
         // Define nodes and edges for this subgraph
     }
@@ -252,38 +250,6 @@ This strategy does the following:
 5. Otherwise, the strategy sends the tool result directly.
 6. If the LLM calls another tool, the strategy runs it.
 7. If the LLM responds with a message, the strategy finishes the process.
-
-### Markdown streaming strategy
-
-The Markdown streaming strategy is an example of a strategy that processes streaming data:
-
-```kotlin
-val agentStrategy = strategy("library-assistant") {
-    val getMdOutput by node<Unit, String> { _ ->
-        val books = mutableListOf<Book>()
-        val mdDefinition = markdownBookDefinition()
-
-        llm.writeSession {
-            val markdownStream = requestLLMStreaming(mdDefinition)
-            parseMarkdownStreamToBooks(markdownStream).collect { book ->
-                books.add(book)
-                println("Parsed Book: ${book.bookName} by ${book.author}")
-            }
-        }
-
-        formatOutput(books)
-    }
-
-    edge(nodeStart forwardTo getMdOutput)
-    edge(getMdOutput forwardTo nodeFinish)
-}
-```
-
-This strategy:
-
-1. Defines a custom node that requests streaming data from the LLM.
-2. Parses the streaming data into Book objects.
-3. Formats the output and returns it.
 
 ## Troubleshooting
 
