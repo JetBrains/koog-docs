@@ -16,6 +16,7 @@ For more detailed reference documentation, see [API reference](https://api.koog.
 A simple pass-through node that does nothing and returns the input as output. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-do-nothing.html).
 
 You can use this node for the following purposes:
+
 - Create a placeholder node in your graph.
 - Create a connection point without modifying the data.
 - To debug and test your workflow.
@@ -104,7 +105,7 @@ edge(someNode forwardTo processComplexQuery)
 
 ### nodeLLMCompressHistory
 
-A node that compresses the current LLM prompt (message history) into a summary, replacing messages with a TLDR. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-compress-history.html).
+A node that compresses the current LLM prompt (message history) into a summary, replacing messages with a concise summary (TL;DR). For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-compress-history.html).
 This is useful for managing long conversations by compressing the history to reduce token usage.
 
 To learn more about history compression, see [History compression](history-compression.md).
@@ -211,6 +212,7 @@ By using the predefined subgraphs, you can implement various popular pipelines. 
 A subgraph that performs a specific task using provided tools and returns a structured result. This subgraph is designed to handle self-contained tasks within a larger workflow. For details, see [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/subgraph-with-task.html).
 
 You can use this subgraph for the following purposes:
+
 - Create special components that handle specific tasks within a larger workflow.
 - Encapsulate complex logic with clear input and output interfaces.
 - Configure task-specific tools, models, and prompts.
@@ -239,10 +241,12 @@ val processQuery by subgraphWithTask<String>(
 A special version of `subgraphWithTask` that verifies whether a task was performed correctly and provides details about any issues encountered. This subgraph is useful for workflows that require validation or quality checks. For details, see [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/subgraph-with-verification.html).
 
 You can use this subgraph for the following purposes:
+
 - Verify the correctness of task execution.
 - Implement quality control processes in your workflows.
 - Create self-validating components.
 - Generate structured verification results with success/failure status and detailed feedback.
+
 The subgraph ensures that the LLM calls a verification tool at the end of the workflow to check whether the task was successfully completed. It guarantees this verification is performed as the final step and returns a `VerifiedSubgraphResult` that indicates whether a task was completed successfully and provides detailed feedback. 
 Here is an example:
 
