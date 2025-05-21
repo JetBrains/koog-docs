@@ -196,29 +196,28 @@ fun parseMarkdownStreamToBooks(markdownStream: Flow<String>): Flow<Book> {
 
 ```kotlin
 val agentStrategy = strategy("library-assistant") {
-    // Describe the node containing the output stream parsing 
-    val getMdOutput by node<Unit, String> { _ ->
-        val books = mutableListOf<Book>()
-        val mdDefinition = markdownBookDefinition()
+     // Describe the node containing the output stream parsing
+     val getMdOutput by node<String, String> { input ->
+         val books = mutableListOf<Book>()
+         val mdDefinition = markdownBookDefinition()
 
-        llm.writeSession {
-            // Initiate the response stream in the form of the definition `mdDefinition`
-            val markdownStream = requestLLMStreaming(mdDefinition)
-            // Call the parser with the result of the response stream and perform actions with the result
-            parseMarkdownStreamToBooks(markdownStream).collect { book ->
-                books.add(book)
-                println("Parsed Book: ${book.bookName} by ${book.author}")
-            }
-        }
-
-        // A custom function for output formatting
-        formatOutput(books)
-    }
-
-    // Describe the agent's graph making sure the node is accessible
-    edge(nodeStart forwardTo getMdOutput)
-    edge(getMdOutput forwardTo nodeFinish)
-}
+         llm.writeSession {
+             updatePrompt { user(input) }
+             // Initiate the response stream in the form of the definition `mdDefinition`
+             val markdownStream = requestLLMStreaming(mdDefinition)
+             // Call the parser with the result of the response stream and perform actions with the result
+             parseMarkdownStreamToBooks(markdownStream).collect { book ->
+                 books.add(book)
+                 println("Parsed Book: ${book.bookName} by ${book.author}")
+             }
+         }
+         // A custom function for output formatting
+         formatOutput(books)
+     }
+     // Describe the agent's graph making sure the node is accessible
+     edge(nodeStart forwardTo getMdOutput)
+     edge(getMdOutput forwardTo nodeFinish)
+ }
 ```
 
 ## Advanced usage: Streaming with tools

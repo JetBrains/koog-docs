@@ -139,7 +139,7 @@ val weatherForecastStructure = JsonStructuredData.createJsonStructure<WeatherFor
 ### Schema format options
 
 - `JsonSchema`: standard JSON Schema format.
-- `SimpleSchema`: a simplified schema format that may work better with some models but has limitations such as no 
+- `Simple`: a simplified schema format that may work better with some models but has limitations such as no 
 polymorphism support.
 
 ### Schema type options
