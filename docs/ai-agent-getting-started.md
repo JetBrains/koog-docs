@@ -66,7 +66,7 @@ edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed
 
 Unlike agents created with the Simple API, agents built using the AI Agent require explicit configuration:
 
-To learn more about configuration options, see API reference.<!--[TODO] Link to API reference-->
+To learn more about configuration options, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.config/-a-i-agent-config/index.html).
 
 ### 1. Provide a prompt executor
 
