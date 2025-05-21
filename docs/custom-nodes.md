@@ -8,14 +8,8 @@ To learn more about what graph nodes are, their usage, and existing default node
 
 ## Node architecture overview
 
-Before diving into implementation details, it is important to understand the architecture of nodes in the Kotlin Agentic
-Framework:
+Before diving into implementation details, it is important to understand the architecture of nodes in the Koog framework. Nodes are the fundamental building blocks of agent workflows, where each node represents a specific operation or transformation in the workflow. You connect nodes using edges, which define the flow of execution between nodes.
 
-- **AIAgentNode**: the abstract base class for all nodes. It defines the core structure and behavior of a node.
-- **AIAgentNodeDelegate**: a delegate class that handles lazy initialization of nodes.
-- **AIAgentSubgraphBuilderBase**: provides the `node` function for creating nodes in a DSL-like manner.
-
-You connect nodes using edges, which define the flow of execution between nodes.
 Each node has an `execute` method that takes an input and produces an output, which is then passed to the next node in the workflow.
 
 ## Implementing a custom node
@@ -25,13 +19,33 @@ an output, to more complex node implementations that accept parameters and maint
 
 ### Basic node implementation
 
-The simplest way to implement a custom node is to create an extension function on `AIAgentSubgraphBuilderBase` that
+The simplest way to implement a custom node in a graph and define your own custom logic would be to use the following pattern:
+
+```kotlin
+val myNode by node<Input, Output>("node_name") { input ->
+    // Processing
+    returnValue
+}
+```
+
+The code above represents a custom node `myNode` with predefined `Input` and `Output` types, with the optional name
+string parameter (`node_name`). In an actual example, here is a simple node that takes a string input and returns
+the input's length:
+
+```kotlin
+val myNode by node<String, Int>("my_node") { input ->
+    // Processing
+    input.length
+}
+```
+
+Another way to create a custom node is to define an extension function on `AIAgentSubgraphBuilder` that
 calls the `node` function:
 
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.myCustomNode(
+fun <T> AIAgentSubgraphBuilder<*, *>.myCustomNode(
     name: String? = null
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
+): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
     // Custom logic here
     input // Return the input as output (pass-through)
 }
@@ -44,11 +58,11 @@ This creates a pass-through node that performs some custom logic but returns the
 You can create nodes that accept parameters to customize their behavior:
 
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
+fun <T> AIAgentSubgraphBuilder<*, *>.myParameterizedNode(
     name: String? = null,
     param1: String,
     param2: Int
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
+): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
     // Use param1 and param2 in your custom logic
     input // Return the input as the output
 }
@@ -59,9 +73,9 @@ fun <T> AIAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
 If your node needs to maintain state between runs, you can use closure variables:
 
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
+fun <T> AIAgentSubgraphBuilder<*, *>.myStatefulNode(
     name: String? = null
-): AIAgentNodeDelegate<T, T> {
+): AIAgentNodeDelegateBase<T, T> {
     var counter = 0
 
     return node(name) { input ->
@@ -77,9 +91,9 @@ fun <T> AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
 Nodes can have different input and output types, which are specified as generic parameters:
 
 ```kotlin
-fun AIAgentSubgraphBuilderBase<*, *>.stringToIntNode(
+fun AIAgentSubgraphBuilder<*, *>.stringToIntNode(
     name: String? = null
-): AIAgentNodeDelegate<String, Int> = node(name) { input: String ->
+): AIAgentNodeDelegateBase<String, Int> = node(name) { input: String ->
     input.toInt() // Convert string to integer
 }
 ```
@@ -108,9 +122,9 @@ The following sections provide some common patterns for implementing custom node
 Nodes that perform an operation but return the input as the output.
 
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.loggingNode(
+fun <T> AIAgentSubgraphBuilder<*, *>.loggingNode(
     name: String? = null
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
+): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
     println("Processing input: $input")
     input // Return the input as output
 }
@@ -121,10 +135,10 @@ fun <T> AIAgentSubgraphBuilderBase<*, *>.loggingNode(
 Nodes that transform the input into a different output.
 
 ```kotlin
-fun AIAgentSubgraphBuilderBase<*, *>.upperCaseNode(
+fun AIAgentSubgraphBuilder<*, *>.upperCaseNode(
     name: String? = null
-): AIAgentNodeDelegate<String, String> = node(name) { input ->
-    input.uppercase() // Transform input to uppercase
+): AIAgentNodeDelegateBase<String, String> = node(name) { input ->
+    input.uppercase() // Transform the input to uppercase
 }
 ```
 
@@ -133,9 +147,9 @@ fun AIAgentSubgraphBuilderBase<*, *>.upperCaseNode(
 Nodes that interact with the LLM.
 
 ```kotlin
-fun AIAgentSubgraphBuilderBase<*, *>.summarizeTextNode(
+fun AIAgentSubgraphBuilder<*, *>.summarizeTextNode(
     name: String? = null
-): AIAgentNodeDelegate<String, String> = node(name) { input ->
+): AIAgentNodeDelegateBase<String, String> = node(name) { input ->
     llm.writeSession {
         updatePrompt {
             user("Please summarize the following text: $input")
@@ -154,9 +168,9 @@ The following sections provide specific examples for common usage patterns in cu
 ### Simple pass-through node
 
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.nodeDoNothing(
+fun <T> AIAgentSubgraphBuilder<*, *>.nodeDoNothing(
     name: String? = null
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
+): AIAgentNodeDelegateBase<T, T> = node(name) { input ->
     input // Return the input as the output
 }
 ```
@@ -164,9 +178,9 @@ fun <T> AIAgentSubgraphBuilderBase<*, *>.nodeDoNothing(
 ### Data transformation node
 
 ```kotlin
-fun AIAgentSubgraphBuilderBase<*, *>.nodeJsonToMap(
+fun AIAgentSubgraphBuilder<*, *>.nodeJsonToMap(
     name: String? = null
-): AIAgentNodeDelegate<String, Map<String, Any>> = node(name) { jsonString ->
+): AIAgentNodeDelegateBase<String, Map<String, Any>> = node(name) { jsonString ->
     Json.decodeFromString<Map<String, Any>>(jsonString) // Decode and deserialize the given JSON string
 }
 ```
@@ -174,10 +188,10 @@ fun AIAgentSubgraphBuilderBase<*, *>.nodeJsonToMap(
 ### LLM interaction node
 
 ```kotlin
-fun AIAgentSubgraphBuilderBase<*, *>.nodeGenerateResponse(
+fun AIAgentSubgraphBuilder<*, *>.nodeGenerateResponse(
     name: String? = null,
     prompt: String
-): AIAgentNodeDelegate<String, Message.Response> = node(name) { input ->
+): AIAgentNodeDelegateBase<String, Message.Response> = node(name) { input ->
     llm.writeSession {
         updatePrompt {
             user("$prompt: $input") // Update the user message in the prompt
@@ -191,10 +205,10 @@ fun AIAgentSubgraphBuilderBase<*, *>.nodeGenerateResponse(
 ### Tool run node
 
 ```kotlin
-fun AIAgentSubgraphBuilderBase<*, *>.nodeExecuteCustomTool(
+fun AIAgentSubgraphBuilder<*, *>.nodeExecuteCustomTool(
     name: String? = null,
     toolName: String
-): AIAgentNodeDelegate<String, String> = node(name) { input ->
+): AIAgentNodeDelegateBase<String, String> = node(name) { input ->
     val toolCall = Message.Tool.Call( 
         id = UUID.randomUUID().toString(),
         tool = toolName,
