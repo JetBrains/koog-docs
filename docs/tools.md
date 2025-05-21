@@ -135,13 +135,13 @@ agent environment.
     Ensure you have implemented proper [error handling](agent-events.md) in your tools to prevent agent failure.
 
 The tools are called within a specific session context represented by `AIAgentLLMWriteSession`.
-It provides several methods for calling tools:
+It provides several methods for calling tools so that you can:
 
-- Calling a tool with the given arguments.
-- Calling a tool by its name and the given arguments.
-- Calling a tool by the provided tool class and arguments.
-- Calling a tool of the specified type with the given arguments.
-- Calling a tool that returns a raw string result.
+- Call a tool with the given arguments.
+- Call a tool by its name and the given arguments.
+- Call a tool by the provided tool class and arguments.
+- Call a tool of the specified type with the given arguments.
+- Call a tool that returns a raw string result.
 
 For more details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.session/-a-i-agent-l-l-m-write-session/index.html).
 
@@ -172,17 +172,12 @@ val myNode by node<Unit, Unit> { _ ->
 
 When building agent workflows with nodes, you can use special nodes to call tools:
 
-* **nodeExecuteTool**: calls a single tool call and returns its result.
+* **nodeExecuteTool**: calls a single tool call and returns its result. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-tool.html).
+ 
+* **nodeExecuteSingleTool** that calls a specific tool with the provided arguments. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-single-tool.html).
 
-```kotlin
-val nodeExecuteTool by nodeExecuteTool()
-```
-* **nodeExecuteSingleTool** that calls a specific tool with the provided arguments.
-* **nodeExecuteMultipleTools** that calls multiple tool calls and returns their results.
-* **nodeLLMSendToolResult** that sends a tool result to the LLM and gets a response.
+* **nodeExecuteMultipleTools** that calls multiple tool calls and returns their results. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-execute-multiple-tools.html).
 
-```kotlin
-val nodeLLMSendToolResult by nodeLLMSendToolResult()
-```
+* **nodeLLMSendToolResult** that sends a tool result to the LLM and gets a response. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-tool-result.html).
 
-* **nodeLLMSendMultipleToolResults** that sends multiple tool results to the LLM.
+* **nodeLLMSendMultipleToolResults** that sends multiple tool results to the LLM. For details, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.dsl.extension/node-l-l-m-send-multiple-tool-results.html).
