@@ -1,4 +1,4 @@
-# Tools Declaration
+# Tool declaration
 
 Tools are functions that an agent can use to perform specific tasks or access external systems.
 
@@ -12,30 +12,37 @@ The process for enabling tools is the same for all agent types:
 
 This page explains how to implement a tool and use it in the agent. To learn more about built-in tools, see [Available tools](simple-api-available-tools.md).
 
-## Getting Started
+## Getting started
 
-To start using tool annotations in your Koog Agents project, you'll need to understand two key annotations:
+To start using tool annotations in your project, you need to understand the following key annotations:
 
-1. `@Tool` - Marks methods that should be exposed as tools to LLMs
-2. `@LLMDescription` - Provides descriptive information about your tools and their components
+| Annotation        | Description                                                             |
+|-------------------|-------------------------------------------------------------------------|
+| `@Tool`           | Marks methods that should be exposed as tools to LLMs.                  |
+| `@LLMDescription` | Provides descriptive information about your tools and their components. |
 
-Let's explore how to use these annotations step by step.
 
-## The @Tool Annotation
+## @Tool annotation
 
 ### Purpose
-The `@Tool` annotation is used to mark methods that should be exposed as tools to LLMs (Large Language Models). Methods annotated with `@Tool` are collected by reflection from objects implementing the `ToolSet` interface.
+
+The `@Tool` annotation is used to mark methods that should be exposed as tools to LLMs. Methods annotated with `@Tool` are collected by reflection from objects implementing the `ToolSet` interface.
 
 ### Definition
+
 ```kotlin
 @Target(AnnotationTarget.FUNCTION)
 public annotation class Tool(val customName: String = "")
 ```
 
 ### Parameters
-- `customName` (optional): Specifies a custom name for the tool. If not provided, the name of the function is used.
+
+| Name         | Required | Description                                                                              |
+|--------------|----------|------------------------------------------------------------------------------------------|
+| `customName` | No       | Specifies a custom name for the tool. If not provided, the name of the function is used. |
 
 ### Usage
+
 Apply the `@Tool` annotation to methods in a class that implements the `ToolSet` interface:
 
 ```kotlin
@@ -54,12 +61,14 @@ class MyToolSet : ToolSet {
 }
 ```
 
-## @LLMDescription Annotation
+## @LLMDescription annotation
 
 ### Purpose
+
 The `@LLMDescription` annotation provides descriptive information about code elements (classes, methods, parameters, etc.) to LLMs. This helps LLMs understand the purpose and usage of these elements.
 
 ### Definition
+
 ```kotlin
 @Target(
     AnnotationTarget.PROPERTY,
@@ -73,12 +82,18 @@ public annotation class LLMDescription(val description: String)
 ```
 
 ### Parameters
-- `description`: A string describing the annotated element.
+
+| Name          | Required | Description                                    |
+|---------------|----------|------------------------------------------------|
+| `description` | Yes      | A string that describes the annotated element. |
+
 
 ### Usage
+
 The `@LLMDescription` annotation can be applied at various levels:
 
-#### Method Level
+#### Method level
+
 ```kotlin
 @Tool
 @LLMDescription("Performs a specific operation and returns the result")
@@ -88,7 +103,8 @@ fun myTool(): String {
 }
 ```
 
-#### Parameter Level
+#### Parameter level
+
 ```kotlin
 @Tool
 @LLMDescription("Processes input data")
@@ -104,13 +120,11 @@ fun processTool(
 }
 ```
 
-## Step-by-Step Guide to Creating Tools
+## Tool creation
 
-Let's walk through the process of creating tools for your AI agent step by step:
+### 1. Create a ToolSet class
 
-### Step 1: Create a ToolSet Class
-
-First, create a class that implements the `ToolSet` interface. This interface marks your class as a container for tools.
+Create a class that implements the `ToolSet` interface. This interface marks your class as a container for tools.
 
 ```kotlin
 class MyFirstToolSet : ToolSet {
@@ -118,7 +132,7 @@ class MyFirstToolSet : ToolSet {
 }
 ```
 
-### Step 2: Add Tool Methods
+### 2. Add tool methods
 
 Add methods to your class and annotate them with `@Tool` to expose them as tools:
 
@@ -132,7 +146,7 @@ class MyFirstToolSet : ToolSet {
 }
 ```
 
-### Step 3: Add Descriptions
+### 3. Add descriptions
 
 Add `@LLMDescription` annotations to provide context for the LLM:
 
@@ -151,9 +165,9 @@ class MyFirstToolSet : ToolSet {
 }
 ```
 
-### Step 4: Use Your Tools with an Agent
+### 4. Use your tools with an agent
 
-Now you can use your tools with a Koog Agent:
+Now you can use your tools with an agent:
 
 ```kotlin
 fun main() = runBlocking {
@@ -176,11 +190,11 @@ fun main() = runBlocking {
 }
 ```
 
-## Real-World Examples
+## Usage examples
 
-Let's look at some real-world examples of tool annotations in action:
+Here are some real-world examples of tool annotations in action.
 
-### Basic Example: Switch Controller
+### Basic example: Switch controller
 
 This example shows a simple tool set for controlling a switch:
 
@@ -205,13 +219,14 @@ class SwitchTools(val switch: Switch) : ToolSet {
 }
 ```
 
-When an LLM needs to control a switch, it can understand from the descriptions:
-- What the tools do
-- What parameters they need
-- What values are acceptable for those parameters
-- What to expect as a return value
+When an LLM needs to control a switch, it can understand the following information from the provided description:
 
-### Advanced Example: Diagnostic Tools
+- The purpose and functionality of the tools.
+- The required parameters for using the tools.
+- The acceptable values for each parameter.
+- The expected return values upon execution.
+
+### Advanced example: Diagnostic tools
 
 This example shows a more complex tool set for device diagnostics:
 
@@ -243,73 +258,68 @@ class DiagnosticToolSet : ToolSet {
 }
 ```
 
-## Best Practices
+## Best practices
 
-1. **Provide Clear Descriptions**: Write clear, concise descriptions that explain the purpose and behavior of tools, parameters, and return values.
+1. **Provide clear descriptions**: write clear, concise descriptions that explain the purpose and behavior of tools, parameters, and return values.
 
-2. **Describe All Parameters**: Add `@LLMDescription` to all parameters to help LLMs understand what each parameter is for.
+2. **Describe all parameters**: add `@LLMDescription` to all parameters to help LLMs understand what each parameter is for.
 
-3. **Use Consistent Naming**: Use consistent naming conventions for tools and parameters to make them more intuitive.
+3. **Use consistent naming**: use consistent naming conventions for tools and parameters to make them more intuitive.
 
-4. **Group Related Tools**: Group related tools in the same `ToolSet` implementation and provide a class-level description.
+4. **Group related tools**: group related tools in the same `ToolSet` implementation and provide a class-level description.
 
-5. **Return Informative Results**: Make sure tool return values provide clear information about the result of the operation.
+5. **Return informative results**: make sure tool return values provide clear information about the result of the operation.
 
-6. **Handle Errors Gracefully**: Include error handling in your tools and return informative error messages.
+6. **Handle errors gracefully**: include error handling in your tools and return informative error messages.
 
-7. **Document Default Values**: When parameters have default values, document this in the description.
+7. **Document default values**: when parameters have default values, document this in the description.
 
 8. **Keep Tools Focused**: Each tool should perform a specific, well-defined task rather than trying to do too many things.
 
-## Troubleshooting Common Issues
+## Troubleshooting common issues
 
-When working with tool annotations, you might encounter some common issues. Here's how to resolve them:
+When working with tool annotations, you might encounter some common issues. Here is how to resolve them.
 
-### Tools Not Being Recognized
+### Tools not being recognized
 
-**Problem**: Your tools are not being recognized by the agent.
-
-**Solutions**:
-- Ensure your class implements the `ToolSet` interface
-- Verify that all tool methods are annotated with `@Tool`
-- Check that your tool methods have appropriate return types (String is recommended for simplicity)
-- Make sure you're properly registering your tool set with the agent using `withTools()`
-
-### Unclear Tool Descriptions
-
-**Problem**: The LLM is not using your tools correctly or misunderstands their purpose.
+**Problem**: The agent does not recognize your tools.
 
 **Solutions**:
-- Improve your `@LLMDescription` annotations to be more specific and clear
-- Include examples in your descriptions when appropriate
-- Specify parameter constraints in the descriptions (e.g., "Must be a positive number")
-- Use consistent terminology throughout your descriptions
 
-### Parameter Type Issues
+- Ensure your class implements the `ToolSet` interface.
+- Verify that all tool methods are annotated with `@Tool`.
+- Check that your tool methods have appropriate return types (String is recommended for simplicity).
+- Make sure you're properly registering your tool set with the agent using `withTools()`.
 
-**Problem**: The LLM is providing incorrect parameter types.
+### Unclear tool descriptions
 
-**Solutions**:
-- Use simple parameter types when possible (String, Boolean, Int)
-- Clearly describe the expected format in the parameter description
-- For complex types, consider using String parameters with a specific format and parse them in your tool
-- Include examples of valid inputs in your parameter descriptions
-
-### Performance Issues
-
-**Problem**: Your tools are causing performance problems.
+**Problem**: The LLM does not use your tools correctly or misunderstands their purpose.
 
 **Solutions**:
-- Keep tool implementations lightweight
-- For resource-intensive operations, consider implementing asynchronous processing
-- Cache results when appropriate
-- Log tool usage to identify bottlenecks
 
-## Next Steps
+- Improve your `@LLMDescription` annotations to be more specific and clear.
+- Include examples in your descriptions when appropriate.
+- Specify parameter constraints in the descriptions (e.g., "Must be a positive number").
+- Use consistent terminology throughout your descriptions.
 
-Now that you understand how to create and use tool annotations in Koog Agents, you can:
+### Parameter type issues
 
-1. **Explore the Examples**: Look at the example code in the repository to see more complex implementations
-2. **Create Your Own Tools**: Start building tools specific to your application's needs
-3. **Combine Multiple Tool Sets**: Create specialized tool sets and combine them in your agent
-4. **Experiment with Different Descriptions**: Try different description styles to see what works best with your LLM
+**Problem**: The LLM provides incorrect parameter types.
+
+**Solutions**:
+
+- Use simple parameter types when possible (String, Boolean, Int).
+- Clearly describe the expected format in the parameter description.
+- For complex types, consider using String parameters with a specific format and parse them in your tool.
+- Include examples of valid inputs in your parameter descriptions.
+
+### Performance issues
+
+**Problem**: Your tools cause performance problems.
+
+**Solutions**:
+
+- Keep tool implementations lightweight.
+- For resource-intensive operations, consider implementing asynchronous processing.
+- Cache results when appropriate.
+- Log tool usage to identify bottlenecks.

@@ -20,14 +20,14 @@ History compression is performed at specific steps in the agent workflow:
 - Between logical steps (subgraphs) of the agent strategy.
 - When context becomes too long.
 
-## Implementing history compression
+## History compression implementation
 
 There are two main approaches to implementing history compression in your agent:
 
 - In a strategy graph.
 - In a custom node.
 
-### Compressing history in a strategy graph
+### History compression in a strategy graph
 
 To compress the history in a strategy graph, you need to use the `nodeLLMCompressHistory` node.
 Depending on which step you decide to perform compression, the following scenarios are available: 
@@ -80,7 +80,7 @@ val strategy = strategy("execute-with-history-compression") {
 ```
 In this example, the history is compressed after completing the information collection phase, but before proceeding to the decision-making phase.
 
-### Compressing history in a custom node
+### History compression in a custom node
 
 If you are implementing a custom node, you can compress history using the `replaceHistoryWithTLDR()` function as follows:
 
@@ -236,7 +236,7 @@ llm.writeSession {
 }
 ```
 
-## Implementing custom history compression strategy
+## Custom history compression strategy implementation
 
 You can create your own history compression strategy by extending the `HistoryCompressionStrategy` abstract class and implementing the `compress` method.
 
@@ -293,7 +293,7 @@ llm.writeSession {
 }
 ```
 
-## Preserving memory during compression
+##  Memory preservation during compression
 
 All history compression methods have the `preserveMemory` parameter that determines whether memory-related messages should be preserved during compression.
 These are messages that contain facts retrieved from memory or indicate that the memory feature is not enabled.
