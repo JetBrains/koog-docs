@@ -69,3 +69,5 @@ theme:
         name: Switch to light mode
       primary: black
       accent: blue
+
+copyright: Copyright © 2000-2025 JetBrains s.r.o.
