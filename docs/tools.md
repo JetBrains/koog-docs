@@ -1,17 +1,11 @@
-# Tools
-
-Tools are functions that an agent can use to perform specific tasks or access external systems.
-
-There are built-in tools available in the Simple API only and custom tools that can be used with both agents created using the Simple API and more sophisticated agents
-created with the AI Agent. 
-
-The process for enabling tools is the same for all agent types:
-
-1. Add the tool to a tool registry. For details, see [Tool registry](#tool-registry)
-2. Pass the tool registry to the agent. For details, see [Passing tools to an agent](#passing-tools-to-an-agent)
-
-This page explains how to implement a tool and use it in the agent. To learn more about built-in tools, see [Available tools](simple-api-available-tools.md).
-
+# Tools Implementation
+This section dives into the advanced API — designed for scenarios that require greater flexibility and custom behavior.
+With this approach, you can define every aspect of a tool: its parameters,
+metadata, execution logic, and how it's registered and invoked.
+This level of control is ideal for building sophisticated tools that go beyond basic use cases 
+and integrate tightly with agent sessions and workflows. 
+You'll also learn how to manage tools through registries, 
+invoke them programmatically or in parallel, and use them within node-based agent architectures.
 ## Tool implementation
 
 Each tool consists of the following components:

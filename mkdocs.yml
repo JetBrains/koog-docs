@@ -9,7 +9,9 @@ nav:
           - Available tools: simple-api-available-tools.md
       - AI Agent:
           - Getting started: ai-agent-getting-started.md
-      - Tools: tools.md
+      - Tools:
+        - Tools Declaration: tools-annotations.md
+        - Tools Implementation: tools.md
       - Agent events: agent-events.md
       - Custom strategy graphs: custom-strategy-graphs.md
       - Pre-defined nodes and components: nodes-and-components.md
