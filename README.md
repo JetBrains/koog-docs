@@ -12,9 +12,7 @@ Welcome to the repository containing documentation of the Koog framework, publis
 
 ## Overview
 
-Koog is a Kotlin-based framework designed to create and run AI agents locally without external
-services. It provides a pure Kotlin implementation for building intelligent agents that can interact with
-tools, handle complex workflows, and communicate with users.
+Koog is a Kotlin-based framework designed to build and run AI agents entirely in idiomatic Kotlin. It lets you create agents that can interact with tools, handle complex workflows, and communicate with users.
 
 ## Contributing
 Read the [Contributing Guidelines](CONTRIBUTING.md).

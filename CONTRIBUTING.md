@@ -30,4 +30,4 @@ so do familiarize yourself with the following guidelines.
 
 ## Koog framework changes
 
-To propose changes in Koog framework, please go to https://github.com/JetBrains/koog
+To propose changes in the Koog framework, please go to https://github.com/JetBrains/koog.
