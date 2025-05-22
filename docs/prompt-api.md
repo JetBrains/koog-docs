@@ -64,7 +64,7 @@ fun main() {
     val client = OpenAILLMClient(token)
 
     // Create a prompt
-    val prompt = prompt("prompt_name", LLMParams())
+    val prompt = prompt("prompt_name", LLMParams()) {
         // Add a system message to set the context
         system("You are a helpful assistant.")
 
