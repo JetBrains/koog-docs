@@ -125,6 +125,7 @@ The following sections provide some common patterns for implementing custom node
 Nodes that perform an operation but return the input as the output.
 
 ```kotlin
+
 val loggingNode by node<String, String>("node_name") { input ->
     println("Processing input: $input")
     input // Return the input as the output
