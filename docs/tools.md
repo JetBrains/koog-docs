@@ -1,11 +1,13 @@
-# Tools Implementation
-This section dives into the advanced API — designed for scenarios that require greater flexibility and custom behavior.
-With this approach, you can define every aspect of a tool: its parameters,
-metadata, execution logic, and how it's registered and invoked.
-This level of control is ideal for building sophisticated tools that go beyond basic use cases 
-and integrate tightly with agent sessions and workflows. 
-You'll also learn how to manage tools through registries, 
-invoke them programmatically or in parallel, and use them within node-based agent architectures.
+# Advanced implementation
+
+This section explains the advanced API designed for scenarios that require enhanced flexibility and customized behavior.
+With this approach, you have full control over every aspect of a tool, including its parameters,
+metadata, execution logic, and how it is registered and invoked.
+
+This level of control is ideal for creating sophisticated tools that extend basic use cases,  enabling seamless integration into agent sessions and workflows.
+
+This page describes how to implement a tool, manage tools through registries, call them, and use within node-based agent architectures.
+
 ## Tool implementation
 
 Each tool consists of the following components:
@@ -112,7 +114,7 @@ For an agent to use a tool, you need to pass a tool registry containing the tool
 ```kotlin
 // Agent initialization
 val agent = simpleSingleRunAgent(
-    executor = simpleOpenAIExecutor(System.getenv("OPEN_AI_API_KEY")),
+    executor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")),
     systemPrompt = "You are a helpful assistant with strong mathematical skills.",
     // Pass your tool registry to the agent
     toolRegistry = toolRegistry

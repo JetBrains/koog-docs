@@ -3,6 +3,8 @@ nav:
   - Documentation:
       - Overview: index.md
       - Key concepts: key-concepts.md
+      - Examples: examples.md
+      - Prompt API: prompt-api.md
       - Simple API:
           - Getting started: simple-api-getting-started.md
           - Configuration options: simple-api-configuration.md
@@ -10,8 +12,8 @@ nav:
       - AI Agent:
           - Getting started: ai-agent-getting-started.md
       - Tools:
-        - Tools Declaration: tools-annotations.md
-        - Tools Implementation: tools.md
+        - Tools declaration: tools-annotations.md
+        - Advanced implementation: tools.md
       - Agent events: agent-events.md
       - Custom strategy graphs: custom-strategy-graphs.md
       - Pre-defined nodes and components: nodes-and-components.md

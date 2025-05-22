@@ -38,7 +38,7 @@ An edge is created using the `edge` function and the `forwardTo` infix function:
 edge(sourceNode forwardTo targetNode)
 ```
 
-### Conditions
+#### Conditions
 
 Conditions determine when to follow a particular edge in the strategy graph. There are several types of conditions:
 
@@ -89,7 +89,7 @@ val strategy = strategy("strategy-name") {
 }
 ```
 
-## Creating a basic strategy graph
+## Basic strategy graph creation
 
 The basic strategy graph operates as follows: 
 

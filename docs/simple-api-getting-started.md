@@ -32,7 +32,7 @@ A single-run agent processes a single input and provides a response:
 
 ```kotlin
 fun main() = runBlocking {
-    val apiKey = System.getenv("OPEN_AI_API_KEY")
+    val apiKey = System.getenv("OPENAI_API_KEY")
 
     val agent = simpleSingleRunAgent(
         executor = simpleOpenAIExecutor(apiKey),
