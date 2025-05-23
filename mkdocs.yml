@@ -33,6 +33,7 @@ nav:
               - Memory: agent-memory.md
       - Testing: testing.md
   - API reference: https://api.koog.ai/
+  - GitHub: https://github.com/JetBrains/koog/
 
 markdown_extensions:
   - pymdownx.highlight:
