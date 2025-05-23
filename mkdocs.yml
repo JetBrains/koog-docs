@@ -33,7 +33,6 @@ nav:
               - Memory: agent-memory.md
       - Testing: testing.md
   - API reference: https://api.koog.ai/
-  - GitHub: https://github.com/JetBrains/koog/
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -54,6 +53,7 @@ theme:
     - navigation.expand
     - navigation.tabs
     - navigation.tabs.sticky
+    - navigation.instant
   color_mode: light
   nav_style: light
   user_color_mode_toggle: true
@@ -73,4 +73,6 @@ theme:
       primary: black
       accent: blue
 
+repo_url: https://github.com/JetBrains/koog
+repo_name: "Koog on GitHub"
 copyright: Copyright © 2000-2025 JetBrains s.r.o.
