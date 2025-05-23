@@ -1,0 +1,2083 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../agent-events/">
+      
+      
+        <link rel="next" href="../nodes-and-components/">
+      
+      
+      <link rel="icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Custom strategy graphs - Koog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#custom-strategy-graphs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Koog" class="md-header__button md-logo" aria-label="Koog" data-md-component="logo">
+      
+  <img src="../img/favicon.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Koog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Custom strategy graphs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JetBrains/koog" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Koog on GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href=".." class="md-tabs__link">
+          
+  
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://api.koog.ai/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Koog" class="md-nav__button md-logo" aria-label="Koog" data-md-component="logo">
+      
+  <img src="../img/favicon.ico" alt="logo">
+
+    </a>
+    Koog
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JetBrains/koog" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Koog on GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Documentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Documentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../key-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Key concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prompt API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Simple API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Simple API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simple-api-getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simple-api-configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration options
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simple-api-available-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Available tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_6" id="__nav_1_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    AI Agent
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            AI Agent
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_7" id="__nav_1_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools-annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tools declaration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Advanced implementation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Agent events
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Custom strategy graphs
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom strategy graphs
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-graph-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strategy graph architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-graph-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strategy graph components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Strategy graph components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nodes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#edges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Edges
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Edges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subgraphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subgraphs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-strategy-graph-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic strategy graph creation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-strategy-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced strategy techniques
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced strategy techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#history-compression" class="md-nav__link">
+    <span class="md-ellipsis">
+      History compression
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parallel-tool-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parallel tool execution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-branching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional branching
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best practices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tone-analysis-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tone analysis strategy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#graph-fails-to-reach-the-finish-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      Graph fails to reach the finish node
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-calls-are-not-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool calls are not running
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#history-gets-too-large" class="md-nav__link">
+    <span class="md-ellipsis">
+      History gets too large
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graph-behaves-unexpectedly" class="md-nav__link">
+    <span class="md-ellipsis">
+      Graph behaves unexpectedly
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-issues-occur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance issues occur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nodes-and-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pre-defined nodes and components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../history-compression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    History compression
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_12" id="__nav_1_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced usage
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_12">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced usage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structured-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Structured data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Streaming API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-nodes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom nodes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLM sessions and manual history management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_12_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_12_5" id="__nav_1_12_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Subgraphs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_12_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_12_5">
+            <span class="md-nav__icon md-icon"></span>
+            Subgraphs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../subgraphs-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-subgraphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom subgraphs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embeddings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_12_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_12_7" id="__nav_1_12_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_12_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_12_7">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tracing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Memory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://api.koog.ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-graph-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strategy graph architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-graph-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strategy graph components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Strategy graph components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nodes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#edges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Edges
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Edges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subgraphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subgraphs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-strategy-graph-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic strategy graph creation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-strategy-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced strategy techniques
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced strategy techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#history-compression" class="md-nav__link">
+    <span class="md-ellipsis">
+      History compression
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parallel-tool-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parallel tool execution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-branching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional branching
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best practices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tone-analysis-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tone analysis strategy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#graph-fails-to-reach-the-finish-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      Graph fails to reach the finish node
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-calls-are-not-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool calls are not running
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#history-gets-too-large" class="md-nav__link">
+    <span class="md-ellipsis">
+      History gets too large
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graph-behaves-unexpectedly" class="md-nav__link">
+    <span class="md-ellipsis">
+      Graph behaves unexpectedly
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-issues-occur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance issues occur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="custom-strategy-graphs">Custom strategy graphs</h1>
+<p>Strategy graphs are the backbone of agent workflows in the Koog framework. They define how the agent processes input,
+interacts with tools, and generates output. A strategy graph consists of nodes connected by edges, with conditions
+determining the flow of execution.</p>
+<p>Creating a strategy graph lets you tailor the behavior of an agent to your specific needs, whether you are
+building a simple chatbot, a complex data processing pipeline, or anything in between.</p>
+<h2 id="strategy-graph-architecture">Strategy graph architecture</h2>
+<p>At a high level, a strategy graph consists of the following components:</p>
+<ul>
+<li><strong>Strategy</strong>: the top-level container for the graph, created using the <code>strategy</code> function.</li>
+<li><strong>Subgraphs</strong>: sections of the graph that can have their own set of tools and context.</li>
+<li><strong>Nodes</strong>: individual operations or transformations in the workflow.</li>
+<li><strong>Edges</strong>: connections between nodes that define transition conditions and transformations.</li>
+</ul>
+<p>The strategy graph begins at a special node called <code>nodeStart</code> and ends at <code>nodeFinish</code>.
+The path between these nodes is determined by the edges and conditions specified in the graph.</p>
+<h2 id="strategy-graph-components">Strategy graph components</h2>
+<h3 id="nodes">Nodes</h3>
+<p>Nodes are building blocks of a strategy graph. Each node represents a specific operation.</p>
+<p>The Koog framework provides predefined nodes and also lets you create custom nodes by using the <code>node</code> function.</p>
+<p>For details, see <a href="../nodes-and-components/">Predefined nodes and components</a> and <a href="../custom-nodes/">Custom nodes</a>.</p>
+<h3 id="edges">Edges</h3>
+<p>Edges connect nodes and define the flow of operation in the strategy graph.
+An edge is created using the <code>edge</code> function and the <code>forwardTo</code> infix function:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">edge</span><span class="p">(</span><span class="n">sourceNode</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">targetNode</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="conditions">Conditions</h4>
+<p>Conditions determine when to follow a particular edge in the strategy graph. There are several types of conditions:</p>
+<table>
+<thead>
+<tr>
+<th>Condition type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>onCondition</td>
+<td>A general-purpose condition that takes a lambda expression that returns a boolean value.</td>
+</tr>
+<tr>
+<td>onToolCall</td>
+<td>A condition that matches when the LLM calls a tool.</td>
+</tr>
+<tr>
+<td>onAssistantMessage</td>
+<td>A condition that matches when the LLM responds with a message.</td>
+</tr>
+<tr>
+<td>onMultipleToolCalls</td>
+<td>A condition that matches when the LLM calls multiple tools.</td>
+</tr>
+<tr>
+<td>onToolNotCalled</td>
+<td>A condition that matches when the LLM does not call a tool.</td>
+</tr>
+</tbody>
+</table>
+<p>You can transform the output before passing it to the target node by using the <code>transformed</code> function:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">edge</span><span class="p">(</span><span class="n">sourceNode</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">targetNode</span><span class="w"> </span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">        </span><span class="n">onCondition</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="n">transformed</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="na">uppercase</span><span class="p">()</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="subgraphs">Subgraphs</h3>
+<p>Subgraphs are sections of the strategy graph that operate with their own set of tools and context.
+The strategy graph can contain multiple subgraphs. Each subgraph is defined by using the <code>subgraph</code> function:</p>
+<p><div class="language-kotlin highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">val</span><span class="w"> </span><span class="nv">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strategy</span><span class="p">(</span><span class="s">&quot;strategy-name&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">firstSubgraph</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">subgraph</span><span class="p">(</span><span class="s">&quot;first&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="c1">// Define nodes and edges for this subgraph</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">secondSubgraph</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">subgraph</span><span class="p">(</span><span class="s">&quot;second&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="c1">// Define nodes and edges for this subgraph</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+</span></code></pre></div>
+A subgraph can use any tool from a tool registry. 
+However, you can specify a subset of tools from this registry that can be used in the subgraph and pass it as an argument to the <code>subgraph</code> function:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">val</span><span class="w"> </span><span class="nv">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strategy</span><span class="p">(</span><span class="s">&quot;strategy-name&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">firstSubgraph</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">subgraph</span><span class="p">(</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;first&quot;</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">        </span><span class="n">tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">listOf</span><span class="p">(</span><span class="n">someTool</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="c1">// Define nodes and edges for this subgraph</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">   </span><span class="c1">// Define other subgraphs</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="basic-strategy-graph-creation">Basic strategy graph creation</h2>
+<p>The basic strategy graph operates as follows: </p>
+<ol>
+<li>Sends the input to the LLM.</li>
+<li>If the LLM responds with a message, finishes the process.</li>
+<li>If the LLM calls a tool, runs the tool.</li>
+<li>Sends the tool result back to the LLM.</li>
+<li>If the LLM responds with a message, finishes the process.</li>
+<li>If the LLM calls another tool, runs the tool, and the process repeats from step 4.</li>
+</ol>
+<p><img alt="basic-strategy-graph" src="../img/basic-strategy-graph.png" /></p>
+<p>Here is an example of a basic strategy graph:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">val</span><span class="w"> </span><span class="nv">myStrategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strategy</span><span class="p">(</span><span class="s">&quot;my-strategy&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeCallLLM</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMRequest</span><span class="p">()</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">executeToolCall</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeExecuteTool</span><span class="p">()</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">sendToolResult</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMSendToolResult</span><span class="p">()</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeStart</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeCallLLM</span><span class="p">)</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeCallLLM</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="w"> </span><span class="n">onAssistantMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeCallLLM</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">executeToolCall</span><span class="w"> </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="n">edge</span><span class="p">(</span><span class="n">executeToolCall</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">sendToolResult</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="n">edge</span><span class="p">(</span><span class="n">sendToolResult</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="w"> </span><span class="n">onAssistantMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="n">edge</span><span class="p">(</span><span class="n">sendToolResult</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">executeToolCall</span><span class="w"> </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="advanced-strategy-techniques">Advanced strategy techniques</h2>
+<h3 id="history-compression">History compression</h3>
+<p>For long-running conversations, the history can grow large and consume a lot of tokens. To learn how to compress the history, see <a href="../history-compression/">History compression</a>.</p>
+<h3 id="parallel-tool-execution">Parallel tool execution</h3>
+<p>For workflows that require executing multiple tools in parallel, you can use the <code>nodeExecuteMultipleTools</code> node:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">val</span><span class="w"> </span><span class="nv">executeMultipleTools</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeExecuteMultipleTools</span><span class="p">()</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kd">val</span><span class="w"> </span><span class="nv">processMultipleResults</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMSendMultipleToolResults</span><span class="p">()</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">edge</span><span class="p">(</span><span class="n">someNode</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">executeMultipleTools</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">edge</span><span class="p">(</span><span class="n">executeMultipleTools</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">processMultipleResults</span><span class="p">)</span>
+</span></code></pre></div>
+<p>You can also use the <code>toParallelToolCallsRaw</code> extension function for streaming data:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">parseMarkdownStreamToBooks</span><span class="p">(</span><span class="n">markdownStream</span><span class="p">).</span><span class="na">toParallelToolCallsRaw</span><span class="p">(</span><span class="n">BookTool</span><span class="o">::</span><span class="n">class</span><span class="p">).</span><span class="na">collect</span><span class="p">()</span>
+</span></code></pre></div>
+<p>To learn more, see <a href="../tools/">Tools</a>. </p>
+<h3 id="conditional-branching">Conditional branching</h3>
+<p>For complex workflows that require different paths based on certain conditions, you can use conditional branching:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">val</span><span class="w"> </span><span class="nv">branchA</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">node</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="c1">// Logic for branch A</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="s">&quot;Branch A: </span><span class="si">$</span><span class="n">input</span><span class="s">&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">}</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kd">val</span><span class="w"> </span><span class="nv">branchB</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">node</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="c1">// Logic for branch B</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="s">&quot;Branch B: </span><span class="si">$</span><span class="n">input</span><span class="s">&quot;</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">}</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="p">(</span><span class="n">someNode</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">branchA</span><span class="p">)</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">            </span><span class="n">onCondition</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">)</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">    </span><span class="p">(</span><span class="n">someNode</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">branchB</span><span class="p">)</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">            </span><span class="n">onCondition</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="best-practices">Best practices</h2>
+<p>When you create custom strategy graphs, follow these best practices:</p>
+<ul>
+<li>Keep it simple. Start with a simple graph and add complexity as needed.</li>
+<li>Give your nodes and edges descriptive names to make the graph easier to understand.</li>
+<li>Handle all possible paths and edge cases.</li>
+<li>Test your graph with various inputs to ensure it behaves as expected.</li>
+<li>Document the purpose and behavior of your graph for future reference.</li>
+<li>Use predefined strategies or common patterns as a starting point.</li>
+<li>For long-running conversations, use history compression to reduce token usage.</li>
+<li>Use subgraphs to organize your graph and manage tool access.</li>
+</ul>
+<h2 id="usage-examples">Usage examples</h2>
+<h3 id="tone-analysis-strategy">Tone analysis strategy</h3>
+<p>The tone analysis strategy is a good example of a tool-based strategy that includes history compression:</p>
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">fun</span><span class="w"> </span><span class="nf">toneStrategy</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">toolRegistry</span><span class="p">:</span><span class="w"> </span><span class="n">ToolRegistry</span><span class="p">):</span><span class="w"> </span><span class="n">AIAgentStrategy</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">strategy</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeSendInput</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMRequest</span><span class="p">()</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeExecuteTool</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeExecuteTool</span><span class="p">()</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeSendToolResult</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMSendToolResult</span><span class="p">()</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeCompressHistory</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMCompressHistory</span><span class="o">&lt;</span><span class="n">Message</span><span class="p">.</span><span class="na">Tool</span><span class="p">.</span><span class="na">Result</span><span class="o">&gt;</span><span class="p">()</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="c1">// Define the flow of the agent</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeStart</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeSendInput</span><span class="p">)</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">        </span><span class="c1">// If the LLM responds with a message, finish</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">            </span><span class="p">(</span><span class="n">nodeSendInput</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="p">)</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">                    </span><span class="n">onAssistantMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">        </span><span class="p">)</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">        </span><span class="c1">// If the LLM calls a tool, execute it</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">            </span><span class="p">(</span><span class="n">nodeSendInput</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeExecuteTool</span><span class="p">)</span>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">                    </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">        </span><span class="p">)</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">        </span><span class="c1">// If the history gets too large, compress it</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">            </span><span class="p">(</span><span class="n">nodeExecuteTool</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeCompressHistory</span><span class="p">)</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="w">                    </span><span class="n">onCondition</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">llm</span><span class="p">.</span><span class="na">readSession</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">prompt</span><span class="p">.</span><span class="na">messages</span><span class="p">.</span><span class="na">size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="w">        </span><span class="p">)</span>
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>
+</span><span id="__span-8-29"><a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeCompressHistory</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeSendToolResult</span><span class="p">)</span>
+</span><span id="__span-8-30"><a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>
+</span><span id="__span-8-31"><a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="w">        </span><span class="c1">// Otherwise, send the tool result directly</span>
+</span><span id="__span-8-32"><a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-8-33"><a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="w">            </span><span class="p">(</span><span class="n">nodeExecuteTool</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeSendToolResult</span><span class="p">)</span>
+</span><span id="__span-8-34"><a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="w">                    </span><span class="n">onCondition</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">llm</span><span class="p">.</span><span class="na">readSession</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">prompt</span><span class="p">.</span><span class="na">messages</span><span class="p">.</span><span class="na">size</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-35"><a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a><span class="w">        </span><span class="p">)</span>
+</span><span id="__span-8-36"><a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>
+</span><span id="__span-8-37"><a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="w">        </span><span class="c1">// If the LLM calls another tool, execute it</span>
+</span><span id="__span-8-38"><a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-8-39"><a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a><span class="w">            </span><span class="p">(</span><span class="n">nodeSendToolResult</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeExecuteTool</span><span class="p">)</span>
+</span><span id="__span-8-40"><a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a><span class="w">                    </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-41"><a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a><span class="w">        </span><span class="p">)</span>
+</span><span id="__span-8-42"><a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a>
+</span><span id="__span-8-43"><a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a><span class="w">        </span><span class="c1">// If the LLM responds with a message, finish</span>
+</span><span id="__span-8-44"><a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span>
+</span><span id="__span-8-45"><a id="__codelineno-8-45" name="__codelineno-8-45" href="#__codelineno-8-45"></a><span class="w">            </span><span class="p">(</span><span class="n">nodeSendToolResult</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="p">)</span>
+</span><span id="__span-8-46"><a id="__codelineno-8-46" name="__codelineno-8-46" href="#__codelineno-8-46"></a><span class="w">                    </span><span class="n">onAssistantMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-47"><a id="__codelineno-8-47" name="__codelineno-8-47" href="#__codelineno-8-47"></a><span class="w">        </span><span class="p">)</span>
+</span><span id="__span-8-48"><a id="__codelineno-8-48" name="__codelineno-8-48" href="#__codelineno-8-48"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-49"><a id="__codelineno-8-49" name="__codelineno-8-49" href="#__codelineno-8-49"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>This strategy does the following:</p>
+<ol>
+<li>Sends the input to the LLM.</li>
+<li>If the LLM responds with a message, the strategy finishes the process.</li>
+<li>If the LLM calls a tool, the strategy runs the tool.</li>
+<li>If the history is too large (more than 100 messages), the strategy compresses it before sending the tool result.</li>
+<li>Otherwise, the strategy sends the tool result directly.</li>
+<li>If the LLM calls another tool, the strategy runs it.</li>
+<li>If the LLM responds with a message, the strategy finishes the process.</li>
+</ol>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>When creating custom strategy graphs, you might encounter some common issues. Here are some troubleshooting tips:</p>
+<h3 id="graph-fails-to-reach-the-finish-node">Graph fails to reach the finish node</h3>
+<p>If your graph does not reach the finish node, check the following:</p>
+<ul>
+<li>All paths from the start node eventually lead to the finish node.</li>
+<li>Your conditions are not too restrictive, preventing edges from being followed.</li>
+<li>There are no cycles in the graph that do not have an exit condition.</li>
+</ul>
+<h3 id="tool-calls-are-not-running">Tool calls are not running</h3>
+<p>If tool calls are not running, check the following:</p>
+<ul>
+<li>The tools are properly registered in the tool registry.</li>
+<li>The edge from the LLM node to the tool execution node has the correct condition (<code>onToolCall { true }</code>).</li>
+</ul>
+<h3 id="history-gets-too-large">History gets too large</h3>
+<p>If your history gets too large and consumes too many tokens, consider the following:</p>
+<ul>
+<li>Add a history compression node.</li>
+<li>Use a condition to check the size of the history and compress it when it gets too large.</li>
+<li>Use a more aggressive compression strategy (e.g., <code>FromLastNMessages</code> with a smaller N value).</li>
+</ul>
+<h3 id="graph-behaves-unexpectedly">Graph behaves unexpectedly</h3>
+<p>If your graph takes unexpected branches, check the following:</p>
+<ul>
+<li>Your conditions are correctly defined.</li>
+<li>The conditions are evaluated in the expected order (edges are checked in the order they are defined).</li>
+<li>You are not accidentally overriding conditions with more general ones.</li>
+</ul>
+<h3 id="performance-issues-occur">Performance issues occur</h3>
+<p>If your graph has performance issues, consider the following:</p>
+<ul>
+<li>Simplify the graph by removing unnecessary nodes and edges.</li>
+<li>Use parallel tool execution for independent operations.</li>
+<li>Compress history.</li>
+<li>Use more efficient nodes and operations.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2000-2025 JetBrains s.r.o.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.expand", "navigation.tabs", "navigation.tabs.sticky", "navigation.instant"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
