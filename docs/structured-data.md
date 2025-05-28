@@ -29,11 +29,11 @@ The first step in using the Structured Data Processing API is to define your dat
 @SerialName("WeatherForecast")
 @LLMDescription("Weather forecast for a given location")
 data class WeatherForecast(
-    @LLMDescription("Temperature in Celsius")
+    @property:LLMDescription("Temperature in Celsius")
     val temperature: Int,
-    @LLMDescription("Weather conditions (e.g., sunny, cloudy, rainy)")
+    @property:LLMDescription("Weather conditions (e.g., sunny, cloudy, rainy)")
     val conditions: String,
-    @LLMDescription("Chance of precipitation in percentage")
+    @property:LLMDescription("Chance of precipitation in percentage")
     val precipitation: Int
 )
 ```
@@ -42,7 +42,7 @@ data class WeatherForecast(
 
 - `@Serializable`: required for kotlinx.serialization to work with the class.
 - `@SerialName`: specifies the name to use during serialization.
-- `@LLMDescription`: provides a description of the class or field for the LLM.
+- `@LLMDescription`: provides a description of the class for the LLM. For field annotations, use `@property:LLMDescription`.
 
 ### Supported features
 
@@ -55,15 +55,15 @@ The API supports a wide range of data structure features:
 @SerialName("WeatherForecast")
 data class WeatherForecast(
     // Other fields
-    @LLMDescription("Coordinates of the location")
+    @property:LLMDescription("Coordinates of the location")
     val latLon: LatLon
 ) {
     @Serializable
     @SerialName("LatLon")
     data class LatLon(
-        @LLMDescription("Latitude of the location")
+        @property:LLMDescription("Latitude of the location")
         val lat: Double,
-        @LLMDescription("Longitude of the location")
+        @property:LLMDescription("Longitude of the location")
         val lon: Double
     )
 }
@@ -76,9 +76,9 @@ data class WeatherForecast(
 @SerialName("WeatherForecast")
 data class WeatherForecast(
     // Other fields
-    @LLMDescription("List of news articles")
+    @property:LLMDescription("List of news articles")
     val news: List<WeatherNews>,
-    @LLMDescription("Map of weather sources")
+    @property:LLMDescription("Map of weather sources")
     val sources: Map<String, WeatherSource>
 )
 ```
@@ -109,7 +109,7 @@ sealed class WeatherAlert {
     data class StormAlert(
         override val severity: Severity,
         override val message: String,
-        @LLMDescription("Wind speed in km/h")
+        @property:LLMDescription("Wind speed in km/h")
         val windSpeed: Double
     ) : WeatherAlert()
 
@@ -118,7 +118,7 @@ sealed class WeatherAlert {
     data class FloodAlert(
         override val severity: Severity,
         override val message: String,
-        @LLMDescription("Expected rainfall in mm")
+        @property:LLMDescription("Expected rainfall in mm")
         val expectedRainfall: Double
     ) : WeatherAlert()
 }
@@ -195,7 +195,7 @@ val structuredResponse = llm.writeSession {
 
 ### Fixing model
 
-The `fixingModel` parameter specifies the language model to use for re-parsing or error correction during retries. This helps ensure that you always get a valid response.
+The `fixingModel` parameter specifies the language model to use for reparsing or error correction during retries. This helps ensure that you always get a valid response.
 
 ## Integrating with agent strategies
 
@@ -235,11 +235,11 @@ Here is a full example of using the Structured Data Processing API:
 @SerialName("SimpleWeatherForecast")
 @LLMDescription("Simple weather forecast for a location")
 data class SimpleWeatherForecast(
-    @LLMDescription("Location name")
+    @property:LLMDescription("Location name")
     val location: String,
-    @LLMDescription("Temperature in Celsius")
+    @property:LLMDescription("Temperature in Celsius")
     val temperature: Int,
-    @LLMDescription("Weather conditions (e.g., sunny, cloudy, rainy)")
+    @property:LLMDescription("Weather conditions (e.g., sunny, cloudy, rainy)")
     val conditions: String
 )
 
