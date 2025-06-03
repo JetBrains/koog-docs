@@ -12,12 +12,13 @@ nav:
       - AI Agent:
           - Getting started: ai-agent-getting-started.md
       - Tools:
-        - Tools declaration: tools-annotations.md
+        - Tool declaration: tools-annotations.md
         - Advanced implementation: tools.md
       - Agent events: agent-events.md
       - Custom strategy graphs: custom-strategy-graphs.md
       - Pre-defined nodes and components: nodes-and-components.md
       - History compression: history-compression.md
+      - Model Context Protocol: model-context-protocol.md
       - Advanced usage:
           - Structured data: structured-data.md
           - Streaming API: streaming-api.md
