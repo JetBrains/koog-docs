@@ -289,3 +289,175 @@ install(Tracing) {
     addMessageProcessor(CustomTraceProcessor())
 }
 ```
+
+Koog provides predefined event types that can be used in custom message processors. The predefined events can be
+classified into several categories, depending on the entity they relate to:
+
+- [Agent events](#agent-events)
+- [Strategy events](#strategy-events)
+- [Node events](#node-events)
+- [LLM call events](#llm-call-events)
+- [Tool call events](#tool-call-events)
+
+#### Agent events
+
+##### AIAgentStartedEvent
+
+Represents the start of an agent run. Includes the following fields:
+
+| Name           | Data type | Required | Default | Description                                            |
+|----------------|-----------|----------|---------|--------------------------------------------------------|
+| `strategyName` | String    | Yes      |         | The name of the strategy that the agent should follow. |
+| `eventId`      | String    | Yes      |         | The unique identifier of the event.                    |
+
+##### AIAgentFinishedEvent
+
+Represents the end of an agent run. Includes the following fields:
+
+| Name           | Data type | Required | Default | Description                                       |
+|----------------|-----------|----------|---------|---------------------------------------------------|
+| `strategyName` | String    | Yes      |         | The name of the strategy that the agent followed. |
+| `result`       | String    | No       |         | The result of the agent run.                      |
+| `eventId`      | String    | Yes      |         | The unique identifier of the event.               |
+
+##### AIAgentRunErrorEvent
+
+Represents the occurrence of an error during an agent run. Includes the following fields:
+
+| Name           | Data type    | Required | Default | Description                                                                                             |
+|----------------|--------------|----------|---------|---------------------------------------------------------------------------------------------------------|
+| `strategyName` | String       | Yes      |         | The name of the strategy that the agent followed.                                                       |
+| `error`        | AIAgentError | No       |         | The specific error that occurred during the agent run. For more inforomation, see `AIAgentError` below. |
+| `eventId`      | String       | Yes      |         | The unique identifier of the event.                                                                     |
+
+**AIAgentError**
+
+An error that occurred during an agent run. Includes the following fields:
+
+| Name         | Data type | Required | Default | Description                                                      |
+|--------------|-----------|----------|---------|------------------------------------------------------------------|
+| `message`    | String    | Yes      |         | The message that provides more details about the specific error. |
+| `stackTrace` | String    | Yes      |         | The collection of stack records until the last executed code.    |
+| `cause`      | String    | No       | null    | The cause of the error, if available.                            |
+
+#### Strategy events
+
+##### AIAgentStrategyStartEvent
+
+Represents the start of a strategy run. Includes the following fields:
+
+| Name           | Data type | Required | Default | Description                         |
+|----------------|-----------|----------|---------|-------------------------------------|
+| `strategyName` | String    | Yes      |         | The name of the strategy.           |
+| `eventId`      | String    | Yes      |         | The unique identifier of the event. |
+
+##### AIAgentStrategyFinishedEvent
+
+Represents the end of a strategy run. Includes the following fields:
+
+| Name           | Data type | Required | Default | Description                         |
+|----------------|-----------|----------|---------|-------------------------------------|
+| `strategyName` | String    | Yes      |         | The name of the strategy.           |
+| `result`       | String    | No       |         | The result of the run.              |
+| `eventId`      | String    | Yes      |         | The unique identifier of the event. |
+
+#### Node events
+
+##### AIAgentNodeExecutionStartEvent
+
+Represents the start of a node run. Includes the following fields:
+
+| Name       | Data type | Required | Default | Description                             |
+|------------|-----------|----------|---------|-----------------------------------------|
+| `nodeName` | String    | Yes      |         | The name of the node whose run started. |
+| `input`    | String    | Yes      |         | The input value for the node.           |
+| `eventId`  | String    | Yes      |         | The unique identifier of the event.     |
+
+##### AIAgentNodeExecutionEndEvent
+
+Represents the end of a node run. Includes the following fields:
+
+| Name       | Data type | Required | Default | Description                            |
+|------------|-----------|----------|---------|----------------------------------------|
+| `nodeName` | String    | Yes      |         | The name of the node whose run ended.  |
+| `input`    | String    | Yes      |         | The input value for the node.          |
+| `output`   | String    | Yes      |         | The output value produced by the node. |
+| `eventId`  | String    | Yes      |         | The unique identifier of the event.    |
+
+#### LLM call events
+
+##### LLMCallStartEvent
+
+Represents the start of an LLM call. Includes the following fields:
+
+| Name      | Data type    | Required | Default | Description                                |
+|-----------|--------------|----------|---------|--------------------------------------------|
+| `prompt`  | Prompt       | Yes      |         | The prompt that is sent to the model.      |
+| `tools`   | List<String> | Yes      |         | The list of tools that the model can call. |
+| `eventId` | String       | Yes      |         | The unique identifier of the event.        |
+
+**Prompt**
+
+The `Prompt` class represents a data structure for a prompt, consisting of a list of messages, a unique identifier, and
+optional parameters for language model settings. 
+Includes the following fields:
+
+| Name       | Data type     | Required | Default     | Description                                                    |
+|------------|---------------|----------|-------------|----------------------------------------------------------------|
+| `messages` | List<Message> | Yes      |             | The list of messages that the prompt consists of.              |
+| `id`       | String        | Yes      |             | The unique identifier for the prompt.                          |
+| `params`   | LLMParams     | No       | LLMParams() | The settings that control the way the model generates content. |
+
+##### LLMCallEndEvent
+
+Represents the end of an LLM call. Includes the following fields:
+
+| Name        | Data type              | Required | Default | Description                                  |
+|-------------|------------------------|----------|---------|----------------------------------------------|
+| `responses` | List<Message.Response> | Yes      |         | One or more responses returned by the model. |
+| `eventId`   | String                 | Yes      |         | The unique identifier of the event.          |
+
+#### Tool call events
+
+##### ToolCallEvent
+
+Represents the event of a model calling a tool. Includes the following fields:
+
+| Name       | Data type | Required | Default | Description                                  |
+|------------|-----------|----------|---------|----------------------------------------------|
+| `toolName` | String    | Yes      |         | The name of the tool.                        |
+| `toolArgs` | Tool.Args | Yes      |         | The arguments that are provided to the tool. |
+| `eventId`  | String    | Yes      |         | The unique identifier of the event.          |
+
+##### ToolValidationErrorEvent
+
+Represents the occurrence of a validation error occurs during a tool call. Includes the following fields:
+
+| Name           | Data type | Required | Default | Description                                       |
+|----------------|-----------|----------|---------|---------------------------------------------------|
+| `toolName`     | String    | Yes      |         | The name of the tool for which validation failed. |
+| `toolArgs`     | Tool.Args | Yes      |         | The arguments that failed validation.             |
+| `errorMessage` | String    | Yes      |         | The validation error message.                     |
+| `eventId`      | String    | Yes      |         | The unique identifier of the event.               |
+
+##### ToolCallFailureEvent
+
+Represents a failure to call a tool. Includes the following fields:
+
+| Name       | Data type    | Required | Default | Description                                                                                       |
+|------------|--------------|----------|---------|---------------------------------------------------------------------------------------------------|
+| `toolName` | String       | Yes      |         | The name of the tool.                                                                             |
+| `toolArgs` | Tool.Args    | Yes      |         | The arguments that are provided to the tool.                                                      |
+| `error`    | AIAgentError | Yes      |         | The specific that occurred when trying to call a tool. For more inforomation, see `AIAgentError`. |
+| `eventId`  | String       | Yes      |         | The unique identifier of the event.                                                               |
+
+##### ToolCallResultEvent
+
+Represents a successful tool call with the return of a result. Includes the following fields:
+
+| Name       | Data type  | Required | Default | Description                                  |
+|------------|------------|----------|---------|----------------------------------------------|
+| `toolName` | String     | Yes      |         | The name of the tool.                        |
+| `toolArgs` | Tool.Args  | Yes      |         | The arguments that are provided to the tool. |
+| `result`   | ToolResult | No       |         | The result of the tool call.                 |
+| `eventId`  | String     | Yes      |         | The unique identifier of the event.          |
