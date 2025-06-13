@@ -167,7 +167,7 @@ val toolRegistry = McpToolRegistryProvider.fromTransport(
 )
 
 // Create and run the agent
-val agent = simpleSingleRunAgent(
+val agent = AIAgent(
     executor = simpleOpenAIExecutor(openAIApiToken),
     llmModel = OpenAIModels.Chat.GPT4o,
     toolRegistry = toolRegistry,
@@ -191,7 +191,7 @@ val toolRegistry = McpToolRegistryProvider.fromTransport(
 )
 
 // Create and run the agent
-val agent = simpleSingleRunAgent(
+val agent = AIAgent(
     executor = simpleOpenAIExecutor(openAIApiToken),
     llmModel = OpenAIModels.Chat.GPT4o,
     toolRegistry = toolRegistry,

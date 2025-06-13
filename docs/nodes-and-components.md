@@ -293,8 +293,6 @@ public fun singleRunStrategy(): AIAgentStrategy = strategy("single_run") {
 }
 ```
 
-See also [API reference](https://api.koog.ai/agents/agents-ext/ai.koog.agents.ext.agent/simple-single-run-agent.html).
-
 ### Tool-based strategy
 
 A tool-based strategy is designed for workflows that heavily rely on tools to perform specific operations.

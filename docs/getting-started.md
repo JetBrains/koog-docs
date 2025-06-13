@@ -1,6 +1,8 @@
-# Getting started
+# Getting started with Koog agents
 
-The AI Agent is a robust implementation that lets you build AI agents in Kotlin.
+The `AIAgent` class is the core component that lets you create AI agents in your Kotlin applications.
+
+You can build simple agents with minimal configuration or create sophisticated agents with advanced capabilities.
 By defining custom strategies, tools, and configurations, you can create agents that handle complex workflows.
 
 ## Prerequisites
@@ -23,11 +25,11 @@ dependencies {
 
 For all available methods of installation, refer to [Installation](index.md#installation).
 
-## Nodes and edges
+## Understand nodes and edges
 
-When creating an agent using the AI Agent, you define a workflow using nodes and edges.
+Nodes and edges are the building blocks of agent workflows.
 
-Nodes represent processing steps in your agent workflow:
+Nodes represent processing steps in your agent workflow.
 
 ```kotlin
 val processNode by node<InputType, OutputType> { input ->
@@ -38,9 +40,9 @@ val processNode by node<InputType, OutputType> { input ->
 }
 ```
 !!! tip
-    There are also pre-defined nodes that you can use in your agent strategies. To learn more, see [Predefined nodes and components](nodes-and-components.md).
+    There are also pre-defined nodes that you can use in your agent workflow. To learn more, see [Predefined nodes and components](nodes-and-components.md).
 
-Edges define the connections between nodes:
+Edges define the connections between nodes.
 
 ```kotlin
 // Basic edge
@@ -64,16 +66,21 @@ edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed
 
 ## Create an agent
 
-Unlike agents created with the Simple API, agents built using the AI Agent require explicit configuration:
+The process of creating and configuring an agent typically includes the following steps:
 
-To learn more about configuration options, see [API reference](https://api.koog.ai/agents/agents-core/ai.koog.agents.core.agent.config/-a-i-agent-config/index.html).
+1. Provide a prompt executor to communicate with the LLM.
+2. Define a strategy that controls the agent workflow.
+3. Configure the agent behavior.
+4. Implement tools for the agent to use.
+5. Add optional features like event handling, memory, or tracing.
+6. Run the agent with user input.
 
 ### 1. Provide a prompt executor
 
 Prompt executors manage and run prompts.
 You can choose a prompt executor based on the LLM provider you plan to use.
 Also, you can create a custom prompt executor using one of the available LLM clients.
-To check all available LLM clients and prompt executors, see [API reference](https://api.koog.ai/index.html).
+To learn more, see [Prompt executors](prompt-api.md#prompt-executors).
 
 For example, to provide the OpenAI prompt executor, you need to call the `simpleOpenAIExecutor` function and provide it with the API key required for authentication with the OpenAI service:
 
@@ -179,55 +186,31 @@ val agentConfig = AIAgentConfig(
 
 ### 4. Implement tools and set up a tool registry
 
-Tools let your agent perform specific tasks. To make a tool available for the agent, you need to add it to a tool registry. For example:
+Tools let your agent perform specific tasks.
+To make a tool available for the agent, you need to add it to a tool registry.
+For example:
 
 ```kotlin
-// Implement s simple calculator tool that can add two numbers
-public object CalculatorTool : Tool<CalculatorTool.Args, ToolResult>() {
-    @Serializable
-    data class Args(
-        val num1: Int,
-        val num2: Int
-    ) : Tool.Args
+// Implement a simple calculator tool that can add two numbers
+@LLMDescription("Tools for performing basic arithmetic operations")
+class CalculatorTools : ToolSet {
+    @Tool
+    @LLMDescription("Add two numbers together and return their sum")
+    fun add(
+        @LLMDescription("First number to add (integer value)")
+        num1: Int,
 
-    @Serializable
-    data class Result(
-        val sum: Int
-    ) : ToolResult {
-        override fun toStringDefault(): String {
-            return "The sum is: $sum"
-        }
-    }
-
-    override val argsSerializer = Args.serializer()
-
-    override val descriptor = ToolDescriptor(
-        name = "calculator",
-        description = "Add two numbers together",
-        requiredParameters = listOf(
-            ToolParameterDescriptor(
-                name = "num1",
-                description = "First number to add",
-                type = ToolParameterType.Integer
-            ),
-            ToolParameterDescriptor(
-                name = "num2",
-                description = "Second number to add",
-                type = ToolParameterType.Integer
-            )
-        )
-    )
-
-    override suspend fun execute(args: Args): Result {
-        // Perform a simple addition operation
-        val sum = args.num1 + args.num2
-        return Result(sum)
+        @LLMDescription("Second number to add (integer value)")
+        num2: Int
+    ): String {
+        val sum = num1 + num2
+        return "The sum of $num1 and $num2 is: $sum"
     }
 }
 
-// Create the tool to the tool registry
+// Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tool(CalculatorTool)
+    tools(CalculatorTools().asTools())
 }
 ```
 
@@ -248,11 +231,12 @@ For example, to install the event handler feature, you need to do the following:
 
 ```kotlin
 installFeatures = {
+    // install the EventHandler feature
     install(EventHandler) {
-        onBeforeAgentStarted = { strategy: AIAgentStrategy, agent: AIAgent ->
+        onBeforeAgentStarted { strategy: AIAgentStrategy, agent: AIAgent ->
             println("Starting strategy: ${strategy.name}")
         }
-        onAgentFinished = { strategyName: String, result: String? ->
+        onAgentFinished { strategyName: String, result: String? ->
             println("Result: $result")
         }
     }
@@ -283,9 +267,9 @@ val agent = AIAgent(
     }
 )
 
-suspend fun main() {
+suspend fun main() = runBlocking {
     println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
-    
+
     // Read the user input and send it to the agent
     val userInput = readlnOrNull() ?: ""
     agent.run(userInput)
@@ -294,11 +278,11 @@ suspend fun main() {
 
 ## Work with structured data
 
-The AI Agent can process structured data from LLM outputs. For more details, see [Streaming API](streaming-api.md).
+The `AIAgent` can process structured data from LLM outputs. For more details, see [Streaming API](streaming-api.md).
 
 ## Use parallel tool calls
 
-The AI Agent supports parallel tool calls. This lets you process multiple tools concurrently, improving performance for independent operations.
+The `AIAgent` supports parallel tool calls. This lets you process multiple tools concurrently, improving performance for independent operations.
 
 For more details, see [Parallel tool calls](tools.md#parallel-tool-calls).
 
@@ -308,7 +292,7 @@ Here is the complete implementation of the agent:
 
 ```kotlin
 // Use the OpenAI executor with an API key from an environment variable
-val promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_KEY"))
+val promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY"))
 
 // Create a simple strategy
 val agentStrategy = strategy("Simple calculator") {
@@ -363,52 +347,26 @@ val agentConfig = AIAgentConfig(
     maxAgentIterations = 10
 )
 
-// Implement s simple calculator tool that can add two numbers
-public object CalculatorTool : Tool<CalculatorTool.Args, ToolResult>() {
-    @Serializable
-    data class Args(
-        val num1: Int,
-        val num2: Int
-    ) : Tool.Args
+// Implement a simple calculator tool that can add two numbers
+@LLMDescription("Tools for performing basic arithmetic operations")
+class CalculatorTools : ToolSet {
+    @Tool
+    @LLMDescription("Add two numbers together and return their sum")
+    fun add(
+        @LLMDescription("First number to add (integer value)")
+        num1: Int,
 
-    @Serializable
-    data class Result(
-        val sum: Int
-    ) : ToolResult {
-        override fun toStringDefault(): String {
-            return "The sum is: $sum"
-        }
-    }
-
-    override val argsSerializer = Args.serializer()
-
-    override val descriptor = ToolDescriptor(
-        name = "calculator",
-        description = "Add two numbers together",
-        requiredParameters = listOf(
-            ToolParameterDescriptor(
-                name = "num1",
-                description = "First number to add",
-                type = ToolParameterType.Integer
-            ),
-            ToolParameterDescriptor(
-                name = "num2",
-                description = "Second number to add",
-                type = ToolParameterType.Integer
-            )
-        )
-    )
-
-    override suspend fun execute(args: Args): Result {
-        // Perform a simple addition operation
-        val sum = args.num1 + args.num2
-        return Result(sum)
+        @LLMDescription("Second number to add (integer value)")
+        num2: Int
+    ): String {
+        val sum = num1 + num2
+        return "The sum of $num1 and $num2 is: $sum"
     }
 }
 
-// Create the tool to the tool registry
+// Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tool(CalculatorTool)
+    tools(CalculatorTools().asTools())
 }
 
 // Create the agent
@@ -420,17 +378,17 @@ val agent = AIAgent(
     installFeatures = {
         // install the EventHandler feature
         install(EventHandler) {
-            onBeforeAgentStarted = { strategy: AIAgentStrategy, agent: AIAgent ->
+            onBeforeAgentStarted { strategy: AIAgentStrategy, agent: AIAgent ->
                 println("Starting strategy: ${strategy.name}")
             }
-            onAgentFinished = { strategyName: String, result: String? ->
+            onAgentFinished { strategyName: String, result: String? ->
                 println("Result: $result")
             }
         }
     }
 )
 
-suspend fun main() {
+suspend fun main() = runBlocking {
     println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
 
     val userInput = readlnOrNull() ?: ""

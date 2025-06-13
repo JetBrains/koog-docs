@@ -1,9 +1,6 @@
 # Tool declaration
 
-Tools are functions that an agent can use to perform specific tasks or access external systems.
-
-There are built-in tools available in the Simple API only and custom tools that can be used with both agents created using the Simple API and more sophisticated agents
-created with the AI Agent.
+Tools are functions that an agent can use to perform specific tasks or access external systems. There are built-in tools and custom tools that can be used with AI agents.
 
 The process for enabling tools is the same for all agent types:
 
@@ -176,7 +173,7 @@ fun main() = runBlocking {
 
     // Create an agent with your tools
 
-    val agent = simpleSingleRunAgent(
+    val agent = AIAgent(
         executor = simpleOpenAIExecutor(TokenService.openAIToken),
         llmModel = OpenAIModels.Reasoning.GPT4oMini,
         systemPrompt = "Provide weather information for a given location.",

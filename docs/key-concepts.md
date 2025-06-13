@@ -3,7 +3,7 @@
 ## Agent
 
 - **Agent**: an AI entity that can interact with tools, handle complex workflows, and communicate with
-  users. The framework offers two main approaches: the Simple API and AI Agent.
+  users.
 
 - **LLM (Large Language Model)**: the underlying AI model that powers agent capabilities.
 
