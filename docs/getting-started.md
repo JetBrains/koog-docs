@@ -2,12 +2,12 @@
 
 The `AIAgent` class is the core component that lets you create AI agents in your Kotlin applications.
 
-You can build simple agents with minimal configuration or create sophisticated agents with advanced capabilities.
-By defining custom strategies, tools, and configurations, you can create agents that handle complex workflows.
+You can build simple agents with minimal configuration or create sophisticated agents with advanced capabilities by
+defining custom strategies, tools, and configurations.
 
 ## Prerequisites
 
-- You have a valid API key from the LLM provider used for implementing an AI agent. For a list of all available providers, see [Overview](index.md).
+- You have a valid API key from the LLM provider used to implement an AI agent. For a list of all available providers, see [Overview](index.md).
 
 !!! tip
     Use environment variables or a secure configuration management system to store your API keys.
@@ -15,7 +15,7 @@ By defining custom strategies, tools, and configurations, you can create agents 
 
 ## Add dependencies
 
-To use the AI Agent functionality, you need to include all necessary dependencies in your build configuration. For example:
+To use the `AIAgent` functionality, include all necessary dependencies in your build configuration. For example:
 
 ```
 dependencies {
@@ -23,7 +23,7 @@ dependencies {
 }
 ```
 
-For all available methods of installation, refer to [Installation](index.md#installation).
+For all available installation methods, see [Installation](index.md#installation).
 
 ## Understand nodes and edges
 
@@ -70,7 +70,7 @@ The process of creating and configuring an agent typically includes the followin
 
 1. Provide a prompt executor to communicate with the LLM.
 2. Define a strategy that controls the agent workflow.
-3. Configure the agent behavior.
+3. Configure agent behavior.
 4. Implement tools for the agent to use.
 5. Add optional features like event handling, memory, or tracing.
 6. Run the agent with user input.
@@ -148,7 +148,7 @@ val agentStrategy = strategy("Simple calculator") {
 
 ### 3. Configure the agent
 
-Define the agent behavior with a configuration:
+Define agent behavior with a configuration:
 
 ```kotlin
 val agentConfig = AIAgentConfig.withSystemPrompt(
@@ -163,7 +163,7 @@ val agentConfig = AIAgentConfig.withSystemPrompt(
 )
 ```
 
-For more advanced configuration, you can specify which LLM will be used by the agent and set the maximum number of iterations the agent can perform to respond:
+For more advanced configuration, you can specify which LLM the agent will use and set the maximum number of iterations the agent can perform to respond:
 
 ```kotlin
 val agentConfig = AIAgentConfig(
@@ -187,7 +187,7 @@ val agentConfig = AIAgentConfig(
 ### 4. Implement tools and set up a tool registry
 
 Tools let your agent perform specific tasks.
-To make a tool available for the agent, you need to add it to a tool registry.
+To make a tool available for the agent, add it to a tool registry.
 For example:
 
 ```kotlin
@@ -218,7 +218,7 @@ To learn more about tools, see [Tools](tools.md).
 
 ### 5. Install features
 
-Agent features let you add new capabilities to the agent, modify its behavior, provide access to external systems and resources,
+Features let you add new capabilities to the agent, modify its behavior, provide access to external systems and resources,
 and log and monitor events during the agent workflow.
 The following features are available:
 
@@ -226,7 +226,7 @@ The following features are available:
 - AgentMemory
 - Tracing
 
-To install the feature, you need to call the `install` function and provide the feature as an argument.
+To install the feature, call the `install` function and provide the feature as an argument.
 For example, to install the event handler feature, you need to do the following:
 
 ```kotlin
@@ -247,7 +247,7 @@ To learn more about feature configuration, see the dedicated page.
 
 ### 6. Run the agent
 
-Create the agent with the configuration option created on the previous stages and run it with a provided input:
+Create the agent with the configuration option created in the previous stages and run it with the provided input:
 
 ```kotlin
 val agent = AIAgent(
@@ -282,7 +282,7 @@ The `AIAgent` can process structured data from LLM outputs. For more details, se
 
 ## Use parallel tool calls
 
-The `AIAgent` supports parallel tool calls. This lets you process multiple tools concurrently, improving performance for independent operations.
+The `AIAgent` supports parallel tool calls. This feature lets you process multiple tools concurrently, improving performance for independent operations.
 
 For more details, see [Parallel tool calls](tools.md#parallel-tool-calls).
 
