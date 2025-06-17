@@ -210,7 +210,7 @@ val promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_KEY"))
 // Make an LLM call that returns a structured response
 val structuredResponse = promptExecutor.executeStructured(
         // Define the prompt (both system and user messages)
-        prompt = Prompt.build("structured-data") {
+        prompt = prompt("structured-data") {
             system(
                 """
                 You are a weather forecasting assistant.
