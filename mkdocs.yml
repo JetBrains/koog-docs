@@ -6,7 +6,6 @@ nav:
       - Getting started:
         - Single-run agents: single-run-agents.md
         - Complex workflow agents: complex-workflow-agents.md
-      - Examples: examples.md
       - Prompt API: prompt-api.md
       - Tools:
         - Tool declaration: tools-annotations.md
@@ -30,6 +29,7 @@ nav:
               - Tracing: tracing.md
               - Memory: agent-memory.md
       - Testing: testing.md
+  - Examples: examples.md
   - API reference: https://api.koog.ai/
 
 markdown_extensions:
