@@ -182,6 +182,82 @@ val exampleForecasts = listOf(
 
 ## Requesting structured responses
 
+There are two ways to request structured responses in Koog:
+
+- Make a single LLM call using a prompt executor and its `executeStructured` or `executeStructuredOneShot` methods.
+- Create structured output requests for agent use cases and integration into agent strategies. 
+
+### Using a prompt executor
+
+To make a single LLM call that returns a structured output, use a prompt executor and its `executeStructured` method.
+This method executes a prompt and ensures the response is properly structured by applying automatic output coercion. The
+ method enhances structured output parsing reliability by:
+
+- Injecting structured output instructions into the original prompt.
+- Executing the enriched prompt to receive a raw response.
+- Using a separate LLM call to parse or coerce the response if direct parsing fails.
+
+Unlike `[execute(prompt, structure)]` which simply attempts to parse the raw response and fails if the format does not
+match exactly, this method actively works to transform unstructured or malformed outputs into the expected structure
+through additional LLM processing.
+
+Here is an example of using the `executeStructured` method:
+
+```kotlin
+// Define a simple, single-provider prompt executor
+val promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_KEY"))
+
+// Make an LLM call that returns a structured response
+val structuredResponse = promptExecutor.executeStructured(
+        // Define the prompt (both system and user messages)
+        prompt = prompt("structured-data") {
+            system(
+                """
+                You are a weather forecasting assistant.
+                When asked for a weather forecast, provide a realistic but fictional forecast.
+                """.trimIndent()
+            )
+            user(
+              "What is the weather forecast for Amsterdam?"
+            )
+        },
+        // Provide the expected data structure to the LLM
+        structure = weatherForecastStructure,
+        // Define the main model that will execute the request
+        mainModel = OpenAIModels.CostOptimized.GPT4oMini,
+        // Set the maximum number of retries to get a proper structured response
+        retries = 5,
+        // Set the LLM used for output coercion (transformation of malformed outputs)
+        fixingModel = OpenAIModels.Chat.GPT4o
+    )
+```
+
+The example relies on an already [generated JSON schema](#generating-json-schemas) named `weatherForecastStructure` that is based on a [defined data structure](#defining-data-structures) and [examples](#providing-examples).
+
+The `executeStructured` method takes the following arguments:
+
+| Name          | Data type      | Required | Default                   | Description                                                                                                                                    |
+|---------------|----------------|----------|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| `prompt`      | Prompt         | Yes      |                           | The prompt to execute. For more information, see [Prompt API](prompt-api.md).                                                                  |
+| `structure`   | StructuredData | Yes      |                           | The structured data definition with schema and parsing logic. For more information, see [Defining data structures](#defining-data-structures). |
+| `mainModel`   | LLModel        | Yes      |                           | The main model to execute the prompt.                                                                                                          |
+| `retries`     | Integer        | No       | `1`                       | The number of attempts to parse the response into a proper structured output.                                                                  |
+| `fixingModel` | LLModel        | No       | `OpenAIModels.Chat.GPT4o` | The model that handles output coercion - transformation of malformed outputs into the expected structure.                                      |
+
+In addition to `executeStructured`, you can also use the `executeStructuredOneShot` method with a prompt executor. The 
+main difference is that `executeStructuredOneShot` does not handle coercion automatically, so you would have to manually
+transform malformed outputs into proper structured ones.
+
+The `executeStructuredOneShot` method takes the following arguments:
+
+| Name        | Data type      | Required | Default | Description                                                   |
+|-------------|----------------|----------|---------|---------------------------------------------------------------|
+| `prompt`    | Prompt         | Yes      |         | The prompt to execute.                                        |
+| `structure` | StructuredData | Yes      |         | The structured data definition with schema and parsing logic. |
+| `model`     | LLModel        | Yes      |         | The model to execute the prompt.                              |
+
+### Structured data responses for agent use cases
+
 To request a structured response from an LLM, use the `requestLLMStructured` method within a `writeSession`:
 
 ```kotlin
@@ -193,11 +269,9 @@ val structuredResponse = llm.writeSession {
 }
 ```
 
-### Fixing model
-
 The `fixingModel` parameter specifies the language model to use for reparsing or error correction during retries. This helps ensure that you always get a valid response.
 
-## Integrating with agent strategies
+#### Integrating with agent strategies
 
 You can integrate structured data processing into your agent strategies:
 
@@ -225,7 +299,7 @@ val agentStrategy = strategy("weather-forecast") {
 }
 ```
 
-## Full code sample
+#### Full code sample
 
 Here is a full example of using the Structured Data Processing API:
 
