@@ -3,7 +3,6 @@ nav:
   - Documentation:
       - Overview: index.md
       - Key concepts: key-concepts.md
-      - Examples: examples.md
       - Prompt API: prompt-api.md
       - Simple API:
           - Getting started: simple-api-getting-started.md
@@ -33,6 +32,7 @@ nav:
               - Tracing: tracing.md
               - Memory: agent-memory.md
       - Testing: testing.md
+  - Examples: examples.md
   - API reference: https://api.koog.ai/
 
 markdown_extensions:
