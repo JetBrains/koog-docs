@@ -1,0 +1,33 @@
+/* Add Slack icon to header */
+/* Style for the header actions container */
+.md-header__source, .md-header-nav__source, .md-header__button[title*="repository"], .md-header__button[aria-label*="repository"], .md-header__button[href*="github"] {
+  display: flex;
+  align-items: center;
+}
+
+/* Style for the header container */
+.md-header__container, .md-header-nav__container {
+  display: flex;
+  align-items: center;
+}
+
+/* Add Slack link next to GitHub icon */
+.md-header__slack-link {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  color: #ffffff;
+  transition: color 125ms;
+}
+
+.md-header__slack-link:hover {
+  color: #e3e3e3;
+}
+
+/* Slack icon */
+.md-header__slack-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: #ffffff;
+  display: block; /* Ensure the SVG is displayed as a block */
+}
