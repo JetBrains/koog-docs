@@ -3,12 +3,14 @@ nav:
   - Documentation:
       - Overview: index.md
       - Key concepts: key-concepts.md
-      - Getting started with Koog agents: getting-started.md
+      - Getting started:
+        - Single-run agents: single-run-agents.md
+        - Complex workflow agents: complex-workflow-agents.md
       - Examples: examples.md
       - Prompt API: prompt-api.md
       - Tools:
-        - Tool declaration: tools-annotations.md
-        - Advanced implementation: tools.md
+          - Tool declaration: tools-annotations.md
+          - Advanced implementation: tools.md
       - Agent events: agent-events.md
       - Custom strategy graphs: custom-strategy-graphs.md
       - Pre-defined nodes and components: nodes-and-components.md

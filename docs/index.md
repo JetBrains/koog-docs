@@ -3,6 +3,11 @@
 Koog is a Kotlin-based framework designed to build and run AI agents entirely in idiomatic Kotlin.
 It lets you create agents that can interact with tools, handle complex workflows, and communicate with users.
 
+The framework supports the following types of agents:
+
+* Single-run agents with minimal configuration that process a single input and provide a response.
+* Complex workflow agents with advanced capabilities that support custom strategies and configurations.
+
 ## Key features
 
 Key features of Koog include:
@@ -83,10 +88,10 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
 
 # Quickstart example
 
-To help you get started with AI agents, here is a quick example:
+To help you get started with AI agents, here is a quick example of a single-run agent:
 
 !!! note
-    Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](getting-started.md).
+    Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](single-run-agents.md).
 
 ```kotlin
 fun main() = runBlocking {
@@ -102,4 +107,4 @@ fun main() = runBlocking {
     println(result)
 }
 ```
-For more details, see [Getting started](getting-started.md).
+For more details, see [Getting started](single-run-agents.md).

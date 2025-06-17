@@ -1,9 +1,15 @@
-# Getting started with Koog agents
+# Complex workflow agents
 
-The `AIAgent` class is the core component that lets you create AI agents in your Kotlin applications.
+In addition to single-run agents, the `AIAgent` class lets you build agents that handle complex workflows by defining custom strategies, tools, and configurations.
 
-You can build simple agents with minimal configuration or create sophisticated agents with advanced capabilities by
-defining custom strategies, tools, and configurations.
+The process of creating and configuring such an agent typically includes the following steps:
+
+1. Provide a prompt executor to communicate with the LLM.
+2. Define a strategy that controls the agent workflow.
+3. Configure agent behavior.
+4. Implement tools for the agent to use.
+5. Add optional features like event handling, memory, or tracing.
+6. Run the agent with user input.
 
 ## Prerequisites
 
@@ -13,9 +19,9 @@ defining custom strategies, tools, and configurations.
     Use environment variables or a secure configuration management system to store your API keys.
     Avoid hardcoding API keys directly in your source code.
 
-## Add dependencies
+## 1. Add dependencies
 
-To use the `AIAgent` functionality, include all necessary dependencies in your build configuration. For example:
+To use the `AIAgent` functionality, include all necessary dependencies in your build configuration:
 
 ```
 dependencies {
@@ -25,57 +31,7 @@ dependencies {
 
 For all available installation methods, see [Installation](index.md#installation).
 
-## Understand nodes and edges
-
-Nodes and edges are the building blocks of agent workflows.
-
-Nodes represent processing steps in your agent workflow.
-
-```kotlin
-val processNode by node<InputType, OutputType> { input ->
-    // Process the input and return an output
-    // You can use llm.writeSession to interact with the LLM
-    // You can call tools using callTool, callToolRaw, etc.
-    transformedOutput
-}
-```
-!!! tip
-    There are also pre-defined nodes that you can use in your agent workflow. To learn more, see [Predefined nodes and components](nodes-and-components.md).
-
-Edges define the connections between nodes.
-
-```kotlin
-// Basic edge
-edge(sourceNode forwardTo targetNode)
-
-// Edge with condition
-edge(sourceNode forwardTo targetNode onCondition { output ->
-    // Return true to follow this edge, false to skip it
-    output.contains("specific text")
-})
-
-// Edge with transformation
-edge(sourceNode forwardTo targetNode transformed { output ->
-    // Transform the output before passing it to the target node
-    "Modified: $output"
-})
-
-// Combined condition and transformation
-edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
-```
-
-## Create an agent
-
-The process of creating and configuring an agent typically includes the following steps:
-
-1. Provide a prompt executor to communicate with the LLM.
-2. Define a strategy that controls the agent workflow.
-3. Configure agent behavior.
-4. Implement tools for the agent to use.
-5. Add optional features like event handling, memory, or tracing.
-6. Run the agent with user input.
-
-### 1. Provide a prompt executor
+## 2. Provide a prompt executor
 
 Prompt executors manage and run prompts.
 You can choose a prompt executor based on the LLM provider you plan to use.
@@ -101,10 +57,51 @@ val googleClient = GoogleLLMClient(System.getenv("GOOGLE_KEY"))
 val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient, googleClient)
 ```
 
-### 2. Create a strategy
+## 3. Define a strategy
 
-A strategy defines the workflow of your agent. To create the strategy, call the `strategy` function and define nodes and edges.
-For example:
+A strategy defines the workflow of your agent by using nodes and edges.
+
+### 3.1. Understand nodes and edges
+
+Nodes and edges are the building blocks of the strategy.
+
+Nodes represent processing steps in your agent strategy.
+
+```kotlin
+val processNode by node<InputType, OutputType> { input ->
+    // Process the input and return an output
+    // You can use llm.writeSession to interact with the LLM
+    // You can call tools using callTool, callToolRaw, etc.
+    transformedOutput
+}
+```
+!!! tip
+    There are also pre-defined nodes that you can use in your agent strategy. To learn more, see [Predefined nodes and components](nodes-and-components.md).
+
+Edges define the connections between nodes.
+
+```kotlin
+// Basic edge
+edge(sourceNode forwardTo targetNode)
+
+// Edge with condition
+edge(sourceNode forwardTo targetNode onCondition { output ->
+    // Return true to follow this edge, false to skip it
+    output.contains("specific text")
+})
+
+// Edge with transformation
+edge(sourceNode forwardTo targetNode transformed { output ->
+    // Transform the output before passing it to the target node
+    "Modified: $output"
+})
+
+// Combined condition and transformation
+edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
+```
+### 3.2. Implement the strategy
+
+To implement the agent strategy, call the `strategy` function and define nodes and edges. For example:
 
 ```kotlin
 val agentStrategy = strategy("Simple calculator") {
@@ -146,7 +143,7 @@ val agentStrategy = strategy("Simple calculator") {
     This approach offers more flexibility and functionality compared to using simplified strategy builders.
     To learn more about subgraphs, see [Subgraphs](subgraphs-overview.md).
 
-### 3. Configure the agent
+## 4. Configure the agent
 
 Define agent behavior with a configuration:
 
@@ -184,7 +181,7 @@ val agentConfig = AIAgentConfig(
 )
 ```
 
-### 4. Implement tools and set up a tool registry
+## 5. Implement tools and set up a tool registry
 
 Tools let your agent perform specific tasks.
 To make a tool available for the agent, add it to a tool registry.
@@ -210,16 +207,16 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools().asTools())
+    tools(CalculatorTools())
 }
 ```
 
 To learn more about tools, see [Tools](tools.md).
 
-### 5. Install features
+## 6. Install features
 
 Features let you add new capabilities to the agent, modify its behavior, provide access to external systems and resources,
-and log and monitor events during the agent workflow.
+and log and monitor events while the agent is running.
 The following features are available:
 
 - EventHandler
@@ -245,7 +242,7 @@ installFeatures = {
 
 To learn more about feature configuration, see the dedicated page.
 
-### 6. Run the agent
+## 7. Run the agent
 
 Create the agent with the configuration option created in the previous stages and run it with the provided input:
 
