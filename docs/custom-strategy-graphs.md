@@ -143,7 +143,7 @@ You can also use the `toParallelToolCallsRaw` extension function for streaming d
 parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::class).collect()
 ```
 
-To learn more, see [Tools](tools.md). 
+To learn more, see [Tools](tools-overview.md#parallel-tool-calls). 
 
 ### Conditional branching
 

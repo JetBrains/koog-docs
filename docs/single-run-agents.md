@@ -92,7 +92,7 @@ val agent = AIAgent(
     }
 )
 ```
-In the example, `SayToUser` is the built-in tool. To learn how to create a custom tool, see [Tools](tools.md).
+In the example, `SayToUser` is the built-in tool. To learn how to create a custom tool, see [Tools](tools-overview.md).
 
 ### 6. Adjust agent iterations
 

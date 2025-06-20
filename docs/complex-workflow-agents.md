@@ -213,7 +213,7 @@ val toolRegistry = ToolRegistry {
 }
 ```
 
-To learn more about tools, see [Tools](tools.md).
+To learn more about tools, see [Tools](tools-overview.md).
 
 ### 6. Install features
 
@@ -283,7 +283,7 @@ The `AIAgent` can process structured data from LLM outputs. For more details, se
 
 The `AIAgent` supports parallel tool calls. This feature lets you process multiple tools concurrently, improving performance for independent operations.
 
-For more details, see [Parallel tool calls](tools.md#parallel-tool-calls).
+For more details, see [Parallel tool calls](tools-overview.md#parallel-tool-calls).
 
 ## Full code sample
 

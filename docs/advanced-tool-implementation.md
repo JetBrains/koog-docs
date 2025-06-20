@@ -15,7 +15,7 @@ This page describes how to implement a tool, manage tools through registries, ca
 The Koog framework provides the following approaches for implementing tools:
 
 * Using the base class `Tool` for all tools. You should use this class when you need to return non-text results or require complete control over the tool behavior.
-* Using the `SimpleTool` class that extends the base class `Tool` and simplifies the creation of tools that return text results. You should use this approach for scenarios where the 
+* Using the `SimpleTool` class that extends the base `Tool` class and simplifies the creation of tools that return text results. You should use this approach for scenarios where the 
   tool only needs to return a text.
 
 Both approaches use the same core components but differ in implementation and the results they return.
@@ -27,13 +27,13 @@ It lets you create tools that accept specific argument types (`Args`) and return
 
 Each tool consists of the following components:
 
-| <div style="width:110px">Component</div> | Description                                                                                                                                                                                                                                                                                                                    |
-|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Args`                                   | The serializable data class that defines arguments required for the tool. This class must implement the [`Tool.Args`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/-args/index.html) interface. For tools that do not require arguments, you can use the built-in `ToolArgs.Empty` implementation.  |
+| <div style="width:110px">Component</div> | Description                                                                                                                                                                                                                                                                                                                   |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Args`                                   | The serializable data class that defines arguments required for the tool. This class must implement the [`Tool.Args`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/-args/index.html) interface. For tools that do not require arguments, you can use the built-in `ToolArgs.Empty` implementation. |
 | `Result`                                 | The type of result that the tool returns. This must implement the [`ToolResult`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool-result/index.html) interface, which can be `ToolResult.Text`, `ToolResult.Boolean`, `ToolResult.Number`, or a custom implementation of `ToolResult.JSONSerializable`. |
-| `argsSerializer`                         | The overridden variable that defines how the arguments for the tool are serialized. See also [argsSerializer](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/args-serializer.html).                                                                                                                   |
-| `descriptor`                             | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default)<br/>- `optionalParameters` (empty by default).<br/>See also [descriptor](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/descriptor.html).                        |
-| `execute()`                              | The protected abstract function that implements the main logic of the tool. This method takes arguments of type `Args` and returns a result of type `Result`. See also [execute()]().                                                                                                                                          |
+| `argsSerializer`                         | The overridden variable that defines how the arguments for the tool are serialized. See also [argsSerializer](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/args-serializer.html).                                                                                                                  |
+| `descriptor`                             | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default)<br/>- `optionalParameters` (empty by default)<br/>See also [descriptor](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/descriptor.html).                        |
+| `execute()`                              | The protected abstract function that implements the main logic of the tool. This method takes arguments of type `Args` and returns a result of type `Result`. See also [execute()]().                                                                                                                                         |
 
 !!! tip
     Ensure your tools have clear descriptions and well-defined parameter names to make it easier for the LLM to understand and use them properly.
@@ -87,7 +87,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
 }
 ```
 
-After implementing your tool, you need to add it to a tool registry and then use it with an agent.
+After implementing your tool, you need to add it to a tool registry and then use it with an agent. For details, see [Tool registry](tools-overview.md#tool-registry).
 
 For more details, see [API reference](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/index.html).
 
@@ -97,12 +97,12 @@ The [`SimpleTool<Args>`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.
 
 Each simple tool consists of the following components:
 
-| <div style="width:110px">Component</div> | Description                                                                                                                                                                                                                                                                                      |
-|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Args`                                   | The serializable data class that defines arguments required for the custom tool.                                                                                                                                                                                                                 |
-| `argsSerializer`                         | The overridden variable that defines how the arguments for the tool are serialized. See also [argsSerializer](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/args-serializer.html).                                                                                     |
-| `descriptor`                             | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default), - `optionalParameters` (empty by default). See also [descriptor](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/descriptor.html). |
-| `doExecute()`                            | The overridden function that describes the main action performed by the tool. It takes arguments of type `Args` and returns a `String`. See also [doExecute()](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-simple-tool/do-execute.html).                                  |
+| <div style="width:110px">Component</div> | Description                                                                                                                                                                                                                                                                                              |
+|------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Args`                                   | The serializable data class that defines arguments required for the custom tool.                                                                                                                                                                                                                         |
+| `argsSerializer`                         | The overridden variable that defines how the arguments for the tool are serialized. See also [argsSerializer](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/args-serializer.html).                                                                                             |
+| `descriptor`                             | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default)<br/> - `optionalParameters` (empty by default)<br/> See also [descriptor](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/descriptor.html). |
+| `doExecute()`                            | The overridden function that describes the main action performed by the tool. It takes arguments of type `Args` and returns a `String`. See also [doExecute()](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-simple-tool/do-execute.html).                                          |
 
 
 !!! tip
@@ -161,3 +161,4 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
 ```
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent.
+For details, see [Tool registry](tools-overview.md#tool-registry).
