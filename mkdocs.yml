@@ -74,3 +74,9 @@ theme:
 repo_url: https://github.com/JetBrains/koog
 repo_name: "Koog on GitHub"
 copyright: Copyright © 2000-2025 JetBrains s.r.o.
+
+extra:
+  social:
+    - icon: fontawesome/brands/slack
+      link: https://kotlinlang.slack.com/messages/koog-agentic-framework/
+      name: Koog on Slack
