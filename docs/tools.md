@@ -113,7 +113,7 @@ For an agent to use a tool, you need to pass a tool registry containing the tool
 
 ```kotlin
 // Agent initialization
-val agent = simpleSingleRunAgent(
+val agent = AIAgent(
     executor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")),
     systemPrompt = "You are a helpful assistant with strong mathematical skills.",
     // Pass your tool registry to the agent

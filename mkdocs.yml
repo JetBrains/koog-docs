@@ -3,13 +3,10 @@ nav:
   - Documentation:
       - Overview: index.md
       - Key concepts: key-concepts.md
+      - Getting started:
+        - Single-run agents: single-run-agents.md
+        - Complex workflow agents: complex-workflow-agents.md
       - Prompt API: prompt-api.md
-      - Simple API:
-          - Getting started: simple-api-getting-started.md
-          - Configuration options: simple-api-configuration.md
-          - Available tools: simple-api-available-tools.md
-      - AI Agent:
-          - Getting started: ai-agent-getting-started.md
       - Tools:
         - Tool declaration: tools-annotations.md
         - Advanced implementation: tools.md

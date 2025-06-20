@@ -3,10 +3,10 @@
 Koog is a Kotlin-based framework designed to build and run AI agents entirely in idiomatic Kotlin.
 It lets you create agents that can interact with tools, handle complex workflows, and communicate with users.
 
-The framework offers two main approaches:
+The framework supports the following types of agents:
 
-* [Simple API](simple-api-getting-started): A high-level, user-friendly interface that lets you quickly create single-run agents with minimal configuration.
-* [AI Agent](ai-agent-getting-started): A more flexible, full-featured framework for building custom agents with advanced capabilities.
+* Single-run agents with minimal configuration that process a single input and provide a response.
+* Complex workflow agents with advanced capabilities that support custom strategies and configurations.
 
 ## Key features
 
@@ -88,22 +88,23 @@ https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
 
 # Quickstart example
 
-To help you get started with AI agents, here is a quick example:
+To help you get started with AI agents, here is a quick example of a single-run agent:
 
 !!! note
-    Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](simple-api-getting-started.md).
+    Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](single-run-agents.md).
 
 ```kotlin
 fun main() = runBlocking {
     val apiKey = System.getenv("OPENAI_API_KEY") // or Anthropic, Google, OpenRouter, etc.
 
-    val agent = simpleSingleRunAgent(
+    val agent = AIAgent(
         executor = simpleOpenAIExecutor(apiKey), // or Anthropic, Google, OpenRouter, etc.
         systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
         llmModel = OpenAIModels.Chat.GPT4o
     )
-   
+    
     val result = agent.runAndGetResult("Hello! How can you help me?")
     println(result)
 }
 ```
+For more details, see [Getting started](single-run-agents.md).
