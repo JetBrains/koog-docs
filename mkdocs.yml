@@ -4,12 +4,14 @@ nav:
       - Overview: index.md
       - Key concepts: key-concepts.md
       - Getting started:
-        - Single-run agents: single-run-agents.md
-        - Complex workflow agents: complex-workflow-agents.md
+          - Single-run agents: single-run-agents.md
+          - Complex workflow agents: complex-workflow-agents.md
       - Prompt API: prompt-api.md
       - Tools:
-        - Tool declaration: tools-annotations.md
-        - Advanced implementation: tools.md
+          - Overview: tools-overview.md
+          - Built-in tools: built-in-tools.md
+          - Annotation-based tools: annotation-based-tools.md
+          - Advanced implementation: advanced-tool-implementation.md
       - Agent events: agent-events.md
       - Custom strategy graphs: custom-strategy-graphs.md
       - Pre-defined nodes and components: nodes-and-components.md

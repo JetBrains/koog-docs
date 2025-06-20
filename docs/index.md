@@ -6,6 +6,7 @@ It lets you create agents that can interact with tools, handle complex workflows
 The framework supports the following types of agents:
 
 * Single-run agents with minimal configuration that process a single input and provide a response.
+  An agent of this type operates within a single cycle of tool-calling to complete its task and provide a response.
 * Complex workflow agents with advanced capabilities that support custom strategies and configurations.
 
 ## Key features
