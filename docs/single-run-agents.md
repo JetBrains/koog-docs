@@ -8,6 +8,7 @@ defining custom strategies, tools, and configurations.
 This page guides you through the steps necessary to create a single-run agent with customizable tools and configurations.
 
 A single-run agent processes a single input and provides a response.
+It operates within a single cycle of tool-calling to complete its task and provide a response.
 This agent can return either a message or a tool result.
 The tool result is returned if the tool registry is provided to the agent.
 
@@ -23,7 +24,9 @@ To learn more about configuration options, see [API reference](https://api.koog.
     Use environment variables or a secure configuration management system to store your API keys.
     Avoid hardcoding API keys directly in your source code.
 
-## 1. Add dependencies
+## Creating a single-run agent
+
+### 1. Add dependencies
 
 To use the `AIAgent` functionality, include all necessary dependencies in your build configuration:
 
@@ -35,7 +38,7 @@ dependencies {
 
 For all available installation methods, see [Installation](index.md#installation).
 
-## 2. Create an agent 
+### 2. Create an agent 
 
 To create an agent, create an instance of the `AIAgent` class and provide the `executor` and `llmModel` parameters:
 
@@ -46,7 +49,7 @@ val agent = AIAgent(
 )
 ```
 
-## 3. Add a system prompt
+### 3. Add a system prompt
 
 A system prompt is used to define agent behavior. To provide the prompt, use the `systemPrompt` parameter:
 
@@ -58,7 +61,7 @@ val agent = AIAgent(
 )
 ```
 
-## 4. Configure LLM output
+### 4. Configure LLM output
 
 Provide a temperature of LLM output generation using the `temperature` parameter:
 
@@ -71,7 +74,7 @@ val agent = AIAgent(
 )
 ```
 
-## 5. Add tools
+### 5. Add tools
 
 Agents use tools to complete specific tasks.
 You can use the built-in tools or implement your own custom tools if needed.
@@ -91,7 +94,7 @@ val agent = AIAgent(
 ```
 In the example, `SayToUser` is the built-in tool. To learn how to create a custom tool, see [Tools](tools.md).
 
-## 6. Adjust agent iterations
+### 6. Adjust agent iterations
 
 Provide the maximum number of steps the agent can take before it is forced to stop using the `maxIterations` parameter:
 
@@ -108,14 +111,14 @@ val agent = AIAgent(
 )
 ```
 
-## 7. Handle events during agent runtime
+### 7. Handle events during agent runtime
 
 Single-run agents support custom event handlers.
 While having an event handler is not required for creating an agent, it might be helpful for testing, debugging, or making hooks for chained agent interactions.
 
 For more information on how to use the `EventHandler` feature for monitoring your agent interactions, see [Agent events](agent-events.md).
 
-## 8. Run the agent
+### 8. Run the agent
 
 To run the agent, use the `run()` function:
 
