@@ -29,11 +29,11 @@ Each tool consists of the following components:
 
 | <div style="width:110px">Component</div> | Description                                                                                                                                                                                                                                                                                                                   |
 |------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Args`                                   | The serializable data class that defines arguments required for the tool. This class must implement the [`Tool.Args`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/-args/index.html) interface. For tools that do not require arguments, you can use the built-in `ToolArgs.Empty` implementation. |
+| `Args`                                   | The serializable data class that defines arguments required for the tool. This class must implement the [`ToolArgs`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/-args/index.html) interface. For tools that do not require arguments, you can use the built-in `ToolArgs.Empty` implementation. |
 | `Result`                                 | The type of result that the tool returns. This must implement the [`ToolResult`](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool-result/index.html) interface, which can be `ToolResult.Text`, `ToolResult.Boolean`, `ToolResult.Number`, or a custom implementation of `ToolResult.JSONSerializable`. |
-| `argsSerializer`                         | The overridden variable that defines how the arguments for the tool are serialized. See also [argsSerializer](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/args-serializer.html).                                                                                                                  |
+| `argsSerializer`                         | The overridden variable that defines how the arguments for the tool are deserialized. See also [argsSerializer](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/args-serializer.html).                                                                                                                  |
 | `descriptor`                             | The overridden variable that specifies tool metadata:<br/>- `name`<br/>- `description`<br/>- `requiredParameters` (empty by default)<br/>- `optionalParameters` (empty by default)<br/>See also [descriptor](https://api.koog.ai/agents/agents-tools/ai.koog.agents.core.tools/-tool/descriptor.html).                        |
-| `execute()`                              | The protected abstract function that implements the main logic of the tool. This method takes arguments of type `Args` and returns a result of type `Result`. See also [execute()]().                                                                                                                                         |
+| `execute()`                              | The function that implements the logic of the tool. It takes arguments of type `Args` and returns a result of type `Result`. See also [execute()]().                                                                                                                                         |
 
 !!! tip
     Ensure your tools have clear descriptions and well-defined parameter names to make it easier for the LLM to understand and use them properly.
@@ -51,7 +51,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     data class Args(
         val digit1: Int,
         val digit2: Int
-    ) : Tool.Args {
+    ) : ToolArgs {
         init {
             require(digit1 in 0..9) { "digit1 must be a single digit (0-9)" }
             require(digit2 in 0..9) { "digit2 must be a single digit (0-9)" }
@@ -125,14 +125,14 @@ import kotlinx.serialization.Serializable
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     // Define tool arguments
     @Serializable
-    data class Args(val expression: String, val comment: String) : Tool.Args
+    data class Args(val expression: String, val comment: String) : ToolArgs
 
     // Serializer for the Args class
     override val argsSerializer = Args.serializer()
 
     // Tool descriptor
     override val descriptor = ToolDescriptor(
-        name = "cast to double",
+        name = "cast_to_double",
         description = "casts the passed expression to double or returns 0.0 if the expression is not castable",
         requiredParameters = listOf(
             ToolParameterDescriptor(
