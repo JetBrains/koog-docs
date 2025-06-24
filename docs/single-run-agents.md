@@ -135,7 +135,7 @@ val agent = AIAgent(
 )
 
 fun main() = runBlocking {
-    val result = agent.run("Hello! How can you help me?")
+    val result = agent.runAndGetResult("Hello! How can you help me?")
 }
 ```
 
