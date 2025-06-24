@@ -145,6 +145,23 @@ parseMarkdownStreamToBooks(markdownStream).toParallelToolCallsRaw(BookTool::clas
 
 To learn more, see [Tools](tools-overview.md#parallel-tool-calls). 
 
+### Parallel node execution 
+
+Parallel node execution lets you run multiple nodes concurrently, improving performance and enabling complex workflows.
+
+To initiate parallel node runs, use the `parallel` method:
+
+```kotlin
+val calc by parallel<String, Int>(
+   nodeCalcTokens, nodeCalcSymbols, nodeCalcWords,
+)
+```
+
+The code above creates a node named `calc` that runs the `nodeCalcTokens`, `nodeCalcSymbols`, and `nodeCalcWords` nodes 
+in parallel and returns the results as an instance of `AsyncParallelResult`.
+
+For more information related to parallel node execution and a detailed reference, see [Parallel node execution](parallel-node-execution.md).
+
 ### Conditional branching
 
 For complex workflows that require different paths based on certain conditions, you can use conditional branching:
