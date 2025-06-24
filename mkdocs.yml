@@ -46,6 +46,7 @@ markdown_extensions:
 
 theme:
   name: material
+  custom_dir: overrides
   favicon: img/favicon.ico
   logo: img/favicon.ico
   features:
@@ -72,6 +73,9 @@ theme:
         name: Switch to light mode
       primary: black
       accent: blue
+
+extra_css:
+  - stylesheets/extra.css
 
 repo_url: https://github.com/JetBrains/koog
 repo_name: "Koog on GitHub"
