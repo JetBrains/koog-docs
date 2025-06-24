@@ -19,7 +19,9 @@ The process of creating and configuring such an agent typically includes the fol
     Use environment variables or a secure configuration management system to store your API keys.
     Avoid hardcoding API keys directly in your source code.
 
-## 1. Add dependencies
+## Creating a single-run agent
+
+### 1. Add dependencies
 
 To use the `AIAgent` functionality, include all necessary dependencies in your build configuration:
 
@@ -31,7 +33,7 @@ dependencies {
 
 For all available installation methods, see [Installation](index.md#installation).
 
-## 2. Provide a prompt executor
+### 2. Provide a prompt executor
 
 Prompt executors manage and run prompts.
 You can choose a prompt executor based on the LLM provider you plan to use.
@@ -57,11 +59,11 @@ val googleClient = GoogleLLMClient(System.getenv("GOOGLE_KEY"))
 val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient, googleClient)
 ```
 
-## 3. Define a strategy
+### 3. Define a strategy
 
 A strategy defines the workflow of your agent by using nodes and edges.
 
-### 3.1. Understand nodes and edges
+#### 3.1. Understand nodes and edges
 
 Nodes and edges are the building blocks of the strategy.
 
@@ -99,7 +101,7 @@ edge(sourceNode forwardTo targetNode transformed { output ->
 // Combined condition and transformation
 edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
 ```
-### 3.2. Implement the strategy
+#### 3.2. Implement the strategy
 
 To implement the agent strategy, call the `strategy` function and define nodes and edges. For example:
 
@@ -143,7 +145,7 @@ val agentStrategy = strategy("Simple calculator") {
     This approach offers more flexibility and functionality compared to using simplified strategy builders.
     To learn more about subgraphs, see [Subgraphs](subgraphs-overview.md).
 
-## 4. Configure the agent
+### 4. Configure the agent
 
 Define agent behavior with a configuration:
 
@@ -181,7 +183,7 @@ val agentConfig = AIAgentConfig(
 )
 ```
 
-## 5. Implement tools and set up a tool registry
+### 5. Implement tools and set up a tool registry
 
 Tools let your agent perform specific tasks.
 To make a tool available for the agent, add it to a tool registry.
@@ -211,9 +213,9 @@ val toolRegistry = ToolRegistry {
 }
 ```
 
-To learn more about tools, see [Tools](tools.md).
+To learn more about tools, see [Tools](tools-overview.md).
 
-## 6. Install features
+### 6. Install features
 
 Features let you add new capabilities to the agent, modify its behavior, provide access to external systems and resources,
 and log and monitor events while the agent is running.
@@ -242,7 +244,7 @@ installFeatures = {
 
 To learn more about feature configuration, see the dedicated page.
 
-## 7. Run the agent
+### 7. Run the agent
 
 Create the agent with the configuration option created in the previous stages and run it with the provided input:
 
@@ -273,15 +275,15 @@ suspend fun main() = runBlocking {
 }
 ```
 
-## Work with structured data
+## Working with structured data
 
 The `AIAgent` can process structured data from LLM outputs. For more details, see [Streaming API](streaming-api.md).
 
-## Use parallel tool calls
+## Using parallel tool calls
 
 The `AIAgent` supports parallel tool calls. This feature lets you process multiple tools concurrently, improving performance for independent operations.
 
-For more details, see [Parallel tool calls](tools.md#parallel-tool-calls).
+For more details, see [Parallel tool calls](tools-overview.md#parallel-tool-calls).
 
 ## Full code sample
 
