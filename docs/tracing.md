@@ -208,7 +208,7 @@ remote endpoint launches a light server at the specified port number and sends e
 
 ```kotlin
 // Create a file writer
-val port = 8080
+val port = 4991
 val serverConfig = ServerConnectionConfig(port = port)
 val writer = TraceFeatureMessageRemoteWriter(connectionConfig = serverConfig)
 
@@ -229,36 +229,27 @@ agent.run("Generate a story about a robot.")
 On the client side, you can use `FeatureMessageRemoteClient` to receive events and deserialize them.
 
 ```kotlin
-// Create the client configuration 
+// Create the client configuration
+// Use the same port number as for the server emitting agent events
 val clientConfig = AIAgentFeatureClientConnectionConfig(
-    host = "127.0.0.1",
-    port = 8080
+   host = "127.0.0.1",
+   port = 4991
 )
 
-// Create a logger
-val logger = KotlinLogging.logger { }
- 
-// Create a list to store received events
-val events = mutableListOf<FeatureMessage>()
- 
 // Create a client instance
 val client = FeatureMessageRemoteClient(
-    connectionConfig = clientConfig,
-    scope = this
+   connectionConfig = clientConfig,
+   scope = this
 )
- 
+
 // Connect the client to the remote feature messaging service
 client.connect()
- 
-// Check the availability and responsiveness of the service
-client.healthCheck()
 
 // Collect events from the remote feature messaging service
 val collectEvents = launch {
-    client.receivedMessages.consumeAsFlow().collect { message: FeatureMessage ->
-        logger.debug { "The client received the following message: $message" }
-        events.add(message)
-    } 
+   client.receivedMessages.consumeAsFlow().collect { message: FeatureMessage ->
+      // Process the received agent event
+   }
 }
 ```
 
@@ -347,30 +338,30 @@ classified into several categories, depending on the entity they relate to:
 
 Represents the start of an agent run. Includes the following fields:
 
-| Name           | Data type | Required | Default | Description                                                               |
-|----------------|-----------|----------|---------|---------------------------------------------------------------------------|
-| `strategyName` | String    | Yes      |         | The name of the strategy that the agent should follow.                    |
-| `eventId`      | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class. |
+| Name           | Data type | Required | Default             | Description                                                               |
+|----------------|-----------|----------|---------------------|---------------------------------------------------------------------------|
+| `strategyName` | String    | Yes      |                     | The name of the strategy that the agent should follow.                    |
+| `eventId`      | String    | No       | `AIAgentStartedEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 #### AIAgentFinishedEvent
 
 Represents the end of an agent run. Includes the following fields:
 
-| Name           | Data type | Required | Default | Description                                                               |
-|----------------|-----------|----------|---------|---------------------------------------------------------------------------|
-| `strategyName` | String    | Yes      |         | The name of the strategy that the agent followed.                         |
-| `result`       | String    | Yes      |         | The result of the agent run. Can be `null` if there is no result.         |
-| `eventId`      | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class. |
+| Name           | Data type | Required | Default              | Description                                                               |
+|----------------|-----------|----------|----------------------|---------------------------------------------------------------------------|
+| `strategyName` | String    | Yes      |                      | The name of the strategy that the agent followed.                         |
+| `result`       | String    | Yes      |                      | The result of the agent run. Can be `null` if there is no result.         |
+| `eventId`      | String    | No       | `AIAgentFinishedEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 #### AIAgentRunErrorEvent
 
 Represents the occurrence of an error during an agent run. Includes the following fields:
 
-| Name           | Data type    | Required | Default | Description                                                                                                     |
-|----------------|--------------|----------|---------|-----------------------------------------------------------------------------------------------------------------|
-| `strategyName` | String       | Yes      |         | The name of the strategy that the agent followed.                                                               |
-| `error`        | AIAgentError | Yes      |         | The specific error that occurred during the agent run. For more information, see [AIAgentError](#aiagenterror). |
-| `eventId`      | String       | No       |         | The identifier of the event. Usually the `simpleName` of the event class.                                       |
+| Name           | Data type    | Required | Default              | Description                                                                                                     |
+|----------------|--------------|----------|----------------------|-----------------------------------------------------------------------------------------------------------------|
+| `strategyName` | String       | Yes      |                      | The name of the strategy that the agent followed.                                                               |
+| `error`        | AIAgentError | Yes      |                      | The specific error that occurred during the agent run. For more information, see [AIAgentError](#aiagenterror). |
+| `eventId`      | String       | No       | `AIAgentRunErrorEvent` | The identifier of the event. Usually the `simpleName` of the event class.                                       |
 
 <a id="aiagenterror"></a>
 The `AIAgentError` class provides more details about an error that occurred during an agent run. Includes the following fields:
@@ -387,20 +378,20 @@ The `AIAgentError` class provides more details about an error that occurred duri
 
 Represents the start of a strategy run. Includes the following fields:
 
-| Name           | Data type | Required | Default | Description                         |
-|----------------|-----------|----------|---------|-------------------------------------|
-| `strategyName` | String    | Yes      |         | The name of the strategy.           |
-| `eventId`      | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class. |
+| Name           | Data type | Required | Default                   | Description                                                               |
+|----------------|-----------|----------|---------------------------|---------------------------------------------------------------------------|
+| `strategyName` | String    | Yes      |                           | The name of the strategy.                                                 |
+| `eventId`      | String    | No       | `AIAgentStrategyStartEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 #### AIAgentStrategyFinishedEvent
 
 Represents the end of a strategy run. Includes the following fields:
 
-| Name           | Data type | Required | Default | Description                         |
-|----------------|-----------|----------|---------|-------------------------------------|
-| `strategyName` | String    | Yes      |         | The name of the strategy.           |
-| `result`       | String    | No       |         | The result of the run.              |
-| `eventId`      | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class. |
+| Name           | Data type | Required | Default                      | Description                                                               |
+|----------------|-----------|----------|------------------------------|---------------------------------------------------------------------------|
+| `strategyName` | String    | Yes      |                              | The name of the strategy.                                                 |
+| `result`       | String    | Yes      |                              | The result of the run.                                                    |
+| `eventId`      | String    | No       | `AIAgentStrategyFinishedEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 ### Node events
 
@@ -408,22 +399,22 @@ Represents the end of a strategy run. Includes the following fields:
 
 Represents the start of a node run. Includes the following fields:
 
-| Name       | Data type | Required | Default | Description                             |
-|------------|-----------|----------|---------|-----------------------------------------|
-| `nodeName` | String    | Yes      |         | The name of the node whose run started. |
-| `input`    | String    | Yes      |         | The input value for the node.           |
-| `eventId`  | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class.     |
+| Name       | Data type | Required | Default                        | Description                                                               |
+|------------|-----------|----------|--------------------------------|---------------------------------------------------------------------------|
+| `nodeName` | String    | Yes      |                                | The name of the node whose run started.                                   |
+| `input`    | String    | Yes      |                                | The input value for the node.                                             |
+| `eventId`  | String    | No       | `AIAgentNodeExecutionStartEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 #### AIAgentNodeExecutionEndEvent
 
 Represents the end of a node run. Includes the following fields:
 
-| Name       | Data type | Required | Default | Description                            |
-|------------|-----------|----------|---------|----------------------------------------|
-| `nodeName` | String    | Yes      |         | The name of the node whose run ended.  |
-| `input`    | String    | Yes      |         | The input value for the node.          |
-| `output`   | String    | Yes      |         | The output value produced by the node. |
-| `eventId`  | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class.    |
+| Name       | Data type | Required | Default                      | Description                                                               |
+|------------|-----------|----------|------------------------------|---------------------------------------------------------------------------|
+| `nodeName` | String    | Yes      |                              | The name of the node whose run ended.                                     |
+| `input`    | String    | Yes      |                              | The input value for the node.                                             |
+| `output`   | String    | Yes      |                              | The output value produced by the node.                                    |
+| `eventId`  | String    | No       | `AIAgentNodeExecutionEndEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 ### LLM call events
 
@@ -431,11 +422,11 @@ Represents the end of a node run. Includes the following fields:
 
 Represents the start of an LLM call. Includes the following fields:
 
-| Name      | Data type    | Required | Default | Description                                                                        |
-|-----------|--------------|----------|---------|------------------------------------------------------------------------------------|
-| `prompt`  | Prompt       | Yes      |         | The prompt that is sent to the model. For more information, see [Prompt](#prompt). |
-| `tools`   | List<String> | Yes      |         | The list of tools that the model can call.                                         |
-| `eventId` | String       | No       |         | The identifier of the event. Usually the `simpleName` of the event class.          |
+| Name      | Data type    | Required | Default           | Description                                                                        |
+|-----------|--------------|----------|-------------------|------------------------------------------------------------------------------------|
+| `prompt`  | Prompt       | Yes      |                   | The prompt that is sent to the model. For more information, see [Prompt](#prompt). |
+| `tools`   | List<String> | Yes      |                   | The list of tools that the model can call.                                         |
+| `eventId` | String       | No       | `LLMCallStartEvent` | The identifier of the event. Usually the `simpleName` of the event class.          |
 
 <a id="prompt"></a>
 The `Prompt` class represents a data structure for a prompt, consisting of a list of messages, a unique identifier, and
@@ -451,10 +442,10 @@ optional parameters for language model settings. Includes the following fields:
 
 Represents the end of an LLM call. Includes the following fields:
 
-| Name        | Data type              | Required | Default | Description                                  |
-|-------------|------------------------|----------|---------|----------------------------------------------|
-| `responses` | List<Message.Response> | Yes      |         | One or more responses returned by the model. |
-| `eventId`   | String                 | No       |         | The identifier of the event. Usually the `simpleName` of the event class.          |
+| Name        | Data type              | Required | Default         | Description                                                               |
+|-------------|------------------------|----------|-----------------|---------------------------------------------------------------------------|
+| `responses` | List<Message.Response> | Yes      |                 | One or more responses returned by the model.                              |
+| `eventId`   | String                 | No       | `LLMCallEndEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 ### Tool call events
 
@@ -462,41 +453,41 @@ Represents the end of an LLM call. Includes the following fields:
 
 Represents the event of a model calling a tool. Includes the following fields:
 
-| Name       | Data type | Required | Default | Description                                  |
-|------------|-----------|----------|---------|----------------------------------------------|
-| `toolName` | String    | Yes      |         | The name of the tool.                        |
-| `toolArgs` | Tool.Args | Yes      |         | The arguments that are provided to the tool. |
-| `eventId`  | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class.          |
+| Name       | Data type | Required | Default       | Description                                                               |
+|------------|-----------|----------|---------------|---------------------------------------------------------------------------|
+| `toolName` | String    | Yes      |               | The name of the tool.                                                     |
+| `toolArgs` | Tool.Args | Yes      |               | The arguments that are provided to the tool.                              |
+| `eventId`  | String    | No       | `ToolCallEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 #### ToolValidationErrorEvent
 
 Represents the occurrence of a validation error during a tool call. Includes the following fields:
 
-| Name           | Data type | Required | Default | Description                                                               |
-|----------------|-----------|----------|---------|---------------------------------------------------------------------------|
-| `toolName`     | String    | Yes      |         | The name of the tool for which validation failed.                         |
-| `toolArgs`     | Tool.Args | Yes      |         | The arguments that are provided to the tool.                              |
-| `errorMessage` | String    | Yes      |         | The validation error message.                                             |
-| `eventId`      | String    | No       |         | The identifier of the event. Usually the `simpleName` of the event class. |
+| Name           | Data type | Required | Default                  | Description                                                               |
+|----------------|-----------|----------|--------------------------|---------------------------------------------------------------------------|
+| `toolName`     | String    | Yes      |                          | The name of the tool for which validation failed.                         |
+| `toolArgs`     | Tool.Args | Yes      |                          | The arguments that are provided to the tool.                              |
+| `errorMessage` | String    | Yes      |                          | The validation error message.                                             |
+| `eventId`      | String    | No       | `ToolValidationErrorEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
 
 #### ToolCallFailureEvent
 
 Represents a failure to call a tool. Includes the following fields:
 
-| Name       | Data type    | Required | Default | Description                                                                                                           |
-|------------|--------------|----------|---------|-----------------------------------------------------------------------------------------------------------------------|
-| `toolName` | String       | Yes      |         | The name of the tool.                                                                                                 |
-| `toolArgs` | Tool.Args    | Yes      |         | The arguments that are provided to the tool.                                                                          |
-| `error`    | AIAgentError | Yes      |         | The specific error that occurred when trying to call a tool. For more information, see [AIAgentError](#aiagenterror). |
-| `eventId`  | String       | No       |         | The identifier of the event. Usually the `simpleName` of the event class.                                             |
+| Name       | Data type    | Required | Default              | Description                                                                                                           |
+|------------|--------------|----------|----------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `toolName` | String       | Yes      |                      | The name of the tool.                                                                                                 |
+| `toolArgs` | Tool.Args    | Yes      |                      | The arguments that are provided to the tool.                                                                          |
+| `error`    | AIAgentError | Yes      |                      | The specific error that occurred when trying to call a tool. For more information, see [AIAgentError](#aiagenterror). |
+| `eventId`  | String       | No       | `ToolCallFailureEvent` | The identifier of the event. Usually the `simpleName` of the event class.                                             |
 
 #### ToolCallResultEvent
 
 Represents a successful tool call with the return of a result. Includes the following fields:
 
-| Name       | Data type  | Required | Default | Description                                  |
-|------------|------------|----------|---------|----------------------------------------------|
-| `toolName` | String     | Yes      |         | The name of the tool.                        |
-| `toolArgs` | Tool.Args  | Yes      |         | The arguments that are provided to the tool. |
-| `result`   | ToolResult | Yes      |         | The result of the tool call.                 |
-| `eventId`  | String     | No       |         | The identifier of the event. Usually the `simpleName` of the event class.          |
+| Name       | Data type  | Required | Default             | Description                                                               |
+|------------|------------|----------|---------------------|---------------------------------------------------------------------------|
+| `toolName` | String     | Yes      |                     | The name of the tool.                                                     |
+| `toolArgs` | Tool.Args  | Yes      |                     | The arguments that are provided to the tool.                              |
+| `result`   | ToolResult | Yes      |                     | The result of the tool call.                                              |
+| `eventId`  | String     | No       | `ToolCallResultEvent` | The identifier of the event. Usually the `simpleName` of the event class. |
