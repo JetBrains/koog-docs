@@ -3,7 +3,7 @@
 Parallel node execution lets you run multiple AI agent nodes concurrently, improving performance and enabling complex workflows. This feature is particularly useful when you need to:
 
 - Process the same input through different models or approaches simultaneously
-- Perform multiple independent operations on the same data
+- Perform multiple independent operations in parallel
 - Implement competitive evaluation patterns where multiple solutions are generated and then compared
 
 ## Key components
