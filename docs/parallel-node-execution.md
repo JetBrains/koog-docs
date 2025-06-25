@@ -12,9 +12,9 @@ Parallel node execution in Koog consists of the methods and data structures desc
 
 ### Methods
 
-- `parallel`: executes multiple nodes in parallel and collects their results.
-- `transform`: applies a transformation function to the outputs of parallel executions.
-- `merge`: combines the results from parallel executions into a single output.
+- `parallel()`: executes multiple nodes in parallel and collects their results.
+- `transform()`: applies a transformation function to the outputs of parallel executions.
+- `merge()`: combines the results from parallel executions into a single output.
 
 ### Data structures
 
@@ -68,6 +68,8 @@ val strategy = strategy("my-strategy") {
     nodeStart then calc then process then aggregate then nodeFinish
 }
 ```
+
+The example above also includes `transform` and `merge` methods. For more information about their use, see [Transforming parallel results](#transforming-parallel-results) and [Merging parallel results](#merging-parallel-results).
 
 ### Transforming parallel results
 
@@ -191,10 +193,11 @@ val strategy = strategy("best-joke") {
 Parallel execution can significantly improve throughput, but it comes with some overhead:
 
 - Each parallel node creates a new coroutine
-- Context forking and merging adds some computational cost
+- Context forking and merging add some computational cost
 - Resource contention may occur with many parallel executions
 
 For optimal performance, parallelize operations that:
+
 - Are independent of each other
 - Have significant execution time
 - Don't share mutable state
