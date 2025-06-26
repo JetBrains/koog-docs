@@ -86,28 +86,27 @@ fun main() {
 
 ## Multimodal inputs
 
-In addition to providing text messages within prompts, Koog also lets you send images, audio, video, and documents to LLMs along with `user` messages. As with standard text-only prompts, you also add media to the prompt using the DSL structure for prompt construction. Specifically, you add files within the `attachments` parameter of the user prompt in the following format:
+In addition to providing text messages within prompts, Koog also lets you send images, audio, video, and files to LLMs along with `user` messages. As with standard text-only prompts, you also add media to the prompt using the DSL structure for prompt construction.
 
 ```kotlin
 val prompt = prompt("multimodal_input") {
-    user(
-        content = "Describe this image", 
-        attachments = listOf(
-            Attachment.Image(
-                content = AttachmentContent.URL("https://example.com/test.png"),
-                format = "png",
-                mimeType = "image/png",
-                fileName = "test.png"
-            )
-        )
-    )
+    system("You are a helpful assistant.")
+
+    user {
+        +"Describe these images"
+
+        attachments {
+            image("https://example.com/test.png")
+            image(Path("/User/koog/image.png"))
+        }
+    }
 }
 ```
 
 ### Textual prompt content
 
-To accommodate for the support for various media types and create a clear distinction between text and media inputs in a prompt, you put text messages in a dedicated `content` parameter within a user prompt. 
-To add media file inputs, provide them as a list within the `attachments` parameter. 
+To accommodate for the support for various attachment types and create a clear distinction between text and file inputs in a prompt, you put text messages in a dedicated `content` parameter within a user prompt. 
+To add file inputs, provide them as a list within the `attachments` parameter. 
 
 The general format of a user message that includes a text message and a list of attachments is as follows:
 
@@ -120,9 +119,9 @@ user(
 )
 ```
 
-### Media files
+### File attachments
 
-To include a media input, provide the file in the `attachments` parameter, following the format below:
+To include an attachment, provide the file in the `attachments` parameter, following the format below:
 
 ```kotlin
 user(
@@ -156,7 +155,7 @@ Each of the classes above takes the following parameters:
 
 #### AttachmentContent
 
-`AttachmentContent` defines the type and source of media content that is provided as an input to the LLM. The following 
+`AttachmentContent` defines the type and source of content that is provided as an input to the LLM. The following 
 classes are supported:
 
 `AttachmentContent.URL(val url: String)`
@@ -167,13 +166,13 @@ Provides file content from the specified URL. Takes the following parameter:
 |--------|-----------|----------|----------------------------------|
 | `url`  | String    | Yes      | The URL of the provided content. |
 
-`AttachmentContent.Binary.Bytes(val path: String)`
+`AttachmentContent.Binary.Bytes(val data: ByteArray)`
 
-Provides file content from the specified local file path. Takes the following parameter:
+Provides file content as a byte array. Takes the following parameter:
 
-| Name   | Data type | Required | Description                 |
-|--------|-----------|----------|-----------------------------|
-| `path` | String    | Yes      | The path to the local file. |
+| Name   | Data type | Required | Description                                |
+|--------|-----------|----------|--------------------------------------------|
+| `data` | ByteArray | Yes      | The file content provided as a byte array. |
 
 `AttachmentContent.Binary.Base64(val base64: String)`
 
@@ -183,108 +182,30 @@ Provides file content encoded as a Base64 string. Takes the following parameter:
 |----------|-----------|----------|-----------------------------------------|
 | `base64` | String    | Yes      | The Base64 string containing file data. |
 
-`AttachmentContent.PlainText(val path: String)`
+`AttachmentContent.PlainText(val text: String)`
 
-_Applies only if the attachment type is `Attachment.File`_. Provides content from a plain text local file (`text/plain` MIME type). Takes the following parameter:
+_Applies only if the attachment type is `Attachment.File`_. Provides content from a plain text file (such as the `text/plain` MIME type). Takes the following parameter:
 
-| Name   | Data type | Required | Description                 |
-|--------|-----------|----------|-----------------------------|
-| `path` | String    | Yes      | The path to the local file. |
+| Name   | Data type | Required | Description              |
+|--------|-----------|----------|--------------------------|
+| `text` | String    | Yes      | The content of the file. |
 
-Here is an example of a prompt that includes a local audio file:
+### Mixed attachment content
 
-```kotlin
-val prompt = prompt("audio_transcription") {
-    // Add a system message to set the context
-    system("You are a helpful assistant")
-
-    // Add the user message along with a local audio file
-    user(
-        content = "Transcribe the audio file",
-        attachments = listOf(
-            Attachment.Image(
-                content = AttachmentContent.Binary.Bytes("/Users/koog/recording.wav"),
-                format = "wav",
-                mimeType = "audio/wav",
-                fileName = "recording.wav"
-            )
-        )
-    )
-}
-```
-
-### File format support per LLM provider
-
-The following sections provide an overview of support for different file formats per LLM provider available in Koog.
-
-#### Images
-
-| Provider   | Supported file formats                       |
-|------------|----------------------------------------------|
-| Anthropic  | `png`, `jpeg`, `webp`, `gif`                 |
-| Google     | `png`, `jpeg`, `webp`, `heic`, `heif`, `gif` |
-| Ollama     | `png`, `jpeg`, `gif`, `webp`                 |
-| OpenAI     | `png`, `jpeg`, `webp`, `gif`                 |
-| OpenRouter | `png`, `jpeg`, `webp`, `gif`                 |
-
-#### Audio
-
-| Provider   | Supported file formats                     |
-|------------|--------------------------------------------|
-| Anthropic  | No audio support                           |
-| Google     | `wav`, `mp3`, `aiff`, `aac`, `ogg`, `flac` |
-| Ollama     | No audio support                           |
-| OpenAI     | `wav`, `mp3`                               |
-| OpenRouter | `wav`, `mp3`                               |
-
-#### Video
-
-| Provider   | Supported file formats                                  |
-|------------|---------------------------------------------------------|
-| Anthropic  | No video support                                        |
-| Google     | `flv`, `mov`, `qt`, `mpeg`, `mp4`, `webm`, `wmv`, `3gp` |
-| Ollama     | No video support                                        |
-| OpenAI     | No video support                                        |
-| OpenRouter | No video support                                        |
-
-#### Documents
-
-| Provider   | Supported file formats                                             |
-|------------|--------------------------------------------------------------------|
-| Anthropic  | `pdf`, `txt`, `md`                                                 |
-| Google     | `pdf`, `js`, `py`, `txt`, `html`, `css`, `md`, `csv`, `xml`, `rtf` |
-| Ollama     | No document support                                                |
-| OpenAI     | `pdf`                                                              |
-| OpenRouter | `pdf`                                                              |
-
-### Mixed media content
-
-In addition to providing different types of media in separate prompts or messages, you can also provide multiple and 
-mixed types of attachments in a single `user` message, as shown below:
+In addition to providing different types of attachments in separate prompts or messages, you can also provide multiple and mixed types of attachments in a single `user` message, as shown below:
 
 ```kotlin
 val prompt = prompt("mixed_content") {
-    // Add a system message to set the context
     system("You are a helpful assistant.")
 
-    // Add the user message with different types of attached files
-    user(
-        content = "Compare the image with the document content:",
-        attachments = listOf(
-            Attachment.Image(
-                content = AttachmentContent.Binary.Bytes("/Users/koog/page.png"),
-                format = "png",
-                mimeType = "image/png",
-                fileName = "page.png"
-            ),
-            Attachment.File(
-              content = AttachmentContent.Binary.Bytes("/Users/koog/report.pdf"),
-              format = "pdf",
-              mimeType = "application/pdf",
-              fileName = "report.pdf"
-            )
-        )
-    )
+    user {
+        +"Compare the image with the document content."
+
+        attachments {
+            image(Path("/User/koog/page.png"))
+            binaryFile(Path("/User/koog/page.pdf"), "application/pdf")
+        }
+    }
 }
 ```
 
