@@ -139,10 +139,10 @@ user(
 
 The `attachments` parameter takes a list of file inputs, where each item is an instance of one of the following classes:
 
-- `Attachment.Image`: local image files or images from a URL in various image file formats.
-- `Attachment.Audio`: audio files from a URL or a local file path.
-- `Attachment.Video`: video files provided from a URL or a local file path.
-- `Attachment.File`: various document types or plain text files provided from a URL or a local file path.
+- `Attachment.Image`: image attachments, such as `jpg` or `png` files.
+- `Attachment.Audio`: audio attachments, such as `mp3` or `wav` files.
+- `Attachment.Video`: video attachments, such as `mpg` or `avi` files.
+- `Attachment.File`: file attachments, such as `pdf` or `txt` files.
 
 Each of the classes above takes the following parameters:
 
