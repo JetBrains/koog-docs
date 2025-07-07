@@ -211,7 +211,34 @@ A `ModerationResult` object includes the following properties:
 
 ## Moderation categories
 
-### OpenAI moderation categories
+### Koog moderation categories
+
+Possible moderation categories provided by the Koog framework (regardless of the underlying LLM and LLM provider) will be the following:
+
+1. **Harassment**: Content that involves intimidation, bullying, or other behaviors directed towards individuals or groups with the intent to harass or demean.
+2. **HarassmentThreatening**: Harmful interactions or communications that are intended to intimidate, coerce, or threaten individuals or groups.
+3. **Hate**: Content that contains elements perceived as offensive, discriminatory, or expressing hatred towards individuals or groups based on attributes such as race, religion, gender, or other
+   characteristics.
+4. **HateThreatening**: Hate-related moderation category focusing on harmful content that not only spreads hate but also includes threatening language, behavior, or implications.
+5. **Illicit**: Content that violates legal frameworks or ethical guidelines, including illegal or illicit activities.
+6. **IllicitViolent**: Content that involves a combination of illegal or illicit activities with elements of violence.
+7. **SelfHarm**: Content that pertains to self-harm or related behavior.
+8. **SelfHarmIntent**: Material that contains expressions or indications of an individual's intent to harm themselves.
+9. **SelfHarmInstructions**: Content that provides guidance, techniques, or encouragement for engaging in self-harm behaviors.
+10. **Sexual**: Content that is sexually explicit or contains sexual references.
+11. **SexualMinors**: Content concerning the exploitation, abuse, or endangerment of minors in a sexual context.
+12. **Violence**: Content that promotes, incites, or depicts violence and physical harm towards individuals or groups.
+13. **ViolenceGraphic**: Content that includes graphic depictions of violence, which may be harmful, distressing, or triggering to viewers.
+14. **Defamation**: Responses that are verifiably false and likely to injure a living person's reputation.
+15. **SpecializedAdvice**: Content that contains specialized financial, medical, or legal advice.
+16. **Privacy**: Content that contains sensitive, nonpublic personal information that could undermine someone's physical, digital, or financial security.
+17. **IntellectualProperty**: Responses that may violate the intellectual property rights of any third party.
+18. **ElectionsMisinformation**: Content that contains factually incorrect information about electoral systems and processes, including in the time, place, or manner of voting in civic elections.
+
+Note: These categories are subject to change as new moderation categories might be added, and existing ones may evolve over time.
+
+
+#### OpenAI moderation categories
 
 OpenAI's moderation API provides the following categories:
 
@@ -229,7 +256,7 @@ OpenAI's moderation API provides the following categories:
 - **Violence**: content that depicts death, violence, or physical injury.
 - **Violence/graphic**: content that depicts death, violence, or physical injury in graphic detail.
 
-### Ollama hazard categories
+#### Ollama hazard categories
 
 Ollama's Llama Guard models use the following hazard categories:
 
@@ -279,7 +306,7 @@ Ollama's Llama Guard models use the following hazard categories:
 
 - **S13 - Elections**: responses that contain factually incorrect information about electoral systems and processes, including in the time, place, or manner of voting in civic elections.
 
-## Category mapping between providers
+#### Category mapping between providers
 
 The following table shows the mapping between Ollama and OpenAI moderation categories:
 
@@ -302,6 +329,8 @@ The following table shows the mapping between Ollama and OpenAI moderation categ
 ## Examples of moderation results
 
 ### OpenAI moderation example (harmful content)
+
+OpenAI provides a specific `/moderations` API that would respond in the following JSON format:
 
 ```json
 {
@@ -343,6 +372,45 @@ The following table shows the mapping between Ollama and OpenAI moderation categ
 }
 ```
 
+In Koog you will see this response as following:
+```kotlin
+ModerationResult(
+    isHarmful = true,
+    categories = mapOf(
+        ModerationCategory.Harassment to false,
+        ModerationCategory.HateThreatening to false,
+        ModerationCategory.Hate to false,
+        ModerationCategory.Illicit to true,
+        ModerationCategory.IllicitViolent to true,
+        ModerationCategory.ViolenceGraphic to false,
+        ModerationCategory.SelfHarm to false,
+        ModerationCategory.SelfHarmIntent to false,
+        ModerationCategory.SelfHarmInstructions to false,
+        ModerationCategory.Sexual to false,
+        ModerationCategory.SexualMinors to false,
+        ModerationCategory.Violence to false
+    ),
+    categoryScores = mapOf(
+        ModerationCategory.Harassment to 0.0001,
+        ModerationCategory.HateThreatening to 0.0001,
+        ModerationCategory.Hate to 0.0001,
+        ModerationCategory.Illicit to 0.9998,
+        ModerationCategory.IllicitViolent to 0.9876,
+        ModerationCategory.ViolenceGraphic to 0.0001,
+        ModerationCategory.SelfHarm to 0.0001,
+        ModerationCategory.SelfHarmIntent to 0.0001,
+        ModerationCategory.SelfHarmInstructions to 0.0001,
+        ModerationCategory.Sexual to 0.0001,
+        ModerationCategory.SexualMinors to 0.0001,
+        ModerationCategory.Violence to 0.0145
+    ),
+    categoryAppliedInputTypes = mapOf(
+        ModerationCategory.Illicit to listOf(InputType.TEXT),
+        ModerationCategory.IllicitViolent to listOf(InputType.TEXT)
+    )
+)
+```
+
 ### OpenAI moderation example (safe content)
 
 ```json
@@ -382,58 +450,110 @@ The following table shows the mapping between Ollama and OpenAI moderation categ
 }
 ```
 
+In Koog you will see such OpenAI response as the following:
+
+```kotlin
+ModerationResult(
+    isHarmful = false,
+    categories = mapOf(
+        ModerationCategory.Harassment to false,
+        ModerationCategory.HateThreatening to false,
+        ModerationCategory.Hate to false,
+        ModerationCategory.Illicit to false,
+        ModerationCategory.IllicitViolent to false,
+        ModerationCategory.Sexual to false,
+        ModerationCategory.SexualMinors to false,
+        ModerationCategory.Violence to false,
+        ModerationCategory.ViolenceGraphic to false,
+        ModerationCategory.SelfHarm to false,
+        ModerationCategory.SelfHarmIntent to false,
+        ModerationCategory.SelfHarmInstructions to false
+    ),
+    categoryScores = mapOf(
+        ModerationCategory.Harassment to 0.0001,
+        ModerationCategory.HateThreatening to 0.0001,
+        ModerationCategory.Hate to 0.0001,
+        ModerationCategory.Illicit to 0.0001,
+        ModerationCategory.IllicitViolent to 0.0001,
+        ModerationCategory.Sexual to 0.0001,
+        ModerationCategory.SexualMinors to 0.0001,
+        ModerationCategory.Violence to 0.0001,
+        ModerationCategory.ViolenceGraphic to 0.0001,
+        ModerationCategory.SelfHarm to 0.0001,
+        ModerationCategory.SelfHarmIntent to 0.0001,
+        ModerationCategory.SelfHarmInstructions to 0.0001
+    ),
+    categoryAppliedInputTypes = emptyMap()
+)
+```
+
 ### Ollama moderation example (harmful content)
 
-```json
-{
-  "isHarmful": true,
-  "categories": {
-    "Harassment": false,
-    "HarassmentThreatening": false,
-    "Hate": false,
-    "HateThreatening": false,
-    "Sexual": false,
-    "SexualMinors": false,
-    "Violence": false,
-    "ViolenceGraphic": false,
-    "SelfHarm": false,
-    "SelfHarmIntent": false,
-    "SelfHarmInstructions": false,
-    "Illicit": true,
-    "IllicitViolent": false,
-    "Defamation": false,
-    "SpecializedAdvice": false,
-    "Privacy": false,
-    "IntellectualProperty": false,
-    "ElectionsMisinformation": false
-  }
-}
+Ollama approach to moderation format significantly differs from the one of OpenAI.
+There are no specific moderation-related API endpoints in Ollama, instead, it utilizes the general chat API.
+
+Moderating Ollama models (ex: `llama-guard3`) would respond a plain text result (Assistant message) where the first line is always `unsafe` or `safe`, and next line(s) contain coma-separated Ollama hazard categories.
+
+For example:
+
+```text
+unsafe
+S1,S10
+```
+
+This would be translated to the following result in Koog:
+
+```kotlin
+ModerationResult(
+    isHarmful = true,
+    categories = mapOf(
+        ModerationCategory.IllicitViolent to true, // from S1
+        ModerationCategory.Violence to true,       // from S1
+        ModerationCategory.Illicit to false,
+        ModerationCategory.Sexual to false,
+        ModerationCategory.SexualMinors to false,
+        ModerationCategory.Defamation to false,
+        ModerationCategory.SpecializedAdvice to false,
+        ModerationCategory.Privacy to false,
+        ModerationCategory.IntellectualProperty to false,
+        ModerationCategory.Hate to true,           // from S10
+        ModerationCategory.SelfHarm to false,
+        ModerationCategory.ElectionsMisinformation to false
+    ),
+    categoryScores = null,
+    categoryAppliedInputTypes = null
+)
 ```
 
 ### Ollama moderation example (safe content)
 
-```json
-{
-  "isHarmful": false,
-  "categories": {
-    "Harassment": false,
-    "HarassmentThreatening": false,
-    "Hate": false,
-    "HateThreatening": false,
-    "Sexual": false,
-    "SexualMinors": false,
-    "Violence": false,
-    "ViolenceGraphic": false,
-    "SelfHarm": false,
-    "SelfHarmIntent": false,
-    "SelfHarmInstructions": false,
-    "Illicit": false,
-    "IllicitViolent": false,
-    "Defamation": false,
-    "SpecializedAdvice": false,
-    "Privacy": false,
-    "IntellectualProperty": false,
-    "ElectionsMisinformation": false
-  }
-}
+Following Ollama response:
+
+```text
+safe
+
+```
+
+In Koog will be translated to:
+
+```kotlin
+ModerationResult(
+    isHarmful = false,
+    categories = mapOf(
+        ModerationCategory.IllicitViolent to false,
+        ModerationCategory.Violence to false,
+        ModerationCategory.Illicit to false,
+        ModerationCategory.Sexual to false,
+        ModerationCategory.SexualMinors to false,
+        ModerationCategory.Defamation to false,
+        ModerationCategory.SpecializedAdvice to false,
+        ModerationCategory.Privacy to false,
+        ModerationCategory.IntellectualProperty to false,
+        ModerationCategory.Hate to false,
+        ModerationCategory.SelfHarm to false,
+        ModerationCategory.ElectionsMisinformation to false
+    ),
+    categoryScores = null,
+    categoryAppliedInputTypes = null
+)
 ```
