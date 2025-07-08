@@ -44,6 +44,11 @@ markdown_extensions:
   - pymdownx.superfences
   - admonition
 
+plugins:
+  - redirects:
+      redirect_maps:
+        'simple-api-getting-started.md': 'index.md'
+
 theme:
   name: material
   custom_dir: overrides
