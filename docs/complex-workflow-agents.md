@@ -1,6 +1,7 @@
 # Complex workflow agents
 
-In addition to single-run agents, the `AIAgent` class lets you build agents that handle complex workflows by defining custom strategies, tools, and configurations.
+In addition to single-run agents, the `AIAgent` class lets you build agents that handle complex workflows by defining 
+custom strategies, tools, configurations, and custom input/output types.
 
 The process of creating and configuring such an agent typically includes the following steps:
 
@@ -61,7 +62,12 @@ val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient,
 
 ### 3. Define a strategy
 
-A strategy defines the workflow of your agent by using nodes and edges.
+A strategy defines the workflow of your agent by using nodes and edges. It can have arbitrary input and output types, 
+which can be specified in `strategy` function generic parameters. These will be input/output types of the `AIAgent` as well.
+Default type for both input and output is `String`.
+
+!!! tip
+    To learn more about strategies, see [Custom strategy graphs](custom-strategy-graphs.md)
 
 #### 3.1. Understand nodes and edges
 
@@ -277,7 +283,7 @@ suspend fun main() = runBlocking {
 
 ## Working with structured data
 
-The `AIAgent` can process structured data from LLM outputs. For more details, see [Streaming API](streaming-api.md).
+The `AIAgent` can process structured data from LLM outputs. For more details, see [Structured data processing](structured-data.md).
 
 ## Using parallel tool calls
 

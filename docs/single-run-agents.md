@@ -3,7 +3,7 @@
 The `AIAgent` class is the core component that lets you create AI agents in your Kotlin applications.
 
 You can build simple agents with minimal configuration or create sophisticated agents with advanced capabilities by
-defining custom strategies, tools, and configurations.
+defining custom strategies, tools, configurations, and custom input/output types.
 
 This page guides you through the steps necessary to create a single-run agent with customizable tools and configurations.
 
