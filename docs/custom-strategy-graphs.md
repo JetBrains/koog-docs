@@ -11,7 +11,8 @@ building a simple chatbot, a complex data processing pipeline, or anything in be
 
 At a high level, a strategy graph consists of the following components:
 
-- **Strategy**: the top-level container for the graph, created using the `strategy` function.
+- **Strategy**: the top-level container for the graph, created using the `strategy` function with the specified input 
+  and output types using generic parameters.
 - **Subgraphs**: sections of the graph that can have their own set of tools and context.
 - **Nodes**: individual operations or transformations in the workflow.
 - **Edges**: connections between nodes that define transition conditions and transformations.
@@ -40,7 +41,7 @@ edge(sourceNode forwardTo targetNode)
 
 #### Conditions
 
-Conditions determine when to follow a particular edge in the strategy graph. There are several types of conditions:
+Conditions determine when to follow a particular edge in the strategy graph. There are several types of conditions, here are some common ones:
 
 | Condition type      | Description                                                                              |
 |---------------------|------------------------------------------------------------------------------------------|
