@@ -8,17 +8,14 @@ Parallel node execution lets you run multiple AI agent nodes concurrently, impro
 
 ## Key components
 
-Parallel node execution in Koog consists of the methods and data structures described below. 
+Parallel node execution in Koog consists of the methods and data structures described below.
 
 ### Methods
 
 - `parallel()`: executes multiple nodes in parallel and collects their results.
-- `transform()`: applies a transformation function to the outputs of parallel executions.
-- `merge()`: combines the results from parallel executions into a single output.
 
 ### Data structures
 
-- `AsyncParallelResult`: represents the asynchronous result of a parallel node execution.
 - `ParallelResult`: represents the completed result of a parallel node execution.
 - `NodeExecutionResult`: contains the output and context of a node execution.
 
@@ -31,96 +28,102 @@ To initiate parallel execution of nodes, use the `parallel` method in the follow
 ```kotlin
 val nodeName by parallel<Input, Output>(
    firstNode, secondNode, thirdNode /* Add more nodes if needed */
-)
+) {
+   // Merge strategy goes here
+   // For example: selectByMax { it.length }
+}
 ```
 
-Here is an actual example of running three nodes in parallel:
+Here is an actual example of running three nodes in parallel and selecting the result with the maximum length:
 
 ```kotlin
 val calc by parallel<String, Int>(
    nodeCalcTokens, nodeCalcSymbols, nodeCalcWords,
-)
-```
-
-The code above runs the `nodeCalcTokens`, `nodeCalcSymbols`, and `nodeCalcWords` nodes in parallel and returns the
-results as an instance of `AsyncParallelResult`.
-
-Here is an example of how to use parallel node execution in your agent strategy and how to process the results:
-
-```kotlin
-val strategy = strategy("my-strategy") {
-    // Define individual nodes
-    val nodeCalcTokens by node<String, Int> { input -> /* processing logic */ }
-    val nodeCalcSymbols by node<String, Int> { input -> /* processing logic */ }
-    val nodeCalcWords by node<String, Int> { input -> /* processing logic */ }
-    
-    // Execute nodes in parallel
-    val calc by parallel<String, Int>(
-       nodeCalcTokens, nodeCalcSymbols, nodeCalcWords,
-    )
-    
-   // Transform the output of parallel execution to a different format
-    val process by transform<String, Int, String> { prevOutput -> /* processing Int output to String */ }
-    
-   // Merge the results and context of all parallel nodes
-    val aggregate by merge<String, String>() { results -> /* aggregation logic to select or combine the result and context */ }
-   
-    nodeStart then calc then process then aggregate then nodeFinish
+) {
+   selectByMax { it }
 }
 ```
 
-The example above also includes `transform` and `merge` methods. For more information about their use, see [Transforming parallel results](#transforming-parallel-results) and [Merging parallel results](#merging-parallel-results).
+The code above runs the `nodeCalcTokens`, `nodeCalcSymbols`, and `nodeCalcWords` nodes in parallel and returns the result with the maximum value.
 
-### Transforming parallel results
+### Merge strategies
 
-The `transform` method applies a transformation function to the output of parallel node executions. The `transform`
-method has the following general format:
+After executing nodes in parallel, you need to specify how to merge the results. Koog provides four merge strategies:
+1. `selectBy()`: selects a result based on a predicate function.
+2. `selectByMax()`: selects the result with the maximum value based on a comparison function.
+3. `selectByIndex()`: selects a result based on an index returned by a selection function.
+4. `fold()`: folds the results into a single value using an operation function.
 
-```kotlin
-val nodeName by transform<Input, prevOutput, newOutput> { prevOutput -> /* processing prevOutput to newOutput */ }
-```
+#### 1. selectBy
 
-Here is an example of defining a transformation node with the `transform` method with actual input and output values:
-
-```kotlin
-val process by transform<String, Int, String> { prevOutput -> /* processing Int to String */ }
-```
-
-The transformation will also run asynchronously and return the results as `AsyncParallelResult`.
-
-`AsyncParallelResult` awaits for the asynchronous execution of a parallel node and converts it into a `ParallelResult`.
-
-#### ParallelResult
-A `ParallelResult` instance contains the following information:
-
-| Name       | Data type                   | Description                            |
-|------------|-----------------------------|----------------------------------------|
-| `nodeName` | String                      | The name of the node                   |
-| `input`    | Input                       | The input to the node                  |
-| `result`   | NodeExecutionResult<Output> | The output and the context of the node |
-
-
-### Merging parallel results
-
-To merge the results of multiple nodes executed in parallel, use the `merge` method that takes the following general
-format:
+Selects a result based on a predicate function:
 
 ```kotlin
-val mergeNodeName by merge<Input, Output> { results -> /* the logic to select or combine the output and context */ }
+val nodeSelectJoke by parallel<String, String>(
+   nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
+) {
+   selectBy { it.contains("programmer") }
+}
 ```
 
-Here is what the use of the `merge` method would look like when used with actual `Input` and `Ouput` values:
+This selects the first joke that contains the word "programmer".
+
+#### 2. selectByMax
+
+Selects the result with the maximum value based on a comparison function:
 
 ```kotlin
-val aggregate by merge<String, String>() { results -> /* the logic to select or combine the output and context */ }
+val nodeLongestJoke by parallel<String, String>(
+   nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
+) {
+   selectByMax { it.length }
+}
 ```
 
-The merge node will wait for all parallel executions to complete and return the combined results as `ParallelResult`.
-For more information, see [ParallelResult](#parallelresult).
+This selects the joke with the maximum length.
+
+#### 3. selectByIndex
+
+Selects a result based on an index returned by a selection function:
+
+```kotlin
+val nodeBestJoke by parallel<String, String>(
+   nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
+) {
+   selectByIndex { jokes ->
+      // Use another LLM to determine the best joke
+      llm.writeSession {
+         model = OpenAIModels.Chat.GPT4o
+         updatePrompt {
+            system("You are a comedy critic. Select the best joke.")
+            user("Here are three jokes: ${jokes.joinToString("\n\n")}")
+         }
+         val response = requestLLMStructured(JsonStructuredData.createJsonStructure<JokeRating>())
+         response.getOrNull()!!.structure.bestJokeIndex
+      }
+   }
+}
+```
+
+This uses another LLM call to determine the index of the best joke.
+
+#### 4. fold
+
+Folds the results into a single value using an operation function:
+
+```kotlin
+val nodeAllJokes by parallel<String, String>(
+   nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
+) {
+   fold("Jokes:\n") { result, joke -> "$result\n$joke" }
+}
+```
+
+This combines all jokes into a single string.
 
 ## Example: Best joke agent
 
-Here is a complete example that uses parallel execution to generate jokes from different LLM models and select the best one. The example presents both parallel node execution and processing of the outputs (transformation and merging):
+Here is a complete example that uses parallel execution to generate jokes from different LLM models and select the best one:
 
 ```kotlin
 val strategy = strategy("best-joke") {
@@ -140,40 +143,59 @@ val strategy = strategy("best-joke") {
     val nodeAnthropicSonnet by node<String, String> { topic ->
         llm.writeSession {
             model = AnthropicModels.Sonnet_3_5
-            // Add the prompt 
+            updatePrompt {
+                system("You are a comedian. Generate a funny joke about the given topic.")
+                user("Tell me a joke about $topic.")
+            }
             val response = requestLLMWithoutTools()
             response.content
         }
     }
 
     val nodeAnthropicOpus by node<String, String> { topic ->
-        // Define the mode, add prompt, and handle the response 
+        llm.writeSession {
+            model = AnthropicModels.Opus_3
+            updatePrompt {
+                system("You are a comedian. Generate a funny joke about the given topic.")
+                user("Tell me a joke about $topic.")
+            }
+            val response = requestLLMWithoutTools()
+            response.content
+        }
     }
 
-    // Execute joke generation in parallel
-    val nodeGenerateJokes by parallel<String, String>(
-        nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus
-    )
+    // Execute joke generation in parallel and select the best joke
+    val nodeGenerateBestJoke by parallel(
+        nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
+    ) {
+        selectByIndex { jokes ->
+            // Another LLM (ex: GPT4o) would find the funniest joke:
+            llm.writeSession {
+                model = OpenAIModels.Chat.GPT4o
+                updatePrompt {
+                    prompt("best-joke-selector") {
+                        system("You are a comedy critic. Give a critique for the given joke.")
+                        user(
+                            """
+                            Here are three jokes about the same topic:
 
-    // Optional: transform the jokes
-    val nodeTransformJoke by transform<String, String, String> { joke ->
-        "My favorite joke: $joke"
-    }
+                            ${jokes.mapIndexed { index, joke -> "Joke $index:\n$joke" }.joinToString("\n\n")}
 
-    // Merge and select the best joke
-    val nodeSelectBestJoke by merge<String, String>() { results ->
-        val jokes = results.map { it.result.output }
-        val contexts = results.map { it.result.context }
-        
-        // Use another LLM call to select the best joke
-        val bestJokeIndex = determineBestJokeIndex(jokes)
-        
-        // Return the selected context and joke
-        contexts[bestJokeIndex] to jokes[bestJokeIndex]
+                            Select the best joke and explain why it's the best.
+                            """.trimIndent()
+                        )
+                    }
+                }
+
+                val response = requestLLMStructured(JsonStructuredData.createJsonStructure<JokeWinner>())
+                val bestJoke = response.getOrNull()!!.structure
+                bestJoke.index
+            }
+        }
     }
 
     // Connect the nodes
-    nodeStart then nodeGenerateJokes then nodeTransformJoke then nodeSelectBestJoke then nodeFinish
+    nodeStart then nodeGenerateBestJoke then nodeFinish
 }
 ```
 
@@ -184,9 +206,10 @@ val strategy = strategy("best-joke") {
 2. **Context management**: Each parallel execution creates a forked context. When merging results, choose which context to preserve or how to combine contexts from different executions.
 
 3. **Optimize for your use case**:
-    - For competitive evaluation (like the joke example), use the merge node to select the best result
-    - For aggregation, combine all results into a composite output
-    - For validation, use parallel execution to cross-check results from different approaches
+   - For competitive evaluation (like the joke example), use `selectByIndex` to select the best result
+   - For finding the maximum value, use `selectByMax`
+   - For filtering based on a condition, use `selectBy`
+   - For aggregation, use `fold` to combine all results into a composite output
 
 ## Performance considerations
 
