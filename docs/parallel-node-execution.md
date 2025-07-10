@@ -48,13 +48,15 @@ The code above runs the `nodeCalcTokens`, `nodeCalcSymbols`, and `nodeCalcWords`
 
 ### Merge strategies
 
-After executing nodes in parallel, you need to specify how to merge the results. Koog provides four merge strategies:
-1. `selectBy()`: selects a result based on a predicate function.
-2. `selectByMax()`: selects the result with the maximum value based on a comparison function.
-3. `selectByIndex()`: selects a result based on an index returned by a selection function.
-4. `fold()`: folds the results into a single value using an operation function.
+After executing nodes in parallel, you need to specify how to merge the results. Koog provides the following merge
+strategies:
 
-#### 1. selectBy
+- `selectBy()`: selects a result based on a predicate function.
+- `selectByMax()`: selects the result with the maximum value based on a comparison function.
+- `selectByIndex()`: selects a result based on an index returned by a selection function.
+- `fold()`: folds the results into a single value using an operation function.
+
+#### selectBy
 
 Selects a result based on a predicate function:
 
@@ -68,7 +70,7 @@ val nodeSelectJoke by parallel<String, String>(
 
 This selects the first joke that contains the word "programmer".
 
-#### 2. selectByMax
+#### selectByMax
 
 Selects the result with the maximum value based on a comparison function:
 
@@ -82,7 +84,7 @@ val nodeLongestJoke by parallel<String, String>(
 
 This selects the joke with the maximum length.
 
-#### 3. selectByIndex
+#### selectByIndex
 
 Selects a result based on an index returned by a selection function:
 
@@ -107,7 +109,7 @@ val nodeBestJoke by parallel<String, String>(
 
 This uses another LLM call to determine the index of the best joke.
 
-#### 4. fold
+#### fold
 
 Folds the results into a single value using an operation function:
 
@@ -169,7 +171,7 @@ val strategy = strategy("best-joke") {
         nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
     ) {
         selectByIndex { jokes ->
-            // Another LLM (ex: GPT4o) would find the funniest joke:
+            // Another LLM (e.g., GPT4o) would find the funniest joke:
             llm.writeSession {
                 model = OpenAIModels.Chat.GPT4o
                 updatePrompt {
@@ -206,10 +208,10 @@ val strategy = strategy("best-joke") {
 2. **Context management**: Each parallel execution creates a forked context. When merging results, choose which context to preserve or how to combine contexts from different executions.
 
 3. **Optimize for your use case**:
-   - For competitive evaluation (like the joke example), use `selectByIndex` to select the best result
-   - For finding the maximum value, use `selectByMax`
-   - For filtering based on a condition, use `selectBy`
-   - For aggregation, use `fold` to combine all results into a composite output
+    - For competitive evaluation (like the joke example), use `selectByIndex` to select the best result
+    - For finding the maximum value, use `selectByMax`
+    - For filtering based on a condition, use `selectBy`
+    - For aggregation, use `fold` to combine all results into a composite output
 
 ## Performance considerations
 
