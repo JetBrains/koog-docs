@@ -28,6 +28,7 @@ nav:
               - Overview: subgraphs-overview.md
               - Custom subgraphs: custom-subgraphs.md
           - Embeddings: embeddings.md
+          - Ranked document storage: ranked-document-storage.md
           - Features:
               - Overview: features-overview.md
               - Tracing: tracing.md
