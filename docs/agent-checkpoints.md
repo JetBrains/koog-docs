@@ -24,11 +24,11 @@ Checkpoints are identified by unique IDs and are associated with a specific agen
 
 AgentCheckpoint uses storage providers to save and retrieve checkpoints. The framework includes several built-in providers:
 
-- `InMemoryAgentCheckpointStorageProvider`: stores checkpoints in memory (lost when the application restarts).
-- `FileAgentCheckpointStorageProvider`: persists checkpoints to the file system.
-- `NoAgentCheckpointStorageProvider`: a no-op implementation that does not store checkpoints. This is the default provider.
+- `InMemoryPersistencyStorageProvider`: stores checkpoints in memory (lost when the application restarts).
+- `FilePersistencyStorageProvider`: persists checkpoints to the file system.
+- `NoPersistencyStorageProvider`: a no-op implementation that does not store checkpoints. This is the default provider.
 
-You can also implement custom storage providers by implementing the `AgentCheckpointStorageProvider` interface.
+You can also implement custom storage providers by implementing the `PersistencyStorageProvider` interface.
 
 ### Continuous persistence
 
