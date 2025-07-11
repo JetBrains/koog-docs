@@ -206,37 +206,37 @@ A `ModerationResult` object includes the following properties:
 | `isHarmful`      | Boolean                                              | Yes      |            | If true, the content was flagged as harmful.                                               |
 | `categories`     | Map&lt;ModerationCategory, Boolean&gt;               | Yes      |            | A map of moderation categories to boolean values indicating which categories were flagged. |
 | `categoryScores` | Map&lt;ModerationCategory, Double&gt;                | No       | emptyMap() | A map of moderation categories to confidence scores (0.0 to 1.0).                          |
-| `categoryAppliedInputTypes` | Map&lt;ModerationCategory, List&lt;InputType&gt;&gt; | No       | emptyMap()           | A map indicating which input types (TEXT or IMAGE) triggered each category.                |
+| `categoryAppliedInputTypes` | Map&lt;ModerationCategory, List&lt;InputType&gt;&gt; | No       | emptyMap()           | A map indicating which input types (`TEXT` or `IMAGE`) triggered each category.                |
 
 
 ## Moderation categories
 
 ### Koog moderation categories
 
-Possible moderation categories provided by the Koog framework (regardless of the underlying LLM and LLM provider) will be the following:
+Possible moderation categories provided by the Koog framework (regardless of the underlying LLM and LLM provider) are as
+follows:
 
-1. **Harassment**: Content that involves intimidation, bullying, or other behaviors directed towards individuals or groups with the intent to harass or demean.
-2. **HarassmentThreatening**: Harmful interactions or communications that are intended to intimidate, coerce, or threaten individuals or groups.
-3. **Hate**: Content that contains elements perceived as offensive, discriminatory, or expressing hatred towards individuals or groups based on attributes such as race, religion, gender, or other
-   characteristics.
-4. **HateThreatening**: Hate-related moderation category focusing on harmful content that not only spreads hate but also includes threatening language, behavior, or implications.
-5. **Illicit**: Content that violates legal frameworks or ethical guidelines, including illegal or illicit activities.
-6. **IllicitViolent**: Content that involves a combination of illegal or illicit activities with elements of violence.
-7. **SelfHarm**: Content that pertains to self-harm or related behavior.
-8. **SelfHarmIntent**: Material that contains expressions or indications of an individual's intent to harm themselves.
-9. **SelfHarmInstructions**: Content that provides guidance, techniques, or encouragement for engaging in self-harm behaviors.
-10. **Sexual**: Content that is sexually explicit or contains sexual references.
-11. **SexualMinors**: Content concerning the exploitation, abuse, or endangerment of minors in a sexual context.
-12. **Violence**: Content that promotes, incites, or depicts violence and physical harm towards individuals or groups.
-13. **ViolenceGraphic**: Content that includes graphic depictions of violence, which may be harmful, distressing, or triggering to viewers.
-14. **Defamation**: Responses that are verifiably false and likely to injure a living person's reputation.
-15. **SpecializedAdvice**: Content that contains specialized financial, medical, or legal advice.
-16. **Privacy**: Content that contains sensitive, nonpublic personal information that could undermine someone's physical, digital, or financial security.
-17. **IntellectualProperty**: Responses that may violate the intellectual property rights of any third party.
-18. **ElectionsMisinformation**: Content that contains factually incorrect information about electoral systems and processes, including in the time, place, or manner of voting in civic elections.
+1. **Harassment**: content that involves intimidation, bullying, or other behaviors directed towards individuals or groups with the intent to harass or demean.
+2. **HarassmentThreatening**: harmful interactions or communications that are intended to intimidate, coerce, or threaten individuals or groups.
+3. **Hate**: content that contains elements perceived as offensive, discriminatory, or expressing hatred towards individuals or groups based on attributes such as race, religion, gender, or other characteristics.
+4. **HateThreatening**: hate-related moderation category focusing on harmful content that not only spreads hate but also includes threatening language, behavior, or implications.
+5. **Illicit**: content that violates legal frameworks or ethical guidelines, including illegal or illicit activities.
+6. **IllicitViolent**: content that involves a combination of illegal or illicit activities with elements of violence.
+7. **SelfHarm**: content that pertains to self-harm or related behavior.
+8. **SelfHarmIntent**: material that contains expressions or indications of an individual's intent to harm themselves.
+9. **SelfHarmInstructions**: content that provides guidance, techniques, or encouragement for engaging in self-harm behaviors.
+10. **Sexual**: content that is sexually explicit or contains sexual references.
+11. **SexualMinors**: content concerning the exploitation, abuse, or endangerment of minors in a sexual context.
+12. **Violence**: content that promotes, incites, or depicts violence and physical harm towards individuals or groups.
+13. **ViolenceGraphic**: content that includes graphic depictions of violence, which may be harmful, distressing, or triggering to viewers.
+14. **Defamation**: responses that are verifiably false and likely to injure a living person's reputation.
+15. **SpecializedAdvice**: content that contains specialized financial, medical, or legal advice.
+16. **Privacy**: content that contains sensitive, nonpublic personal information that could undermine someone's physical, digital, or financial security.
+17. **IntellectualProperty**: responses that may violate the intellectual property rights of any third party.
+18. **ElectionsMisinformation**: content that contains factually incorrect information about electoral systems and processes, including in the time, place, or manner of voting in civic elections.
 
-Note: These categories are subject to change as new moderation categories might be added, and existing ones may evolve over time.
-
+!!! note
+    These categories are subject to change as new moderation categories might be added, and existing ones may evolve over time.
 
 #### OpenAI moderation categories
 
@@ -310,8 +310,8 @@ Ollama's Llama Guard models use the following hazard categories:
 
 The following table shows the mapping between Ollama and OpenAI moderation categories:
 
-| Ollama category                                                                           | Closest OpenAI moderation category / categories                                       | Notes                                                                                      |
-|-------------------------------------------------------------------------------------------| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Ollama category                                                                           | Closest OpenAI moderation category or categories                                      | Notes                                                                                      |
+|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------| ------------------------------------------------------------------------------------------ |
 | **S1 – Violent crimes**                                                                   | `illicit/violent`, `violence` <br>(`violence/graphic` when gore is described)         | Covers instructions or endorsement of violent wrongdoing, plus the violent content itself. |
 | **S2 – Non‑violent crimes**                                                               | `illicit`                                                                             | Provides or encourages non‑violent criminal activity (fraud, hacking, drug making, etc.).  |
 | **S3 – Sex‑related crimes**                                                               | `illicit/violent` (rape, trafficking, etc.)<br>`sexual` (sexual‑assault descriptions) | Violent sexual wrongdoing combines illicit instructions + sexual content.                  |
@@ -330,7 +330,7 @@ The following table shows the mapping between Ollama and OpenAI moderation categ
 
 ### OpenAI moderation example (harmful content)
 
-OpenAI provides a specific `/moderations` API that would respond in the following JSON format:
+OpenAI provides the specific `/moderations` API that provides responses in the following JSON format:
 
 ```json
 {
@@ -372,7 +372,7 @@ OpenAI provides a specific `/moderations` API that would respond in the followin
 }
 ```
 
-In Koog you will see this response as following:
+In Koog, the structure of the response above maps to the following response:
 ```kotlin
 ModerationResult(
     isHarmful = true,
@@ -450,7 +450,7 @@ ModerationResult(
 }
 ```
 
-In Koog you will see such OpenAI response as the following:
+In Koog, the OpenAI response above is presented as follows:
 
 ```kotlin
 ModerationResult(
@@ -489,10 +489,11 @@ ModerationResult(
 
 ### Ollama moderation example (harmful content)
 
-Ollama approach to moderation format significantly differs from the one of OpenAI.
-There are no specific moderation-related API endpoints in Ollama, instead, it utilizes the general chat API.
+Ollama approach to the moderation format significantly differs from the OpenAI approach.
+There are no specific moderation-related API endpoints in Ollama. 
+Instead, Ollama uses the general chat API.
 
-Moderating Ollama models (ex: `llama-guard3`) would respond a plain text result (Assistant message) where the first line is always `unsafe` or `safe`, and next line(s) contain coma-separated Ollama hazard categories.
+Ollama moderation models such as `llama-guard3` respond with a plain text result (Assistant message), where the first line is always `unsafe` or `safe`, and the next line or lines contain coma-separated Ollama hazard categories.
 
 For example:
 
@@ -501,7 +502,7 @@ unsafe
 S1,S10
 ```
 
-This would be translated to the following result in Koog:
+This is translated to the following result in Koog:
 
 ```kotlin
 ModerationResult(
@@ -527,14 +528,13 @@ ModerationResult(
 
 ### Ollama moderation example (safe content)
 
-Following Ollama response:
+Here is an example of an Ollama response that marks the content as safe:
 
 ```text
 safe
-
 ```
 
-In Koog will be translated to:
+Koog translates the response in the following way:
 
 ```kotlin
 ModerationResult(
