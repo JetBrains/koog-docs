@@ -1,10 +1,13 @@
 # OpenTelemetry support
 
-This page provides details about the support for OpenTelemetry with the Koog agentic framework for tracing and monitoring your AI agents.
+This page provides details about the support for OpenTelemetry with the Koog agentic framework for tracing and 
+monitoring your AI agents.
 
 ## Overview
 
-OpenTelemetry is an observability framework that provides tools for generating, collecting, and exporting telemetry data (metrics, logs, and traces) from your applications. The Koog OpenTelemetry feature allows you to instrument your AI agents to collect telemetry data, which can help you:
+OpenTelemetry is an observability framework that provides tools for generating, collecting, and exporting telemetry data
+(traces) from your applications. The Koog OpenTelemetry feature allows you to instrument your AI agents to collect 
+telemetry data, which can help you:
 
 - Monitor agent performance and behavior
 - Debug issues in complex agent workflows
@@ -14,11 +17,21 @@ OpenTelemetry is an observability framework that provides tools for generating, 
 
 ## Key OpenTelemetry concepts
 
-- **Spans**: spans represent individual units of work or operations within a distributed trace. They indicate the beginning and end of a specific activity in an application, such as an agent execution, a function call, an LLM call, or a tool call.
-- **Attributes**: attributes provide metadata about a telemetry-related item such as a span. Attributes are represented as key-value pairs.
-- **Events**: events are specific points in time during the lifetime of a span (span-related events) that represent something potentially noteworthy that happened.
-- **Exporters**: exporters are components responsible for sending the collected telemetry data (spans, metrics, logs) to various backends or destinations.
-- **Collectors**: collectors receive, process, and export telemetry data. They act as intermediaries between your applications and your observability backend.
+- **Spans**: spans represent individual units of work or operations within a distributed trace. They indicate the 
+beginning and end of a specific activity in an application, such as an agent execution, a function call, an LLM call, 
+or a tool call.
+- **Attributes**: attributes provide metadata about a telemetry-related item such as a span. Attributes are represented 
+as key-value pairs.
+- **Events**: events are specific points in time during the lifetime of a span (span-related events) that represent 
+something potentially noteworthy that happened.
+- **Exporters**: exporters are components responsible for sending the collected telemetry data to various backends or 
+destinations.
+- **Collectors**: collectors receive, process, and export telemetry data. They act as intermediaries between your 
+applications and your observability backend.
+- **Samplers**: samplers determine whether a trace should be recorded based on the sampling strategy. They are used to 
+manage the volume of telemetry data.
+- **Resources**: resources represent entities that produce telemetry data. They are identified by resource attributes, 
+which are key-value pairs that provide information about the resource.
 
 The OpenTelemetry feature in Koog automatically creates spans for various agent events, including:
 
@@ -50,17 +63,20 @@ val agent = AIAgent(
 
 Here is the full list of available properties that you set when configuring the OpenTelemetry feature in an agent:
 
-| Name             | Data type          | Default value | Description                                                                  |
-|------------------|--------------------|---------------|------------------------------------------------------------------------------|
-| `serviceName`    | `String`           | `ai.koog`     | The name of the service being instrumented.                                  |
-| `serviceVersion` | `String`           | `0.0.0`       | The version of the service being instrumented.                               |
-| `sdk`            | `OpenTelemetrySdk` | `null`        | The OpenTelemetry SDK instance to use for telemetry collection.              |
-| `isVerbose`      | `Boolean`          | `false`       | Whether to enable verbose logging for debugging OpenTelemetry configuration. |
-| `tracer`         | `Tracer`           |               | The OpenTelemetry tracer instance used for creating spans.                   |
+| Name             | Data type          | Default value                | Description                                                                  |
+|------------------|--------------------|------------------------------|------------------------------------------------------------------------------|
+| `serviceName`    | `String`           | `ai.koog`                    | The name of the service being instrumented.                                  |
+| `serviceVersion` | `String`           | Current Koog library version | The version of the service being instrumented.                               |
+| `isVerbose`      | `Boolean`          | `false`                      | Whether to enable verbose logging for debugging OpenTelemetry configuration. |
+| `sdk`            | `OpenTelemetrySdk` |                              | The OpenTelemetry SDK instance to use for telemetry collection.              |
+| `tracer`         | `Tracer`           |                              | The OpenTelemetry tracer instance used for creating spans.                   |
+
+!!! note
+    The `sdk` and `tracer` properties are public properties that you can access, but you can only set them using the
+    public methods listed below.
 
 The `OpenTelemetryConfig` class also includes methods that represent actions related to different configuration
 items. Here is an example of installing the OpenTelemetry feature with a basic set of configuration items:
-
 
 ```kotlin
 install(OpenTelemetry) {
@@ -95,16 +111,16 @@ Adds a span exporter to send telemetry data to external systems. Takes the follo
 
 Adds a span processor to process spans before they are exported. Takes the following argument:
 
-| Name       | Data type      | Required | Default value | Description                                                                                |
-|------------|----------------|----------|---------------|--------------------------------------------------------------------------------------------|
+| Name        | Data type       | Required | Default value | Description                                                                                |
+|-------------|-----------------|----------|---------------|--------------------------------------------------------------------------------------------|
 | `processor` | `SpanProcessor` | Yes      |               | The span processor that includes the custom logic to process telemetry data before export. |
 
 #### addResourceAttributes
 
 Adds resource attributes to provide additional context about the service. Takes the following argument:
 
-| Name         | Data type             | Required | Default value | Description                                                            |
-|--------------|-----------------------|----------|---------------|------------------------------------------------------------------------|
+| Name         | Data type                 | Required | Default value | Description                                                            |
+|--------------|---------------------------|----------|---------------|------------------------------------------------------------------------|
 | `attributes` | `Map<AttributeKey<T>, T>` | Yes      |               | The key-value pairs that provide additional details about the service. |
 
 #### setSampler
@@ -119,9 +135,9 @@ Sets the sampling strategy to control which spans are collected. Takes the follo
 
 Enables or disables verbose logging for debugging OpenTelemetry configuration. Takes the following argument:
 
-| Name      | Data type | Required | Default value | Description                                                             |
-|-----------|-----------|----------|---------------|-------------------------------------------------------------------------|
-| `verbose` | `Boolean` | Yes      | `false`       | If true, `true`, the application collects more detailed telemetry data. |
+| Name      | Data type | Required | Default value | Description                                                     |
+|-----------|-----------|----------|---------------|-----------------------------------------------------------------|
+| `verbose` | `Boolean` | Yes      | `false`       | If true, the application collects more detailed telemetry data. |
 
 ### Advanced configuration
 
@@ -139,7 +155,7 @@ install(OpenTelemetry) {
     addSpanExporter(LoggingSpanExporter.create())
     
     // Set the sampler 
-    setSampler(Sampler.alwaysOn()) 
+    setSampler(Sampler.traceIdRatioBased(0.5)) 
 
     // Add resource attributes
     addResourceAttributes(mapOf(
@@ -161,7 +177,7 @@ For more information about available samplers and sampling strategies, see the O
 
 #### Resource attributes
 
-Resource attributes represent additional information about a process producing telemetry data. Koog includes a set of
+Resource attributes represent additional information about a process producing telemetry data. Koog includes a set of 
 resource attributes that are set by default:
 
 - `service.name`
@@ -170,6 +186,9 @@ resource attributes that are set by default:
 - `os.type`
 - `os.version`
 - `os.arch`
+
+The default value of the `service.name` attribute is `ai.koog`, while the default `service.version` value is the
+currently used Koog library version.
 
 In addition to default resource attributes, you can also add custom attributes. To add a custom attribute to an 
 OpenTelemetry configuration in Koog, use the `addResourceAttribute()` method in an OpenTelemetry configuration that 
@@ -185,7 +204,7 @@ addResourceAttributes(mapOf(
 
 The OpenTelemetry feature automatically creates different types of spans to track various operations in your agent:
 
-- **CreateAgentSpan**: the creation of an agent.
+- **CreateAgentSpan**: created when you run an agent, closed when the agent is closed or the process is terminated.
 - **InvokeAgentSpan**: the invocation of an agent.
 - **NodeExecuteSpan**: the execution of a node in the agent's strategy. This is a custom, Koog-specific span.
 - **InferenceSpan**: an LLM call.
@@ -206,38 +225,45 @@ CreateAgentSpan
 
 ### Span attributes
 
-Span attributes provide metadata related to a span. Each span has its set of attributes, while some spans can also repeat attributes. 
+Span attributes provide metadata related to a span. Each span has its set of attributes, while some spans can also 
+repeat attributes.
 
-Koog supports a list of predefined attributes that follow OpenTelemetry's [Semantic conventions for generative AI events](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/). For example, the conventions define an attribute named `gen_ai.conversation.id`, which is usually a required attribute for a span. In Koog, the value of this attribute is the unique identifier for an agent run, when you call the `agent.run()` method.
+Koog supports a list of predefined attributes that follow OpenTelemetry's [Semantic conventions for generative AI events](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/). For example, the conventions define an attribute named 
+`gen_ai.conversation.id`, which is usually a required attribute for a span. In Koog, the value of this attribute is the 
+unique identifier for an agent run, that is automatically set when you call the `agent.run()` method.
 
-In addition, Koog also includes custom, Koog-specific attributes. You can recognize most of these attributes by the `koog.` 
-prefix. Here are the available custom attributes:
+In addition, Koog also includes custom, Koog-specific attributes. You can recognize most of these attributes by the 
+`koog.` prefix. Here are the available custom attributes:
 
-- For the `InvokeAgentSpan` span:
-    - `koog.agent.strategy.name`: the name of the agent strategy. A strategy is a Koog-related entity that describes the purpose of the agent.
-- For the `NodeExecuteSpan` span:
-    - `koog.node.name`: the name of the node being run.
+- `koog.agent.strategy.name`: the name of the agent strategy. A strategy is a Koog-related entity that describes the 
+purpose of the agent. Used in the `InvokeAgentSpan` span.
+- `koog.node.name`: the name of the node being run. Used in the `NodeExecuteSpan` span.
 
 ### Events
 
 A span can also have an _event_ attached to the span. Events describe a specific point in time when something relevant 
-happened. For example, when an LLM call started or finished. Events also have attributes and additionally include 
-_event body_ fields.
+happened. For example, when an LLM call started or finished. Events also have attributes and additionally include event 
+_body fields_.
 
 The following event types are supported in line with OpenTelemetry's [Semantic conventions for generative AI events](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/):
 
-- **UserMessageEvent**: the user message passed to the model.
 - **SystemMessageEvent**: the system instructions passed to the model.
+- **UserMessageEvent**: the user message passed to the model.
 - **AssistantMessageEvent**: the assistant message passed to the model.
-- **ChoiceEvent**: the response message from a model.
 - **ToolMessageEvent**: the response from a tool or function call passed to the model.
+- **ChoiceEvent**: the response message from a model.
 
 !!! note   
-    The `optentelemetry-java` SDK does not support adding an event body when adding an event. Therefore, in the OpenTelemetry support in Koog, event body fields are a separate attribute whose key is `body` and value type is string. The string includes the content or payload for the event body, which is usually a JSON-like object. For examples of event bodies, see the [OpenTelemetry documentation](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/#examples).
+    The `optentelemetry-java` SDK does not support the event body fields parameter when adding an event. Therefore, in 
+    the OpenTelemetry support in Koog, event body fields are a separate attribute whose key is `body` and value type is 
+    string. The string includes the content or payload for the event body field, which is usually a JSON-like object. For 
+    examples of event body fields, see the [OpenTelemetry documentation](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/#examples). For the state of support for event body 
+    fields in `opentelemetry-java`, see the related [GitHub issue](https://github.com/open-telemetry/semantic-conventions/issues/1870).
 
 ## Exporters
 
-Exporters send collected telemetry data to an OpenTelemetry Collector or other types of destinations or backend implementations. To add an exporter, use the `addSpanExporter()` method when installing the OpenTelemetry feature. The 
+Exporters send collected telemetry data to an OpenTelemetry Collector or other types of destinations or backend 
+implementations. To add an exporter, use the `addSpanExporter()` method when installing the OpenTelemetry feature. The 
 method takes the following argument:
 
 | Name       | Data type    | Required | Default | Description                                                                 |
@@ -248,7 +274,8 @@ The sections below provide information about some of the most commonly used expo
 
 ### Logging exporter
 
-A logging exporter that outputs trace information to the console. `LoggingSpanExporter` (`io.opentelemetry.exporter.logging.LoggingSpanExporter`) is a part of the `opentelemetry-java` SDK.
+A logging exporter that outputs trace information to the console. `LoggingSpanExporter` 
+(`io.opentelemetry.exporter.logging.LoggingSpanExporter`) is a part of the `opentelemetry-java` SDK.
 
 This type of export is useful for development and debugging purposes.
 
@@ -256,13 +283,14 @@ This type of export is useful for development and debugging purposes.
 install(OpenTelemetry) {
     // Add the logging exporter
     addSpanExporter(LoggingSpanExporter.create())
-   // Add more exporters as needed
+    // Add more exporters as needed
 }
 ```
 
 ### OpenTelemetry HTTP exporter
 
-OpenTelemetry HTTP exporter (`OtlpHttpSpanExporter`) is a part of the `opentelemetry-java` SDK (`io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter`) and sends span data to a backend through HTTP.
+OpenTelemetry HTTP exporter (`OtlpHttpSpanExporter`) is a part of the `opentelemetry-java` SDK 
+(`io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter`) and sends span data to a backend through HTTP.
 
 ```kotlin
 install(OpenTelemetry) {
@@ -282,8 +310,10 @@ install(OpenTelemetry) {
 
 ### OpenTelemetry gRPC exporter
 
-OpenTelemetry gRPC exporter (`OtlpGrpcSpanExporter`) is a part of the `opentelemetry-java` SDK (`io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter`). It exports telemetry data to a backend through gRPC and lets you define the host and
-port of the backend, collector, or endpoint that receives the data. The default port is `4317`.
+OpenTelemetry gRPC exporter (`OtlpGrpcSpanExporter`) is a part of the `opentelemetry-java` SDK 
+(`io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter`). It exports telemetry data to a backend through gRPC and 
+lets you define the host and port of the backend, collector, or endpoint that receives the data. The default port is 
+`4317`.
 
 ```kotlin
 install(OpenTelemetry) {
@@ -304,7 +334,8 @@ Jaeger is a popular distributed tracing system that works with OpenTelemetry. Th
 
 ### Prerequisites
 
-To test OpenTelemetry with Koog and Jaeger, start the Jaeger OpenTelemetry all-in-one process using the provided `docker-compose.yaml` file, by running the following command:
+To test OpenTelemetry with Koog and Jaeger, start the Jaeger OpenTelemetry all-in-one process using the provided 
+`docker-compose.yaml` file, by running the following command:
 
 ```bash
 docker compose up -d
@@ -329,7 +360,9 @@ To access the Jaeger UI and view your traces, open `http://localhost:16686`.
 
 ### Example
 
-To export telemetry data for use in Jaeger, the example uses `LoggingSpanExporter` (`io.opentelemetry.exporter.logging.LoggingSpanExporter`) and `OtlpGrpcSpanExporter` (`io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter`) from the `opentelemetry-java` SDK.
+To export telemetry data for use in Jaeger, the example uses `LoggingSpanExporter` 
+(`io.opentelemetry.exporter.logging.LoggingSpanExporter`) and `OtlpGrpcSpanExporter` 
+(`io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter`) from the `opentelemetry-java` SDK.
 
 Here is the full code sample:
 
@@ -364,87 +397,14 @@ fun main() = runBlocking {
       }
    }
 
-   println("Running agent with OpenTelemetry tracing...")
+    agent.use { agent ->
+        println("Running the agent with OpenTelemetry tracing...")
 
-   val result = agent.run("Tell me a joke about programming")
+        val result = agent.run("Tell me a joke about programming")
 
-   println("Agent run completed with result: '$result'." +
-           "\nCheck Jaeger UI at http://localhost:16686 to view traces")
-}
-```
-
-## Integration with Langfuse
-
-Langfuse is a platform for observability and tracing specifically designed for applications that use large language 
-models. In addition, Langfuse provides features such as prompt management, evaluation, metrics, and analytics.
-
-OpenTelemetry support in Koog lets you configure the export of telemetry data for use with Langfuse. For an example of 
-the specific implementation, see the code below.
-
-```kotlin
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.agents.example.ApiKeyService
-import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
-import io.opentelemetry.exporter.logging.LoggingSpanExporter
-import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
-import io.opentelemetry.sdk.trace.export.SpanExporter
-import kotlinx.coroutines.runBlocking
-import java.util.*
-import java.util.concurrent.TimeUnit
-
-
-fun main() = runBlocking {
-    // Set the Langfuse host
-    val langfuseUrl = System.getenv()["LANGFUSE_HOST"] ?: throw IllegalArgumentException("LANGFUSE_HOST is not set")
-    
-   // Create an AI agent with OpenTelemetry configured for Langfuse
-    val agent = AIAgent(
-        executor = simpleOpenAIExecutor(ApiKeyService.openAIApiKey),
-        llmModel = OpenAIModels.Reasoning.GPT4oMini,
-        systemPrompt = "You are a code assistant. Provide concise code examples."
-    ) {
-        install(OpenTelemetry) {
-            // Add a console logger for local debugging
-            addSpanExporter(LoggingSpanExporter.create())
-            // Add the Langfuse span exporter
-            addSpanExporter(
-                createLangfuseSpanExporter(
-                    langfuseUrl,
-                    System.getenv()["LANGFUSE_PUBLIC_KEY"] ?: throw IllegalArgumentException("LANGFUSE_PUBLIC_KEY is not set"),
-                    System.getenv()["LANGFUSE_SECRET_KEY"] ?: throw IllegalArgumentException("LANGFUSE_SECRET_KEY is not set"),
-                )
-            )
-        }
+        println("Agent run completed with result: '$result'." +
+                "\nCheck Jaeger UI at http://localhost:16686 to view traces")
     }
-
-    println("Running agent with Langfuse tracing")
-
-    val result = agent.run("Tell me a joke about programming")
-
-    println("Result: $result\nSee traces on $langfuseUrl")
-}
-
-// The function used to create a Langfuse exporter
-fun createLangfuseSpanExporter(
-    // Set the URL of the Langfuse service
-    langfuseUrl: String,
-    // Set Langfuse public and private keys
-    langfusePublicKey: String,
-    langfuseSecretKey: String,
-): SpanExporter {
-    val credentials = "$langfusePublicKey:$langfuseSecretKey"
-    val auth = Base64.getEncoder().encodeToString(credentials.toByteArray(Charsets.UTF_8))
-
-    return OtlpHttpSpanExporter.builder()
-        // Set the maximum time to wait for the collector to process an exported batch of spans 
-        .setTimeout(30, TimeUnit.SECONDS)
-        // Set the OpenTelemetry endpoint to connect to
-        .setEndpoint("$langfuseUrl/api/public/otel/v1/traces")
-        // Add the authorization header
-        .addHeader("Authorization", "Basic $auth")
-        .build()
 }
 ```
 
