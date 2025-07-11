@@ -191,7 +191,7 @@ The default value of the `service.name` attribute is `ai.koog`, while the defaul
 currently used Koog library version.
 
 In addition to default resource attributes, you can also add custom attributes. To add a custom attribute to an 
-OpenTelemetry configuration in Koog, use the `addResourceAttribute()` method in an OpenTelemetry configuration that 
+OpenTelemetry configuration in Koog, use the `addResourceAttributes()` method in an OpenTelemetry configuration that 
 takes a key and a value as its arguments.
 
 ```kotlin
