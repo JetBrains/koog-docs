@@ -34,6 +34,7 @@ nav:
               - Overview: features-overview.md
               - Tracing: tracing.md
               - Memory: agent-memory.md
+              - OpenTelemetry: opentelemetry-support.md
       - Testing: testing.md
   - Examples: examples.md
   - API reference: https://api.koog.ai/
