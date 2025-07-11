@@ -1,7 +1,7 @@
 # Agent Persistency
 
-Agent Persistency is a feature that provides checkpoint functionality for AI agents in the Koog framework. It allows 
-saving and restoring the state of an agent at specific points during execution, enabling capabilities such as:
+Agent Persistency is a feature that provides checkpoint functionality for AI agents in the Koog framework. 
+It lets you save and restore the state of an agent at specific points during execution, enabling capabilities such as:
 
 - Resuming agent execution from a specific point
 - Rolling back to previous states
@@ -20,23 +20,10 @@ A checkpoint captures the complete state of an agent at a specific point in its 
 
 Checkpoints are identified by unique IDs and are associated with a specific agent.
 
-### Storage providers
-
-AgentCheckpoint uses storage providers to save and retrieve checkpoints. The framework includes several built-in providers:
-
-- `InMemoryPersistencyStorageProvider`: stores checkpoints in memory (lost when the application restarts).
-- `FilePersistencyStorageProvider`: persists checkpoints to the file system.
-- `NoPersistencyStorageProvider`: a no-op implementation that does not store checkpoints. This is the default provider.
-
-You can also implement custom storage providers by implementing the `PersistencyStorageProvider` interface.
-
-### Continuous persistence
-
-The feature can be configured to automatically create checkpoints after each node execution, ensuring that the agent's state is continuously persisted and can be recovered at any point.
-
 ## Prerequisites
 
-The AgentCheckpoint feature requires that all nodes in your agent's strategy have unique names. This is enforced when the feature is installed:
+The Agent Persistency feature requires that all nodes in your agent's strategy have unique names.
+This is enforced when the feature is installed:
 
 ```kotlin
 require(ctx.strategy.metadata.uniqueNames) { 
@@ -44,11 +31,11 @@ require(ctx.strategy.metadata.uniqueNames) {
 }
 ```
 
-Make sure to set unique names for nodes it your graph
+Make sure to set unique names for nodes in your graph.
 
 ## Installation
 
-To use the AgentCheckpoint feature, you need to add it to your agent's configuration:
+To use the Agent Persistency feature, add it to your agent's configuration:
 
 ```kotlin
 val agent = AIAgent(
@@ -56,14 +43,20 @@ val agent = AIAgent(
         llmModel = OllamaModels.Meta.LLAMA_3_2,
     ) {
         install(Persistency) {
-            storage = InMemoryPersistencyStorageProvider() // Use in-memory storage for snapshots
-            enableAutomaticPersistency = true // Enable automatic persistency
+            // Use in-memory storage for snapshots
+            storage = InMemoryPersistencyStorageProvider()
+            // Enable automatic persistency
+            enableAutomaticPersistency = true 
         }
     }
+```
 
 ## Configuration options
 
 The Agent Persistency feature has two main configuration options:
+
+- **Storage provider**: the provider used to save and retrieve checkpoints.
+- **Continuous persistence**: automatic creation of checkpoints after each node is run.
 
 ### Storage provider
 
@@ -71,30 +64,38 @@ Set the storage provider that will be used to save and retrieve checkpoints:
 
 ```kotlin
 install(Persistency) {
-    storage = InMemoryAgentCheckpointStorageProvider()
+    storage = InMemoryPersistencyStorageProvider()
 }
-Available built-in providers:
+```
 
-- `InMemoryPersistencyStorageProvider`: in-memory storage (non-persistent)
-- `FilePersistencyStorageProvider`: file-based storage
-- `NoPersistencyStorageProvider`: no-op provider (default)
+The framework includes the following built-in providers:
+
+- `InMemoryPersistencyStorageProvider`: stores checkpoints in memory (lost when the application restarts).
+- `FilePersistencyStorageProvider`: persists checkpoints to the file system.
+- `NoPersistencyStorageProvider`: a no-op implementation that does not store checkpoints. This is the default provider.
+
+You can also implement custom storage providers by implementing the `PersistencyStorageProvider` interface. 
+For more information, see [Custom storage providers](#custom-storage-providers).
 
 ### Continuous persistence
 
-Enable automatic checkpoint creation after each node execution:
+Continuous persistence means that a checkpoint is automatically created after each node is run. 
+To activate continuous persistence, use the code below:
 
 ```kotlin
 install(Persistency) {
     enableAutomaticPersistency = true
 }
+```
 
-When enabled, the agent will automatically create a checkpoint after each node is executed, allowing for fine-grained recovery.
+When activated, the agent will automatically create a checkpoint after each node is executed, 
+allowing for fine-grained recovery.
 
 ## Basic usage
 
 ### Creating a checkpoint
 
-Create a checkpoint at a specific point in your agent's execution:
+To learn how to create a checkpoint at a specific point in your agent's execution, see the code sample below:
 
 ```kotlin
 suspend fun example(context: AIAgentContextBase) {
@@ -113,7 +114,7 @@ suspend fun example(context: AIAgentContextBase) {
 
 ### Restoring from a checkpoint
 
-Restore an agent's state from a specific checkpoint:
+To restore the state of an agent from a specific checkpoint, follow the code sample below:
 
 ```kotlin
 suspend fun example(context: AIAgentContextBase, checkpointId: String) {
@@ -127,7 +128,7 @@ suspend fun example(context: AIAgentContextBase, checkpointId: String) {
 
 ### Using extension functions
 
-The feature provides convenient extension functions for working with checkpoints:
+The Agent Persistency feature provides convenient extension functions for working with checkpoints:
 
 ```kotlin
 suspend fun example(context: AIAgentContextBase) {
@@ -140,15 +141,16 @@ suspend fun example(context: AIAgentContextBase) {
         createCheckpoint(ctx.id, ctx, "node-id", inputData)
     }
 }
+```
 
 ## Advanced usage
 
 ### Custom storage providers
 
-You can implement custom storage providers by implementing the `AgentCheckpointStorageProvider` interface:
+You can implement custom storage providers by implementing the `PersistencyStorageProvider` interface:
 
 ```kotlin
-class MyCustomStorageProvider : AgentCheckpointStorageProvider {
+class MyCustomStorageProvider : PersistencyStorageProvider {
     override suspend fun getCheckpoints(agentId: String): List<AgentCheckpointData> {
         // Implementation
     }
@@ -163,12 +165,15 @@ class MyCustomStorageProvider : AgentCheckpointStorageProvider {
 }
 ```
 
-Then use your custom provider in the feature configuration:
+To use your custom provider in the feature configuration, set it as the storage when configuring the Agent Persistency
+feature in your agent.
 
 ```kotlin
 install(Persistency) {
    storage = MyCustomStorageProvider()
 }
+```
+
 ### Setting execution points
 
 For advanced control, you can directly set the execution point of an agent:
@@ -182,4 +187,6 @@ fun example(context: AIAgentContextBase) {
         input = customInput
     )
 }
+```
+
 This allows for more fine-grained control over the agent's state beyond just restoring from checkpoints.

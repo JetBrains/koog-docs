@@ -32,7 +32,7 @@ nav:
               - Overview: features-overview.md
               - Tracing: tracing.md
               - Memory: agent-memory.md
-              - Checkpoints: agent-checkpoints.md
+              - Agent Persistency: agent-persistency.md
       - Testing: testing.md
   - Examples: examples.md
   - API reference: https://api.koog.ai/
