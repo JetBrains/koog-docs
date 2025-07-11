@@ -298,7 +298,7 @@ These implementations provide a flexible and extensible framework for working wi
 
 You can extend Koog's vector storage framework by implementing your own custom document embedders and vector storage solutions. This is particularly useful when working with specialized document types or storage requirements.
 
-Here's an example of implementing a custom document embedder for PDF documents:
+Here is an example of implementing a custom document embedder for PDF documents:
 
 ```kotlin
 // Define a PDFDocument class
@@ -403,7 +403,7 @@ While embedding-based document ranking is powerful, there are scenarios where yo
 - User interaction history
 - Domain-specific heuristics
 
-Here's an example of implementing a custom `RankedDocumentStorage` that uses a simple keyword-based ranking approach:
+Here is an example of implementing a custom `RankedDocumentStorage` that uses a simple keyword-based ranking approach:
 
 ```kotlin
 class KeywordBasedDocumentStorage<Document>(
