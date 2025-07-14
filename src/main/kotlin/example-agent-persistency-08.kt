@@ -4,16 +4,20 @@ package ai.koog.agents.example.exampleAgentPersistency08
 import ai.koog.agents.snapshot.feature.AgentCheckpointData
 import ai.koog.agents.snapshot.providers.PersistencyStorageProvider
 
+/*
+// KNIT: Ignore example
+
 class MyCustomStorageProvider : PersistencyStorageProvider {
     override suspend fun getCheckpoints(agentId: String): List<AgentCheckpointData> {
-        TODO("Implementation")
+        // Implementation
     }
-
+    
     override suspend fun saveCheckpoint(agentCheckpointData: AgentCheckpointData) {
-        TODO("Implementation")
+        // Implementation
     }
-
+    
     override suspend fun getLatestCheckpoint(agentId: String): AgentCheckpointData? {
-        TODO("Implementation")
+        // Implementation
     }
 }
+*/

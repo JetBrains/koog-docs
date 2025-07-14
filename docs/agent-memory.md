@@ -497,19 +497,25 @@ import ai.koog.agents.memory.model.Fact
 import ai.koog.agents.memory.model.MemoryScope
 import ai.koog.agents.memory.model.MemorySubject
 import ai.koog.agents.memory.providers.AgentMemoryProvider
+
+/* 
+// KNIT: Ignore example
+-->
+<!--- SUFFIX
+*/
 -->
 ```kotlin
 class MyCustomMemoryProvider : AgentMemoryProvider {
     override suspend fun save(fact: Fact, subject: MemorySubject, scope: MemoryScope) {
-        TODO("Implementation for saving facts")
+        // Implementation for saving facts
     }
 
     override suspend fun load(concept: Concept, subject: MemorySubject, scope: MemoryScope): List<Fact> {
-        TODO("Implementation for loading facts by concept")
+        // Implementation for loading facts by concept
     }
 
     override suspend fun loadAll(subject: MemorySubject, scope: MemoryScope): List<Fact> {
-        TODO("Implementation for loading all facts")
+        // Implementation for loading all facts
     }
 
     override suspend fun loadByDescription(
@@ -517,7 +523,7 @@ class MyCustomMemoryProvider : AgentMemoryProvider {
         subject: MemorySubject,
         scope: MemoryScope
     ): List<Fact> {
-        TODO("Implementation for loading facts by description")
+        // Implementation for loading facts by description
     }
 }
 ```

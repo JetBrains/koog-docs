@@ -235,20 +235,25 @@ You can implement custom storage providers by implementing the `PersistencyStora
 <!--- INCLUDE
 import ai.koog.agents.snapshot.feature.AgentCheckpointData
 import ai.koog.agents.snapshot.providers.PersistencyStorageProvider
--->
 
+/*
+// KNIT: Ignore example
+-->
+<!--- SUFFIX
+*/
+-->
 ```kotlin
 class MyCustomStorageProvider : PersistencyStorageProvider {
     override suspend fun getCheckpoints(agentId: String): List<AgentCheckpointData> {
-        TODO("Implementation")
+        // Implementation
     }
-
+    
     override suspend fun saveCheckpoint(agentCheckpointData: AgentCheckpointData) {
-        TODO("Implementation")
+        // Implementation
     }
-
+    
     override suspend fun getLatestCheckpoint(agentId: String): AgentCheckpointData? {
-        TODO("Implementation")
+        // Implementation
     }
 }
 ```
