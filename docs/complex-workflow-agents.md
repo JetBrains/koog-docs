@@ -43,22 +43,41 @@ To learn more, see [Prompt executors](prompt-api.md#prompt-executors).
 
 For example, to provide the OpenAI prompt executor, you need to call the `simpleOpenAIExecutor` function and provide it with the API key required for authentication with the OpenAI service:
 
+<!--- INCLUDE
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+
+const val token = ""
+-->
 ```kotlin
 val promptExecutor = simpleOpenAIExecutor(token)
 ```
+<!--- KNIT example-complex-workflow-agents-01.kt -->
 
 To create a prompt executor that works with multiple LLM providers, do the following:
 
 1. Configure clients for the required LLM providers with the corresponding API keys. For example:
+<!--- INCLUDE
+import ai.koog.prompt.executor.clients.openai.OpenAILLMClient
+import ai.koog.prompt.executor.clients.anthropic.AnthropicLLMClient
+import ai.koog.prompt.executor.clients.google.GoogleLLMClient
+-->
 ```kotlin
 val openAIClient = OpenAILLMClient(System.getenv("OPENAI_KEY"))
 val anthropicClient = AnthropicLLMClient(System.getenv("ANTHROPIC_KEY"))
 val googleClient = GoogleLLMClient(System.getenv("GOOGLE_KEY"))
 ```
+<!--- KNIT example-complex-workflow-agents-02.kt -->
 2. Pass the configured clients to the `DefaultMultiLLMPromptExecutor` class constructor to create a prompt executor with multiple LLM providers:
+<!--- INCLUDE
+import ai.koog.agents.example.exampleComplexWorkflowAgents02.anthropicClient
+import ai.koog.agents.example.exampleComplexWorkflowAgents02.googleClient
+import ai.koog.agents.example.exampleComplexWorkflowAgents02.openAIClient
+import ai.koog.prompt.executor.llms.all.DefaultMultiLLMPromptExecutor
+-->
 ```kotlin
 val multiExecutor = DefaultMultiLLMPromptExecutor(openAIClient, anthropicClient, googleClient)
 ```
+<!--- KNIT example-complex-workflow-agents-03.kt -->
 
 ### 3. Define a strategy
 
@@ -75,6 +94,18 @@ Nodes and edges are the building blocks of the strategy.
 
 Nodes represent processing steps in your agent strategy.
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+class InputType
+
+class OutputType
+
+val transformedOutput = OutputType()
+val strategy = strategy<InputType, OutputType>("Simple calculator") {
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val processNode by node<InputType, OutputType> { input ->
     // Process the input and return an output
@@ -83,11 +114,37 @@ val processNode by node<InputType, OutputType> { input ->
     transformedOutput
 }
 ```
+<!--- KNIT example-complex-workflow-agents-04.kt -->
 !!! tip
     There are also pre-defined nodes that you can use in your agent strategy. To learn more, see [Predefined nodes and components](nodes-and-components.md).
 
 Edges define the connections between nodes.
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.forwardTo
+import ai.koog.agents.core.dsl.builder.strategy
+
+const val transformedOutput = "transformed-output"
+
+val strategy = strategy<String, String>("Simple calculator") {
+
+    val sourceNode by node<String, String> { input ->
+        // Process the input and return an output
+        // You can use llm.writeSession to interact with the LLM
+        // You can call tools using callTool, callToolRaw, etc.
+        transformedOutput
+    }
+
+    val targetNode by node<String, String> { input ->
+        // Process the input and return an output
+        // You can use llm.writeSession to interact with the LLM
+        // You can call tools using callTool, callToolRaw, etc.
+        transformedOutput
+    }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 // Basic edge
 edge(sourceNode forwardTo targetNode)
@@ -107,10 +164,16 @@ edge(sourceNode forwardTo targetNode transformed { output ->
 // Combined condition and transformation
 edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
 ```
+<!--- KNIT example-complex-workflow-agents-05.kt -->
 #### 3.2. Implement the strategy
 
 To implement the agent strategy, call the `strategy` function and define nodes and edges. For example:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.forwardTo
+import ai.koog.agents.core.dsl.builder.strategy
+import ai.koog.agents.core.dsl.extension.*
+-->
 ```kotlin
 val agentStrategy = strategy("Simple calculator") {
     // Define nodes for the strategy
@@ -146,6 +209,7 @@ val agentStrategy = strategy("Simple calculator") {
     )
 }
 ```
+<!--- KNIT example-complex-workflow-agents-06.kt -->
 !!! tip
     The `strategy` function lets you define multiple subgraphs, each containing its own set of nodes and edges.
     This approach offers more flexibility and functionality compared to using simplified strategy builders.
