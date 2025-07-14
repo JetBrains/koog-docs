@@ -42,6 +42,14 @@ Each tool consists of the following components:
 
 Here is an example of a custom tool implementation using the `Tool` class that returns a numeric result:
 
+<!--- INCLUDE
+import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolDescriptor
+import ai.koog.agents.core.tools.ToolParameterDescriptor
+import ai.koog.agents.core.tools.ToolParameterType
+import ai.koog.agents.core.tools.ToolResult
+import kotlinx.serialization.Serializable
+-->
 ```kotlin
 // Implement a simple calculator tool that adds two digits
 object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
@@ -51,7 +59,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     data class Args(
         val digit1: Int,
         val digit2: Int
-    ) : ToolArgs {
+    ) : Tool.Args {
         init {
             require(digit1 in 0..9) { "digit1 must be a single digit (0-9)" }
             require(digit2 in 0..9) { "digit2 must be a single digit (0-9)" }
@@ -86,6 +94,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     }
 }
 ```
+<!--- KNIT example-advanced-tool-implementation-01.kt --> 
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent. For details, see [Tool registry](tools-overview.md#tool-registry).
 
@@ -125,14 +134,14 @@ import kotlinx.serialization.Serializable
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     // Define tool arguments
     @Serializable
-    data class Args(val expression: String, val comment: String) : ToolArgs
+    data class Args(val expression: String, val comment: String) : Tool.Args
 
     // Serializer for the Args class
     override val argsSerializer = Args.serializer()
 
     // Tool descriptor
     override val descriptor = ToolDescriptor(
-        name = "cast_to_double",
+        name = "cast to double",
         description = "casts the passed expression to double or returns 0.0 if the expression is not castable",
         requiredParameters = listOf(
             ToolParameterDescriptor(
@@ -159,6 +168,7 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     }
 }
 ```
+<!--- KNIT example-advanced-tool-implementation-02.kt --> 
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent.
 For details, see [Tool registry](tools-overview.md#tool-registry).
