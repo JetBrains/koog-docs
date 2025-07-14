@@ -23,20 +23,20 @@ val strategy = strategy<String, String>("Simple calculator") {
     }
 
 // Basic edge
-    edge(sourceNode forwardTo targetNode)
+edge(sourceNode forwardTo targetNode)
 
 // Edge with condition
-    edge(sourceNode forwardTo targetNode onCondition { output ->
-        // Return true to follow this edge, false to skip it
-        output.contains("specific text")
-    })
+edge(sourceNode forwardTo targetNode onCondition { output ->
+    // Return true to follow this edge, false to skip it
+    output.contains("specific text")
+})
 
 // Edge with transformation
-    edge(sourceNode forwardTo targetNode transformed { output ->
-        // Transform the output before passing it to the target node
-        "Modified: $output"
-    })
+edge(sourceNode forwardTo targetNode transformed { output ->
+    // Transform the output before passing it to the target node
+    "Modified: $output"
+})
 
 // Combined condition and transformation
-    edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
+edge(sourceNode forwardTo targetNode onCondition { it.isNotEmpty() } transformed { it.uppercase() })
 }

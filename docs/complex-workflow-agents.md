@@ -218,7 +218,9 @@ val agentStrategy = strategy("Simple calculator") {
 ### 4. Configure the agent
 
 Define agent behavior with a configuration:
-
+<!--- INCLUDE
+import ai.koog.agents.core.agent.config.AIAgentConfig
+-->
 ```kotlin
 val agentConfig = AIAgentConfig.withSystemPrompt(
     prompt = """
@@ -231,9 +233,14 @@ val agentConfig = AIAgentConfig.withSystemPrompt(
         """.trimIndent()
 )
 ```
+<!--- KNIT example-complex-workflow-agents-07.kt -->
 
 For more advanced configuration, you can specify which LLM the agent will use and set the maximum number of iterations the agent can perform to respond:
-
+<!--- INCLUDE
+import ai.koog.agents.core.agent.config.AIAgentConfig
+import ai.koog.prompt.dsl.Prompt
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+-->
 ```kotlin
 val agentConfig = AIAgentConfig(
     prompt = Prompt.build("simple-calculator") {
@@ -252,13 +259,20 @@ val agentConfig = AIAgentConfig(
     maxAgentIterations = 10
 )
 ```
+<!--- KNIT example-complex-workflow-agents-08.kt -->
 
 ### 5. Implement tools and set up a tool registry
 
 Tools let your agent perform specific tasks.
 To make a tool available for the agent, add it to a tool registry.
 For example:
-
+<!--- INCLUDE
+import ai.koog.agents.core.tools.ToolRegistry
+import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.agents.core.tools.annotations.Tool
+import ai.koog.agents.core.tools.reflect.ToolSet
+import ai.koog.agents.core.tools.reflect.asTools
+-->
 ```kotlin
 // Implement a simple calculator tool that can add two numbers
 @LLMDescription("Tools for performing basic arithmetic operations")
@@ -279,9 +293,10 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools())
+    tools(CalculatorTools().asTools())
 }
 ```
+<!--- KNIT example-complex-workflow-agents-09.kt -->
 
 To learn more about tools, see [Tools](tools-overview.md).
 
@@ -297,53 +312,82 @@ The following features are available:
 
 To install the feature, call the `install` function and provide the feature as an argument.
 For example, to install the event handler feature, you need to do the following:
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.feature.handler.AgentFinishedContext
+import ai.koog.agents.core.feature.handler.AgentStartContext
+import ai.koog.agents.features.eventHandler.feature.EventHandler
+import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
+import ai.koog.prompt.llm.OllamaModels
 
+val agent = AIAgent(
+    executor = simpleOllamaAIExecutor(),
+    llmModel = OllamaModels.Meta.LLAMA_3_2,
+-->
+<!--- SUFFIX
+)
+-->
 ```kotlin
+// install the EventHandler feature
 installFeatures = {
-    // install the EventHandler feature
     install(EventHandler) {
-        onBeforeAgentStarted { strategy: AIAgentStrategy, agent: AIAgent ->
-            println("Starting strategy: ${strategy.name}")
+        onBeforeAgentStarted { eventContext: AgentStartContext<*> ->
+            println("Starting strategy: ${eventContext.strategy.name}")
         }
-        onAgentFinished { strategyName: String, result: String? ->
-            println("Result: $result")
+        onAgentFinished { eventContext: AgentFinishedContext ->
+            println("Result: ${eventContext.result}")
         }
     }
 }
 ```
+<!--- KNIT example-complex-workflow-agents-10.kt -->
 
 To learn more about feature configuration, see the dedicated page.
 
 ### 7. Run the agent
 
 Create the agent with the configuration option created in the previous stages and run it with the provided input:
-
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.feature.handler.AgentFinishedContext
+import ai.koog.agents.core.feature.handler.AgentStartContext
+import ai.koog.agents.example.exampleComplexWorkflowAgents01.promptExecutor
+import ai.koog.agents.example.exampleComplexWorkflowAgents06.agentStrategy
+import ai.koog.agents.example.exampleComplexWorkflowAgents07.agentConfig
+import ai.koog.agents.example.exampleComplexWorkflowAgents09.toolRegistry
+import ai.koog.agents.features.eventHandler.feature.EventHandler
+import kotlinx.coroutines.runBlocking
+-->
 ```kotlin
 val agent = AIAgent(
     promptExecutor = promptExecutor,
+    toolRegistry = toolRegistry,
     strategy = agentStrategy,
     agentConfig = agentConfig,
-    toolRegistry = toolRegistry,
     installFeatures = {
         install(EventHandler) {
-            onBeforeAgentStarted = { strategy: AIAgentStrategy, agent: AIAgent ->
-                println("Starting strategy: ${strategy.name}")
+            onBeforeAgentStarted { eventContext: AgentStartContext<*> ->
+                println("Starting strategy: ${eventContext.strategy.name}")
             }
-            onAgentFinished = { strategyName: String, result: String? ->
-                println("Result: $result")
+            onAgentFinished { eventContext: AgentFinishedContext ->
+                println("Result: ${eventContext.result}")
             }
         }
     }
 )
 
-suspend fun main() = runBlocking {
-    println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
+fun main() {
+    runBlocking {
+        println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
 
-    // Read the user input and send it to the agent
-    val userInput = readlnOrNull() ?: ""
-    agent.run(userInput)
+        // Read the user input and send it to the agent
+        val userInput = readlnOrNull() ?: ""
+        val agentResult = agent.run(userInput)
+        println("The agent returned: $agentResult")
+    }
 }
 ```
+<!--- KNIT example-complex-workflow-agents-11.kt -->
 
 ## Working with structured data
 
@@ -358,7 +402,26 @@ For more details, see [Parallel tool calls](tools-overview.md#parallel-tool-call
 ## Full code sample
 
 Here is the complete implementation of the agent:
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.agent.config.AIAgentConfig
+import ai.koog.agents.core.dsl.builder.forwardTo
+import ai.koog.agents.core.dsl.builder.strategy
+import ai.koog.agents.core.dsl.extension.*
+import ai.koog.agents.core.feature.handler.AgentFinishedContext
+import ai.koog.agents.core.feature.handler.AgentStartContext
+import ai.koog.agents.core.tools.ToolRegistry
+import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.agents.core.tools.annotations.Tool
+import ai.koog.agents.core.tools.reflect.ToolSet
+import ai.koog.agents.core.tools.reflect.asTools
+import ai.koog.agents.features.eventHandler.feature.EventHandler
+import ai.koog.prompt.dsl.Prompt
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import kotlinx.coroutines.runBlocking
 
+-->
 ```kotlin
 // Use the OpenAI executor with an API key from an environment variable
 val promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY"))
@@ -435,32 +498,36 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools())
+    tools(CalculatorTools().asTools())
 }
 
 // Create the agent
 val agent = AIAgent(
     promptExecutor = promptExecutor,
+    toolRegistry = toolRegistry,
     strategy = agentStrategy,
     agentConfig = agentConfig,
-    toolRegistry = toolRegistry,
     installFeatures = {
-        // install the EventHandler feature
         install(EventHandler) {
-            onBeforeAgentStarted { strategy: AIAgentStrategy, agent: AIAgent ->
-                println("Starting strategy: ${strategy.name}")
+            onBeforeAgentStarted { eventContext: AgentStartContext<*> ->
+                println("Starting strategy: ${eventContext.strategy.name}")
             }
-            onAgentFinished { strategyName: String, result: String? ->
-                println("Result: $result")
+            onAgentFinished { eventContext: AgentFinishedContext ->
+                println("Result: ${eventContext.result}")
             }
         }
     }
 )
 
-suspend fun main() = runBlocking {
-    println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
+fun main() {
+    runBlocking {
+        println("Enter two numbers to add (e.g., 'add 5 and 7' or '5 + 7'):")
 
-    val userInput = readlnOrNull() ?: ""
-    agent.run(userInput)
+        // Read the user input and send it to the agent
+        val userInput = readlnOrNull() ?: ""
+        val agentResult = agent.run(userInput)
+        println("The agent returned: $agentResult")
+    }
 }
 ```
+<!--- KNIT example-complex-workflow-agents-12.kt -->
