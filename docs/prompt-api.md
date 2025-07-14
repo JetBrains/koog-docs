@@ -85,6 +85,131 @@ fun main() {
 }
 ```
 
+## Multimodal inputs
+
+In addition to providing text messages within prompts, Koog also lets you send images, audio, video, and files to LLMs along with `user` messages. As with standard text-only prompts, you also add media to the prompt using the DSL structure for prompt construction.
+
+```kotlin
+val prompt = prompt("multimodal_input") {
+    system("You are a helpful assistant.")
+
+    user {
+        +"Describe these images"
+
+        attachments {
+            image("https://example.com/test.png")
+            image(Path("/User/koog/image.png"))
+        }
+    }
+}
+```
+
+### Textual prompt content
+
+To accommodate for the support for various attachment types and create a clear distinction between text and file inputs in a prompt, you put text messages in a dedicated `content` parameter within a user prompt. 
+To add file inputs, provide them as a list within the `attachments` parameter. 
+
+The general format of a user message that includes a text message and a list of attachments is as follows:
+
+```kotlin
+user(
+    content = "This is the user message",
+    attachments = listOf(
+        // Add attachments
+    )
+)
+```
+
+### File attachments
+
+To include an attachment, provide the file in the `attachments` parameter, following the format below:
+
+```kotlin
+user(
+    content = "Describe this image",
+    attachments = listOf(
+        Attachment.Image(
+            content = AttachmentContent.URL("https://example.com/capture.png"),
+            format = "png",
+            mimeType = "image/png",
+            fileName = "capture.png"
+        )
+    )
+)
+```
+
+The `attachments` parameter takes a list of file inputs, where each item is an instance of one of the following classes:
+
+- `Attachment.Image`: image attachments, such as `jpg` or `png` files.
+- `Attachment.Audio`: audio attachments, such as `mp3` or `wav` files.
+- `Attachment.Video`: video attachments, such as `mpg` or `avi` files.
+- `Attachment.File`: file attachments, such as `pdf` or `txt` files.
+
+Each of the classes above takes the following parameters:
+
+| Name       | Data type                               | Required                   | Description                                                                                                 |
+|------------|-----------------------------------------|----------------------------|-------------------------------------------------------------------------------------------------------------|
+| `content`  | [AttachmentContent](#attachmentcontent) | Yes                        | The source of the provided file content. For more information, see [AttachmentContent](#attachmentcontent). |
+| `format`   | String                                  | Yes                        | The format of the provided file. For example, `png`.                                                        |
+| `mimeType` | String                                  | Only for `Attachment.File` | The MIME Type of the provided file. For example, `image/png`.                                               |
+| `fileName` | String                                  | No                         | The name of the provided file including the extension. For example, `screenshot.png`.                       |
+
+#### AttachmentContent
+
+`AttachmentContent` defines the type and source of content that is provided as an input to the LLM. The following 
+classes are supported:
+
+`AttachmentContent.URL(val url: String)`
+
+Provides file content from the specified URL. Takes the following parameter:
+
+| Name   | Data type | Required | Description                      |
+|--------|-----------|----------|----------------------------------|
+| `url`  | String    | Yes      | The URL of the provided content. |
+
+`AttachmentContent.Binary.Bytes(val data: ByteArray)`
+
+Provides file content as a byte array. Takes the following parameter:
+
+| Name   | Data type | Required | Description                                |
+|--------|-----------|----------|--------------------------------------------|
+| `data` | ByteArray | Yes      | The file content provided as a byte array. |
+
+`AttachmentContent.Binary.Base64(val base64: String)`
+
+Provides file content encoded as a Base64 string. Takes the following parameter:
+
+| Name     | Data type | Required | Description                             |
+|----------|-----------|----------|-----------------------------------------|
+| `base64` | String    | Yes      | The Base64 string containing file data. |
+
+`AttachmentContent.PlainText(val text: String)`
+
+_Applies only if the attachment type is `Attachment.File`_. Provides content from a plain text file (such as the `text/plain` MIME type). Takes the following parameter:
+
+| Name   | Data type | Required | Description              |
+|--------|-----------|----------|--------------------------|
+| `text` | String    | Yes      | The content of the file. |
+
+### Mixed attachment content
+
+In addition to providing different types of attachments in separate prompts or messages, you can also provide multiple and mixed types of attachments in a single `user` message, as shown below:
+
+```kotlin
+val prompt = prompt("mixed_content") {
+    system("You are a helpful assistant.")
+
+    user {
+        +"Compare the image with the document content."
+
+        attachments {
+            image(Path("/User/koog/page.png"))
+            binaryFile(Path("/User/koog/page.pdf"), "application/pdf")
+        }
+    }
+}
+```
+
 ## Prompt executors
 
 Prompt executors provide a higher-level way to work with LLMs, handling the details of client creation and management.
