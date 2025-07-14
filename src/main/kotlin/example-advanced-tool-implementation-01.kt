@@ -2,6 +2,7 @@
 package ai.koog.agents.example.exampleAdvancedToolImplementation01
 
 import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolArgs
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
@@ -16,7 +17,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     data class Args(
         val digit1: Int,
         val digit2: Int
-    ) : Tool.Args {
+    ) : ToolArgs {
         init {
             require(digit1 in 0..9) { "digit1 must be a single digit (0-9)" }
             require(digit2 in 0..9) { "digit2 must be a single digit (0-9)" }

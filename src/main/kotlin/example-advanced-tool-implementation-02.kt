@@ -2,7 +2,7 @@
 package ai.koog.agents.example.exampleAdvancedToolImplementation02
 
 import ai.koog.agents.core.tools.SimpleTool
-import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolArgs
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     // Define tool arguments
     @Serializable
-    data class Args(val expression: String, val comment: String) : Tool.Args
+    data class Args(val expression: String, val comment: String) : ToolArgs
 
     // Serializer for the Args class
     override val argsSerializer = Args.serializer()

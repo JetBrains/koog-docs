@@ -44,6 +44,7 @@ Here is an example of a custom tool implementation using the `Tool` class that r
 
 <!--- INCLUDE
 import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolArgs
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
@@ -59,7 +60,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     data class Args(
         val digit1: Int,
         val digit2: Int
-    ) : Tool.Args {
+    ) : ToolArgs {
         init {
             require(digit1 in 0..9) { "digit1 must be a single digit (0-9)" }
             require(digit2 in 0..9) { "digit2 must be a single digit (0-9)" }
@@ -123,7 +124,7 @@ Here is an example of a custom tool implementation using `SimpleTool`:
 
 <!--- INCLUDE
 import ai.koog.agents.core.tools.SimpleTool
-import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolArgs
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
@@ -134,7 +135,7 @@ import kotlinx.serialization.Serializable
 object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     // Define tool arguments
     @Serializable
-    data class Args(val expression: String, val comment: String) : Tool.Args
+    data class Args(val expression: String, val comment: String) : ToolArgs
 
     // Serializer for the Args class
     override val argsSerializer = Args.serializer()
