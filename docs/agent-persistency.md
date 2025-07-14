@@ -265,10 +265,25 @@ feature in your agent.
 
 <!--- INCLUDE
 import ai.koog.agents.core.agent.AIAgent
-import ai.koog.agents.example.exampleAgentPersistency08.MyCustomStorageProvider
+import ai.koog.agents.snapshot.feature.AgentCheckpointData
 import ai.koog.agents.snapshot.feature.Persistency
+import ai.koog.agents.snapshot.providers.PersistencyStorageProvider
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.llm.OllamaModels
+
+class MyCustomStorageProvider : PersistencyStorageProvider {
+    override suspend fun getCheckpoints(agentId: String): List<AgentCheckpointData> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLatestCheckpoint(agentId: String): AgentCheckpointData? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveCheckpoint(agentCheckpointData: AgentCheckpointData) {
+        TODO("Not yet implemented")
+    }
+}
 
 val agent = AIAgent(
     executor = simpleOllamaAIExecutor(),
