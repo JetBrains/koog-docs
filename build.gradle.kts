@@ -5,19 +5,15 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
-    maven(url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
     maven(url = "https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
+    mavenCentral()
 }
 
-val koogVersion = "0.1.0-alpha.5+0.4.49"
-val grazieVersion = "0.4.43"
+val koogVersion = "0.2.1.44"
 val logBackVersion = "1.5.13"
 
 dependencies {
-    implementation("ai.koog.agents:agents-core:$koogVersion")
-    implementation("ai.koog.agents:agents-ext:$koogVersion")
-    implementation("ai.koog.prompt:prompt-executor-llms-all:$koogVersion")
+    implementation("ai.koog:koog-agents:$koogVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("ch.qos.logback:logback-classic:$logBackVersion")
@@ -28,5 +24,5 @@ knit {
     files = fileTree("docs/") {
         include("**/*.md")
     }
-    siteRoot = "https://koan-agents.labs.jb.gg"
+    siteRoot = "https://docs.koog.ai/"
 }

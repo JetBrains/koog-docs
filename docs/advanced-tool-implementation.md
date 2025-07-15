@@ -42,6 +42,15 @@ Each tool consists of the following components:
 
 Here is an example of a custom tool implementation using the `Tool` class that returns a numeric result:
 
+<!--- INCLUDE
+import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolArgs
+import ai.koog.agents.core.tools.ToolDescriptor
+import ai.koog.agents.core.tools.ToolParameterDescriptor
+import ai.koog.agents.core.tools.ToolParameterType
+import ai.koog.agents.core.tools.ToolResult
+import kotlinx.serialization.Serializable
+-->
 ```kotlin
 // Implement a simple calculator tool that adds two digits
 object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
@@ -86,6 +95,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     }
 }
 ```
+<!--- KNIT example-advanced-tool-implementation-01.kt --> 
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent. For details, see [Tool registry](tools-overview.md#tool-registry).
 
@@ -114,7 +124,7 @@ Here is an example of a custom tool implementation using `SimpleTool`:
 
 <!--- INCLUDE
 import ai.koog.agents.core.tools.SimpleTool
-import ai.koog.agents.core.tools.Tool
+import ai.koog.agents.core.tools.ToolArgs
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
@@ -159,6 +169,7 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     }
 }
 ```
+<!--- KNIT example-advanced-tool-implementation-02.kt --> 
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent.
 For details, see [Tool registry](tools-overview.md#tool-registry).
