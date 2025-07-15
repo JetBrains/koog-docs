@@ -293,7 +293,7 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools())
+    tools(CalculatorTools().asTools())
 }
 ```
 <!--- KNIT example-complex-workflow-agents-09.kt -->
@@ -498,7 +498,7 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools())
+    tools(CalculatorTools().asTools())
 }
 
 // Create the agent
