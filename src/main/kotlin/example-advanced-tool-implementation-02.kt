@@ -19,7 +19,7 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
 
     // Tool descriptor
     override val descriptor = ToolDescriptor(
-        name = "cast to double",
+        name = "cast_to_double",
         description = "casts the passed expression to double or returns 0.0 if the expression is not castable",
         requiredParameters = listOf(
             ToolParameterDescriptor(
