@@ -6,7 +6,7 @@ By using annotations, you can transform any function into a tool that LLMs can u
 This approach is useful when you need to expose existing functionality to LLMs without implementing tool descriptions manually.
 
 !!! note
-    Annotation-based tools are JVM-only and not available for other platforms. For multiplatform support, use the [advanced tool API](advanced-tool-implementation.md).
+    Annotation-based tools are JVM-only and not available for other platforms. For multiplatform support, use the [class-based tool API](class-based-tools.md).
 
 ## Key annotations
 

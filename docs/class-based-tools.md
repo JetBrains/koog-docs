@@ -1,6 +1,6 @@
-# Advanced implementation
+# Class-based tools
 
-This section explains the advanced API designed for scenarios that require enhanced flexibility and customized behavior.
+This section explains the API designed for scenarios that require enhanced flexibility and customized behavior.
 With this approach, you have full control over a tool, including its parameters, metadata, execution logic, and how it is registered and invoked.
 
 This level of control is ideal for creating sophisticated tools that extend basic use cases, enabling seamless integration into agent sessions and workflows.
@@ -8,7 +8,7 @@ This level of control is ideal for creating sophisticated tools that extend basi
 This page describes how to implement a tool, manage tools through registries, call them, and use within node-based agent architectures.
 
 !!! note
-    The advanced tool API is multiplatform. This lets you use the same tools across different platforms.
+    The API is multiplatform. This lets you use the same tools across different platforms.
 
 ## Tool implementation
 

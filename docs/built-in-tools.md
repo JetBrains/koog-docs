@@ -47,4 +47,4 @@ val agent = AIAgent(
 <!--- KNIT example-built-in-tools-01.kt -->
 
 You can create a comprehensive set of capabilities for your agent by combining built-in tools and custom tools within the same registry.
-To learn more about custom tools, see [Annotation-based tools](annotation-based-tools.md) and [Advanced implementation](advanced-tool-implementation.md).
+To learn more about custom tools, see [Annotation-based tools](annotation-based-tools.md) and [Class-based tools](class-based-tools.md).
