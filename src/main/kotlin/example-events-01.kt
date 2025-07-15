@@ -11,18 +11,16 @@ val agent = AIAgent(
     llmModel = OllamaModels.Meta.LLAMA_3_2,
 ) {
 
-{
-    handleEvents {
-        // Handle tool calls
-        onToolCall { eventContext ->
-            println("Tool called: ${eventContext.tool} with args ${eventContext.toolArgs}")
-        }
-        // Handle event triggered when the agent completes its execution
-        onAgentFinished { eventContext ->
-            println("Agent finished with result: ${eventContext.result}")
-        }
-
-        // Other event handlers
+handleEvents {
+    // Handle tool calls
+    onToolCall { eventContext ->
+        println("Tool called: ${eventContext.tool} with args ${eventContext.toolArgs}")
     }
+    // Handle event triggered when the agent completes its execution
+    onAgentFinished { eventContext ->
+        println("Agent finished with result: ${eventContext.result}")
+    }
+
+    // Other event handlers
 }
 } 
