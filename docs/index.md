@@ -94,18 +94,27 @@ To help you get started with AI agents, here is a quick example of a single-run 
 !!! note
     Before you run the example, assign a corresponding API key as an environment variable. For details, see [Getting started](single-run-agents.md).
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import kotlinx.coroutines.runBlocking
+-->
 ```kotlin
-fun main() = runBlocking {
-    val apiKey = System.getenv("OPENAI_API_KEY") // or Anthropic, Google, OpenRouter, etc.
+fun main() {
+    runBlocking {
+        val apiKey = System.getenv("OPENAI_API_KEY") // or Anthropic, Google, OpenRouter, etc.
 
-    val agent = AIAgent(
-        executor = simpleOpenAIExecutor(apiKey), // or Anthropic, Google, OpenRouter, etc.
-        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-        llmModel = OpenAIModels.Chat.GPT4o
-    )
-    
-    val result = agent.runAndGetResult("Hello! How can you help me?")
-    println(result)
+        val agent = AIAgent(
+            executor = simpleOpenAIExecutor(apiKey), // or Anthropic, Google, OpenRouter, etc.
+            systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+            llmModel = OpenAIModels.Chat.GPT4o
+        )
+
+        val result = agent.run("Hello! How can you help me?")
+        println(result)
+    }
 }
 ```
+<!--- KNIT example-index-01.kt -->
 For more details, see [Getting started](single-run-agents.md).
