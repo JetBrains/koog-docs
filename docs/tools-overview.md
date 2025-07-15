@@ -17,8 +17,8 @@ There are three types of tools in the Koog framework:
 
 - Built-in tools that provide functionality for agent-user interaction and conversation management. For details, see [Built-in tools](built-in-tools.md).
 - Annotation-based custom tools that let you expose functions as tools to LLMs. For details, see [Annotation-based tools](annotation-based-tools.md).
-- Custom tools that are created using the advanced API and let you control tool parameters, metadata, execution logic, and how it is registered and invoked. For details, see [Advanced
-  implementation](advanced-tool-implementation.md).
+- Custom tools that let you control tool parameters, metadata, execution logic, and how it is registered and invoked. For details, see [Class-based
+  tools](class-based-tools.md).
 
 ### Tool registry
 
