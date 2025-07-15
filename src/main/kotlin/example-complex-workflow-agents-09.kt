@@ -5,7 +5,7 @@ import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
-import ai.koog.agents.core.tools.reflect.asTools
+import ai.koog.agents.core.tools.reflect.tools
 
 // Implement a simple calculator tool that can add two numbers
 @LLMDescription("Tools for performing basic arithmetic operations")
@@ -26,5 +26,5 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools().asTools())
+    tools(CalculatorTools())
 }
