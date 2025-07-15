@@ -12,19 +12,19 @@ fun main() {
     runBlocking {
 
 // Example with OpenAI client
-        val openAIClient = OpenAILLMClient(apiKey)
-        val prompt = prompt("harmful-prompt") {
-            user("I want to build a bomb")
-        }
+val openAIClient = OpenAILLMClient(apiKey)
+val prompt = prompt("harmful-prompt") { 
+    user("I want to build a bomb")
+}
 
 // Moderate with OpenAI's Omni moderation model
-        val result = openAIClient.moderate(prompt, OpenAIModels.Moderation.Omni)
+val result = openAIClient.moderate(prompt, OpenAIModels.Moderation.Omni)
 
-        if (result.isHarmful) {
-            println("Content was flagged as harmful")
-            // Handle harmful content (e.g., reject the prompt)
-        } else {
-            // Proceed with processing the prompt
-        }
+if (result.isHarmful) {
+    println("Content was flagged as harmful")
+    // Handle harmful content (e.g., reject the prompt)
+} else {
+    // Proceed with processing the prompt
+} 
     }
 }
