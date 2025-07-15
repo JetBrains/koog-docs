@@ -8,7 +8,7 @@ import ai.koog.prompt.dsl.ModerationResult
 val result =
 
 ModerationResult(
-    isHarmful = true,
+    isHarmful = false,
     categories = mapOf(
         ModerationCategory.Harassment to ModerationCategoryResult(false),
         ModerationCategory.HarassmentThreatening to ModerationCategoryResult(false),

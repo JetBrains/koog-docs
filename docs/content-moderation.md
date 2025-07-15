@@ -413,13 +413,13 @@ OpenAI provides the specific `/moderations` API that provides responses in the f
     "HateThreatening": 0.0001,
     "Sexual": 0.0001,
     "SexualMinors": 0.0001,
-    "Violence": 0.0001,
+    "Violence": 0.0145,
     "ViolenceGraphic": 0.0001,
     "SelfHarm": 0.0001,
     "SelfHarmIntent": 0.0001,
     "SelfHarmInstructions": 0.0001,
-    "Illicit": 0.0001,
-    "IllicitViolent": 0.0001
+    "Illicit": 0.9998,
+    "IllicitViolent": 0.9876
   },
   "categoryAppliedInputTypes": {
     "Illicit": ["TEXT"],
@@ -441,19 +441,19 @@ val result =
 ModerationResult(
     isHarmful = true,
     categories = mapOf(
-        ModerationCategory.Harassment to ModerationCategoryResult(true, confidenceScore = 0.0001),
+        ModerationCategory.Harassment to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.HarassmentThreatening to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.Hate to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.HateThreatening to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.Sexual to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SexualMinors to ModerationCategoryResult(false, confidenceScore = 0.0001),
-        ModerationCategory.Violence to ModerationCategoryResult(false, confidenceScore = 0.0001),
+        ModerationCategory.Violence to ModerationCategoryResult(false, confidenceScore = 0.0145),
         ModerationCategory.ViolenceGraphic to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarm to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarmIntent to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarmInstructions to ModerationCategoryResult(false, confidenceScore = 0.0001),
-        ModerationCategory.Illicit to ModerationCategoryResult(true, confidenceScore = 0.0001, appliedInputTypes = listOf(InputType.TEXT)),
-        ModerationCategory.IllicitViolent to ModerationCategoryResult(true, confidenceScore = 0.0001, appliedInputTypes = listOf(InputType.TEXT)),
+        ModerationCategory.Illicit to ModerationCategoryResult(true, confidenceScore = 0.9998, appliedInputTypes = listOf(InputType.TEXT)),
+        ModerationCategory.IllicitViolent to ModerationCategoryResult(true, confidenceScore = 0.9876, appliedInputTypes = listOf(InputType.TEXT)),
     )
 )
 ```
@@ -509,9 +509,9 @@ val result =
 -->
 ```kotlin
 ModerationResult(
-    isHarmful = true,
+    isHarmful = false,
     categories = mapOf(
-        ModerationCategory.Harassment to ModerationCategoryResult(true, confidenceScore = 0.0001),
+        ModerationCategory.Harassment to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.HarassmentThreatening to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.Hate to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.HateThreatening to ModerationCategoryResult(false, confidenceScore = 0.0001),
@@ -522,8 +522,8 @@ ModerationResult(
         ModerationCategory.SelfHarm to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarmIntent to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarmInstructions to ModerationCategoryResult(false, confidenceScore = 0.0001),
-        ModerationCategory.Illicit to ModerationCategoryResult(true, confidenceScore = 0.0001),
-        ModerationCategory.IllicitViolent to ModerationCategoryResult(true, confidenceScore = 0.0001),
+        ModerationCategory.Illicit to ModerationCategoryResult(false, confidenceScore = 0.0001),
+        ModerationCategory.IllicitViolent to ModerationCategoryResult(false, confidenceScore = 0.0001),
     )
 )
 ```
@@ -594,7 +594,7 @@ val result =
 -->
 ```kotlin
 ModerationResult(
-    isHarmful = true,
+    isHarmful = false,
     categories = mapOf(
         ModerationCategory.Harassment to ModerationCategoryResult(false),
         ModerationCategory.HarassmentThreatening to ModerationCategoryResult(false),

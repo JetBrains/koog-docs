@@ -8,9 +8,9 @@ import ai.koog.prompt.dsl.ModerationResult
 val result =
 
 ModerationResult(
-    isHarmful = true,
+    isHarmful = false,
     categories = mapOf(
-        ModerationCategory.Harassment to ModerationCategoryResult(true, confidenceScore = 0.0001),
+        ModerationCategory.Harassment to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.HarassmentThreatening to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.Hate to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.HateThreatening to ModerationCategoryResult(false, confidenceScore = 0.0001),
@@ -21,7 +21,7 @@ ModerationResult(
         ModerationCategory.SelfHarm to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarmIntent to ModerationCategoryResult(false, confidenceScore = 0.0001),
         ModerationCategory.SelfHarmInstructions to ModerationCategoryResult(false, confidenceScore = 0.0001),
-        ModerationCategory.Illicit to ModerationCategoryResult(true, confidenceScore = 0.0001),
-        ModerationCategory.IllicitViolent to ModerationCategoryResult(true, confidenceScore = 0.0001),
+        ModerationCategory.Illicit to ModerationCategoryResult(false, confidenceScore = 0.0001),
+        ModerationCategory.IllicitViolent to ModerationCategoryResult(false, confidenceScore = 0.0001),
     )
 )
