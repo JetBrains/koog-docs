@@ -5,11 +5,10 @@ plugins {
 }
 
 repositories {
-    maven(url = "https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
     mavenCentral()
 }
 
-val koogVersion = "0.2.1.44"
+val koogVersion = "0.3.0"
 val logBackVersion = "1.5.13"
 
 dependencies {

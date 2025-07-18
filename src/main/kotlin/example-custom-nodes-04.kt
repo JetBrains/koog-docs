@@ -5,16 +5,19 @@ import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
 import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
 import ai.koog.agents.core.dsl.builder.strategy
 
+typealias Input = String
+typealias Output = String
+
 val strategy = strategy<String, String>("strategy_name") {
 
-    fun <T> AIAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
+    fun AIAgentSubgraphBuilderBase<*, *>.myNodeWithArguments(
     name: String? = null,
-    param1: String,
-    param2: Int
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
-    // Use param1 and param2 in your custom logic
+    arg1: String,
+    arg2: Int
+): AIAgentNodeDelegate<Input, Output> = node(name) { input ->
+    // Use arg1 and arg2 in your custom logic
     input // Return the input as the output
 }
 
-val myCustomNode by myParameterizedNode<String>("node_name", param1 = "value1", param2 = 42)
+val myCustomNode by myNodeWithArguments("node_name", arg1 = "value1", arg2 = 42)
 }

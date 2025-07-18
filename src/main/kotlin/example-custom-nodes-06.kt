@@ -1,12 +1,20 @@
 // This file was automatically generated from custom-nodes.md by Knit tool. Do not edit.
 package ai.koog.agents.example.exampleCustomNodes06
 
-import ai.koog.agents.core.dsl.builder.strategy
+import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
+import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
 
-val strategy = strategy<String, String>("strategy_name") {
+typealias Input = Unit
+typealias Output = Unit
 
-val stringToIntNode by node<String, Int>("node_name") { input: String ->
-    // Processing
-    input.toInt() // Convert string to integer
-}
+fun AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
+    name: String? = null
+): AIAgentNodeDelegate<Input, Output> {
+    var counter = 0
+
+    return node(name) { input ->
+        counter++
+        println("Node executed $counter times")
+        input
+    }
 }

@@ -3,15 +3,16 @@ package ai.koog.agents.example.exampleCustomNodes05
 
 import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
 import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
+import ai.koog.agents.core.dsl.builder.strategy
 
-fun <T> AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
-    name: String? = null
-): AIAgentNodeDelegate<T, T> {
-    var counter = 0
+inline fun <reified T> AIAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
+    name: String? = null,
+): AIAgentNodeDelegate<T, T> = node(name) { input ->
+    // Do some additional actions
+    // Return the input as the output
+    input
+}
 
-    return node(name) { input ->
-        counter++
-        println("Node executed $counter times")
-        input
-    }
+val strategy = strategy<String, String>("strategy_name") {
+    val myCustomNode by myParameterizedNode<String>("node_name")
 }
