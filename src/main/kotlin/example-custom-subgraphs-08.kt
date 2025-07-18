@@ -55,10 +55,11 @@ class DoAnotherAction: SimpleTool<DoAnotherAction.Args>() {
 }
 
 // Define the agent strategy
-val strategy = strategy("assistant") {
+val strategy = strategy<String, String>("assistant") {
     // A subgraph that includes a tool call
+
     val researchSubgraph by subgraph<String, String>(
-        "name",
+        "research_subgraph",
         tools = listOf(WebSearchTool())
     ) {
         val nodeCallLLM by nodeLLMRequest("call_llm")
@@ -71,9 +72,9 @@ val strategy = strategy("assistant") {
         edge(nodeSendToolResult forwardTo nodeExecuteTool onToolCall { true })
         edge(nodeCallLLM forwardTo nodeFinish onAssistantMessage { true })
     }
-    
+
     val planSubgraph by subgraph(
-        "research_subgraph",
+        "plan_subgraph",
         tools = listOf()
     ) {
         val nodeUpdatePrompt by node<String, Unit> { research ->
@@ -97,7 +98,7 @@ val strategy = strategy("assistant") {
     }
 
     val executeSubgraph by subgraph<String, String>(
-        "research_subgraph",
+        "execute_subgraph",
         tools = listOf(DoAction(), DoAnotherAction()),
     ) {
         val nodeUpdatePrompt by node<String, Unit> { plan ->

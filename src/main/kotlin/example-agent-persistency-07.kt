@@ -2,10 +2,10 @@
 package ai.koog.agents.example.exampleAgentPersistency07
 
 import ai.koog.agents.core.agent.context.AIAgentContextBase
+import ai.koog.agents.example.exampleAgentPersistency05.inputData
+import ai.koog.agents.example.exampleAgentPersistency05.inputType
 import ai.koog.agents.snapshot.feature.persistency
 import ai.koog.agents.snapshot.feature.withPersistency
-
-const val inputData = "some-input-data"
 
 suspend fun example(context: AIAgentContextBase) {
     // Access the checkpoint feature
@@ -14,6 +14,12 @@ suspend fun example(context: AIAgentContextBase) {
     // Or perform an action with the checkpoint feature
     context.withPersistency(context) { ctx ->
         // 'this' is the checkpoint feature
-        createCheckpoint(ctx.id, ctx, "node-id", inputData)
+        createCheckpoint(
+            agentContext = context,
+            nodeId = "current-node-id",
+            lastInput = inputData,
+            lastInputType = inputType,
+            checkpointId = context.id,
+        )
     }
 }

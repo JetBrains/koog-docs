@@ -3,6 +3,7 @@ package ai.koog.agents.example.exampleAgentMemory05
 
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.memory.feature.AgentMemory
+import ai.koog.agents.example.exampleAgentMemory06.memoryProvider
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.llm.OllamaModels
 

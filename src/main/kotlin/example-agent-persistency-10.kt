@@ -4,8 +4,9 @@ package ai.koog.agents.example.exampleAgentPersistency10
 import ai.koog.agents.core.agent.context.AIAgentContextBase
 import ai.koog.agents.snapshot.feature.persistency
 import ai.koog.prompt.message.Message.User
+import kotlinx.serialization.json.JsonPrimitive
 
-const val customInput = "custom-input"
+val customInput = JsonPrimitive("custom-input")
 val customMessageHistory = emptyList<User>()
 
 fun example(context: AIAgentContextBase) {
@@ -16,3 +17,4 @@ fun example(context: AIAgentContextBase) {
         input = customInput
     )
 }
+
