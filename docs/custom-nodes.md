@@ -70,52 +70,84 @@ import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
 import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
 import ai.koog.agents.core.dsl.builder.strategy
 
+typealias Input = String
+typealias Output = String
+
 val strategy = strategy<String, String>("strategy_name") {
 -->
 <!--- SUFFIX
 }
 -->
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.myCustomNode(
+fun AIAgentSubgraphBuilderBase<*, *>.myCustomNode(
     name: String? = null
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
+): AIAgentNodeDelegate<Input, Output> = node(name) { input ->
     // Custom logic
     input // Return the input as output (pass-through)
 }
 
-val myCustomNode by myCustomNode<String>("node_name")
+val myCustomNode by myCustomNode("node_name")
 ```
 <!--- KNIT example-custom-nodes-03.kt -->
 
 This creates a pass-through node that performs some custom logic but returns the input as the output without modification.
 
-### Parameterized nodes
+### Nodes with additional arguments
 
-You can create nodes that accept parameters to customize their behavior:
+You can create nodes that accept arguments to customize their behavior:
 
 <!--- INCLUDE
 import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
 import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
 import ai.koog.agents.core.dsl.builder.strategy
 
+typealias Input = String
+typealias Output = String
+
 val strategy = strategy<String, String>("strategy_name") {
 -->
 <!--- SUFFIX
 }
 -->
 ```kotlin
-    fun <T> AIAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
+    fun AIAgentSubgraphBuilderBase<*, *>.myNodeWithArguments(
     name: String? = null,
-    param1: String,
-    param2: Int
-): AIAgentNodeDelegate<T, T> = node(name) { input ->
-    // Use param1 and param2 in your custom logic
+    arg1: String,
+    arg2: Int
+): AIAgentNodeDelegate<Input, Output> = node(name) { input ->
+    // Use arg1 and arg2 in your custom logic
     input // Return the input as the output
 }
 
-val myCustomNode by myParameterizedNode<String>("node_name", param1 = "value1", param2 = 42)
+val myCustomNode by myNodeWithArguments("node_name", arg1 = "value1", arg2 = 42)
 ```
 <!--- KNIT example-custom-nodes-04.kt -->
+
+
+### Parametrized nodes
+
+You can define input, output parameter on the nodes:
+
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
+import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
+import ai.koog.agents.core.dsl.builder.strategy
+-->
+
+```kotlin
+inline fun <reified T> AIAgentSubgraphBuilderBase<*, *>.myParameterizedNode(
+    name: String? = null,
+): AIAgentNodeDelegate<T, T> = node(name) { input ->
+    // Do some additional actions
+    // Return the input as the output
+    input
+}
+
+val strategy = strategy<String, String>("strategy_name") {
+    val myCustomNode by myParameterizedNode<String>("node_name")
+}
+```
+<!--- KNIT example-custom-nodes-05.kt -->
 
 ### Stateful nodes
 
@@ -125,11 +157,14 @@ If your node needs to maintain state between runs, you can use closure variables
 import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate
 import ai.koog.agents.core.dsl.builder.AIAgentSubgraphBuilderBase
 
+typealias Input = Unit
+typealias Output = Unit
+
 -->
 ```kotlin
-fun <T> AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
+fun AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
     name: String? = null
-): AIAgentNodeDelegate<T, T> {
+): AIAgentNodeDelegate<Input, Output> {
     var counter = 0
 
     return node(name) { input ->
@@ -139,7 +174,7 @@ fun <T> AIAgentSubgraphBuilderBase<*, *>.myStatefulNode(
     }
 }
 ```
-<!--- KNIT example-custom-nodes-05.kt -->
+<!--- KNIT example-custom-nodes-06.kt -->
 
 ## Node input and output types
 
@@ -159,7 +194,7 @@ val stringToIntNode by node<String, Int>("node_name") { input: String ->
     input.toInt() // Convert string to integer
 }
 ```
-<!--- KNIT example-custom-nodes-06.kt -->
+<!--- KNIT example-custom-nodes-07.kt -->
 
 !!! note
     The input and output types determine how the node can be connected to other nodes in the workflow. Nodes can only be connected if the output type of the source node is compatible with the input type of the target node.
@@ -199,7 +234,7 @@ val loggingNode by node<String, String>("node_name") { input ->
     input // Return the input as the output
 }
 ```
-<!--- KNIT example-custom-nodes-07.kt -->
+<!--- KNIT example-custom-nodes-08.kt -->
 
 ### Transformation nodes
 
@@ -219,7 +254,7 @@ val upperCaseNode by node<String, String>("node_name") { input ->
     input.uppercase() // Transform the input to uppercase
 }
 ```
-<!--- KNIT example-custom-nodes-08.kt -->
+<!--- KNIT example-custom-nodes-09.kt -->
 
 ### LLM interaction nodes
 
@@ -245,7 +280,7 @@ val summarizeTextNode by node<String, String>("node_name") { input ->
     }
 }
 ```
-<!--- KNIT example-custom-nodes-09.kt -->
+<!--- KNIT example-custom-nodes-10.kt -->
 
 ### Tool run node
 
@@ -283,4 +318,4 @@ val nodeExecuteCustomTool by node<String, String>("node_name") { input ->
     result.content
 }
 ```
-<!--- KNIT example-custom-nodes-10.kt -->
+<!--- KNIT example-custom-nodes-11.kt -->

@@ -95,7 +95,7 @@ object CalculatorTool : Tool<CalculatorTool.Args, ToolResult.Number>() {
     }
 }
 ```
-<!--- KNIT example-advanced-tool-implementation-01.kt --> 
+<!--- KNIT example-class-based-tools-01.kt --> 
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent. For details, see [Tool registry](tools-overview.md#tool-registry).
 
@@ -169,7 +169,7 @@ object CastToDoubleTool : SimpleTool<CastToDoubleTool.Args>() {
     }
 }
 ```
-<!--- KNIT example-advanced-tool-implementation-02.kt --> 
+<!--- KNIT example-class-based-tools-02.kt --> 
 
 After implementing your tool, you need to add it to a tool registry and then use it with an agent.
 For details, see [Tool registry](tools-overview.md#tool-registry).

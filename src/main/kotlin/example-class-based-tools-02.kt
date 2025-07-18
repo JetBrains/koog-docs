@@ -1,5 +1,5 @@
-// This file was automatically generated from advanced-tool-implementation.md by Knit tool. Do not edit.
-package ai.koog.agents.example.exampleAdvancedToolImplementation02
+// This file was automatically generated from class-based-tools.md by Knit tool. Do not edit.
+package ai.koog.agents.example.exampleClassBasedTools02
 
 import ai.koog.agents.core.tools.SimpleTool
 import ai.koog.agents.core.tools.ToolArgs
