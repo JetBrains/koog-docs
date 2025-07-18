@@ -13,6 +13,6 @@ val agent = AIAgent(
 ) {
 
 install(Persistency) {
-    storage = InMemoryPersistencyStorageProvider()
+    storage = InMemoryPersistencyStorageProvider("in-memory-storage")
 }
 } 

@@ -9,15 +9,15 @@ import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.llm.OllamaModels
 
 class MyCustomStorageProvider : PersistencyStorageProvider {
-    override suspend fun getCheckpoints(agentId: String): List<AgentCheckpointData> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getLatestCheckpoint(agentId: String): AgentCheckpointData? {
+    override suspend fun getCheckpoints(): List<AgentCheckpointData> {
         TODO("Not yet implemented")
     }
 
     override suspend fun saveCheckpoint(agentCheckpointData: AgentCheckpointData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLatestCheckpoint(): AgentCheckpointData? {
         TODO("Not yet implemented")
     }
 }

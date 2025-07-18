@@ -26,5 +26,5 @@ class CalculatorTools : ToolSet {
 
 // Add the tool to the tool registry
 val toolRegistry = ToolRegistry {
-    tools(CalculatorTools().asTools())
+    tools(CalculatorTools())
 }

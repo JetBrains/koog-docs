@@ -199,7 +199,7 @@ Now you can use your tools with an agent:
 <!--- INCLUDE
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.tools.ToolRegistry
-import ai.koog.agents.core.tools.reflect.asTools
+import ai.koog.agents.core.tools.reflect.tools
 import ai.koog.agents.example.exampleAnnotationBasedTools06.MyFirstToolSet
 import ai.koog.prompt.executor.clients.openai.OpenAIModels
 import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
@@ -220,7 +220,7 @@ fun main() {
             systemPrompt = "Provide weather information for a given location.",
             llmModel = OpenAIModels.Chat.GPT4o,
             toolRegistry = ToolRegistry {
-                tools(weatherTools.asTools())
+                tools(weatherTools)
             }
         )
 
