@@ -25,5 +25,6 @@ knit {
     files = fileTree("docs/") {
         include("**/*.md")
     }
+    moduleDocs = "docs/modules.md"
     siteRoot = "https://docs.koog.ai/"
 }
