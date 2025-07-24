@@ -51,6 +51,7 @@ markdown_extensions:
   - admonition
 
 plugins:
+  - search
   - redirects:
       redirect_maps:
         'simple-api-getting-started.md': 'index.md'
