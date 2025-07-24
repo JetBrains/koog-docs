@@ -25,7 +25,7 @@ Key features of Koog include:
 - **Flexible graph workflows**: Design complex agent behaviors using intuitive graph-based workflows.
 - **Modular feature system**: Customize agent capabilities through a composable architecture.
 - **Scalable architecture**: Handle workloads from simple chatbots to enterprise applications.
-- **Multiplatform**: Run agents on both JVM and JS targets with Kotlin Multiplatform.
+- **Multiplatform**: Run agents on JVM, JS, WasmJS targets with Kotlin Multiplatform.
 
 # Available LLM providers and platforms
 
