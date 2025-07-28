@@ -12,10 +12,6 @@ LLM providers in a provider-agnostic way. The set includes the following classes
 
 - **LLModel**: a data class that represents a specific LLM with its provider, unique identifier, and supported capabilities.
 
-- **LLMProvider**: a class hierarchy that defines supported LLM providers.
-
-- **OllamaModels**: a collection of predefined LLM configurations for specific models from providers like Meta and Alibaba, with their respective capabilities.
-
 This serves as a foundation for interacting with different LLM providers in a unified way, allowing applications to work
 with various models while abstracting away provider-specific details.
 
