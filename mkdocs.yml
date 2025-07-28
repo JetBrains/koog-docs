@@ -19,6 +19,7 @@ nav:
         - Parallel node execution: parallel-node-execution.md
       - History compression: history-compression.md
       - Model Context Protocol: model-context-protocol.md
+      - Model capabilities: model-capabilities.md
       - Content moderation: content-moderation.md
       - Advanced usage:
           - Structured data: structured-data.md
