@@ -112,6 +112,12 @@ This section provides detailed examples of creating `LLModel` instances with dif
 
 The code below represents a basic LLM configuration with core capabilities:
 
+<!--- INCLUDE
+import ai.koog.prompt.llm.LLMCapability
+import ai.koog.prompt.llm.LLMProvider
+import ai.koog.prompt.llm.LLModel
+
+-->
 ```kotlin
 val basicModel = LLModel(
     provider = LLMProvider.OpenAI,
@@ -120,13 +126,19 @@ val basicModel = LLModel(
         LLMCapability.Temperature,
         LLMCapability.Tools,
         LLMCapability.Schema.JSON.Full
-    ),
-    contextLength = 128_000
+    )
 )
 ```
+<!--- KNIT example-model-capabilities-01.kt -->
 
 The model configuration below is a multimodal LLM with vision capabilities:
 
+<!--- INCLUDE
+import ai.koog.prompt.llm.LLMCapability
+import ai.koog.prompt.llm.LLMProvider
+import ai.koog.prompt.llm.LLModel
+
+-->
 ```kotlin
 val visionModel = LLModel(
     provider = LLMProvider.OpenAI,
@@ -135,13 +147,19 @@ val visionModel = LLModel(
         LLMCapability.Temperature,
         LLMCapability.Vision.Image,
         LLMCapability.MultipleChoices
-    ),
-    contextLength = 1_047_576,
-    maxOutputTokens = 32_768
+    )
 )
 ```
+<!--- KNIT example-model-capabilities-02.kt -->
+
 An LLM with audio processing capabilities:
 
+<!--- INCLUDE
+import ai.koog.prompt.llm.LLMCapability
+import ai.koog.prompt.llm.LLMProvider
+import ai.koog.prompt.llm.LLModel
+
+-->
 ```kotlin
 val audioModel = LLModel(
     provider = LLMProvider.Anthropic,
@@ -150,22 +168,37 @@ val audioModel = LLModel(
         LLMCapability.Audio,
         LLMCapability.Temperature,
         LLMCapability.PromptCaching
-    ),
-    contextLength = 200_000
+    )
 )
 ```
+<!--- KNIT example-model-capabilities-03.kt -->
+
 
 In addition to creating models as `LLModel` instances and having to specify all related parameters, Koog includes a
 collection of predefined models and their configurations with supported capabilities.
 To use a predefined Ollama model, specify it as follows:
 
+<!--- INCLUDE
+import ai.koog.prompt.llm.OllamaModels
+
+-->
 ```kotlin
 val metaModel = OllamaModels.Meta.LLAMA_3_2
 ```
+<!--- KNIT example-model-capabilities-04.kt -->
+
 
 To check whether a model supports a specific capability use the `contains` method to check for the presence of the 
 capability in the `capabilities` list:
 
+<!--- INCLUDE
+import ai.koog.prompt.llm.LLMCapability
+import ai.koog.prompt.llm.OllamaModels
+
+val basicModel = OllamaModels.Meta.LLAMA_3_2
+val visionModel = OllamaModels.Meta.LLAMA_3_2
+
+-->
 ```kotlin
 // Check if models support specific capabilities
 val supportsTools = basicModel.capabilities.contains(LLMCapability.Tools) // true
@@ -175,6 +208,7 @@ val supportsVideo = visionModel.capabilities.contains(LLMCapability.Vision.Video
 val jsonCapability = basicModel.capabilities.filterIsInstance<LLMCapability.Schema.JSON>().firstOrNull()
 val hasFullJsonSupport = jsonCapability is LLMCapability.Schema.JSON.Full // true
 ```
+<!--- KNIT example-model-capabilities-05.kt -->
 
 ### LLM capabilities by model
 
