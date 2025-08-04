@@ -13,6 +13,7 @@ val logBackVersion = "1.5.13"
 
 dependencies {
     implementation("ai.koog:koog-agents:$koogVersion")
+    implementation("ai.koog:agents-test:$koogVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("ch.qos.logback:logback-classic:$logBackVersion")
