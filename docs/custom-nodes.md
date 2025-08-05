@@ -124,9 +124,9 @@ val myCustomNode by myNodeWithArguments("node_name", arg1 = "value1", arg2 = 42)
 <!--- KNIT example-custom-nodes-04.kt -->
 
 
-### Parametrized nodes
+### Parameterized nodes
 
-You can define input, output parameter on the nodes:
+You can define nodes with input and output parameters:
 
 <!--- INCLUDE
 import ai.koog.agents.core.dsl.builder.AIAgentNodeDelegate

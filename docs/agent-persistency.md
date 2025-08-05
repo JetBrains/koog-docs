@@ -224,11 +224,11 @@ suspend fun example(context: AIAgentContextBase) {
     context.withPersistency(context) { ctx ->
         // 'this' is the checkpoint feature
         createCheckpoint(
-            agentContext = context,
+            agentContext = ctx,
             nodeId = "current-node-id",
             lastInput = inputData,
             lastInputType = inputType,
-            checkpointId = context.id,
+            checkpointId = ctx.id,
         )
     }
 }
