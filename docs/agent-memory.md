@@ -162,6 +162,7 @@ To install the AgentMemory feature in an agent, follow the pattern provided in t
 <!--- INCLUDE
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.memory.feature.AgentMemory
+import ai.koog.agents.example.exampleAgentMemory06.memoryProvider
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.llm.OllamaModels
 -->
@@ -441,11 +442,11 @@ In the example above, the LLM would search for the user-related facts and projec
     import ai.koog.agents.core.agent.AIAgent
     -->
    ```kotlin
-   try {
-       memoryProvider.save(fact, subject)
-   } catch (e: Exception) {
-       println("Oops! Couldn't save: ${e.message}")
-   }
+    try {
+        memoryProvider.save(fact, subject)
+    } catch (e: Exception) {
+        println("Oops! Couldn't save: ${e.message}")
+    }
    ```
    <!--- KNIT example-agent-memory-14.kt -->
 

@@ -44,6 +44,14 @@ The OpenTelemetry feature in Koog automatically creates spans for various agent 
 
 To use OpenTelemetry with Koog, add the OpenTelemetry feature to your agent:
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+
+const val apiKey = ""
+-->
 ```kotlin
 val agent = AIAgent(
     executor = simpleOpenAIExecutor(apiKey),
@@ -56,6 +64,7 @@ val agent = AIAgent(
     }
 )
 ```
+<!--- KNIT example-opentelemetry-support-01.kt -->
 
 ## Configuration
 
@@ -78,6 +87,24 @@ Here is the full list of available properties that you set when configuring the 
 The `OpenTelemetryConfig` class also includes methods that represent actions related to different configuration
 items. Here is an example of installing the OpenTelemetry feature with a basic set of configuration items:
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import io.opentelemetry.exporter.logging.LoggingSpanExporter
+
+const val apiKey = ""
+
+val agent = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
+    llmModel = OpenAIModels.Chat.GPT4o,
+    systemPrompt = "You are a helpful assistant."
+) {
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 install(OpenTelemetry) {
     // Set your service configuration
@@ -87,6 +114,7 @@ install(OpenTelemetry) {
     addSpanExporter(LoggingSpanExporter.create())
 }
 ```
+<!--- KNIT example-opentelemetry-support-02.kt -->
 
 For a reference of available methods, see the sections below.
 
@@ -146,6 +174,26 @@ For more advanced configuration, you can also customize the following configurat
 - Sampler: configure the sampling strategy to adjust the frequency and amount of collected data.
 - Resource attributes: add more information about the process that is producing telemetry data. 
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.exporter.logging.LoggingSpanExporter
+import io.opentelemetry.sdk.trace.samplers.Sampler
+
+const val apiKey = ""
+
+val agent = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
+    llmModel = OpenAIModels.Chat.GPT4o,
+    systemPrompt = "You are a helpful assistant."
+) {
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 install(OpenTelemetry) {
     // Set your service configuration
@@ -163,6 +211,7 @@ install(OpenTelemetry) {
     )
 }
 ```
+<!--- KNIT example-opentelemetry-support-03.kt -->
 
 #### Sampler
 
@@ -194,11 +243,33 @@ In addition to default resource attributes, you can also add custom attributes. 
 OpenTelemetry configuration in Koog, use the `addResourceAttributes()` method in an OpenTelemetry configuration that 
 takes a key and a value as its arguments.
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import io.opentelemetry.api.common.AttributeKey
+
+
+const val apiKey = "api-key"
+val agent = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
+    llmModel = OpenAIModels.Chat.GPT4o,
+    systemPrompt = "You are a helpful assistant.",
+    installFeatures = {
+        install(OpenTelemetry) {
+-->
+<!--- SUFFIX
+        }
+    }
+)
+-->
 ```kotlin
 addResourceAttributes(mapOf(
     AttributeKey.stringKey("custom.attribute") to "custom-value")
 )
 ```
+<!--- KNIT example-opentelemetry-support-04.kt -->
 
 ## Span types and attributes
 
@@ -279,6 +350,24 @@ A logging exporter that outputs trace information to the console. `LoggingSpanEx
 
 This type of export is useful for development and debugging purposes.
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import io.opentelemetry.exporter.logging.LoggingSpanExporter
+
+const val apiKey = ""
+
+val agent = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
+    llmModel = OpenAIModels.Chat.GPT4o,
+    systemPrompt = "You are a helpful assistant."
+) {
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 install(OpenTelemetry) {
     // Add the logging exporter
@@ -286,12 +375,34 @@ install(OpenTelemetry) {
     // Add more exporters as needed
 }
 ```
+<!--- KNIT example-opentelemetry-support-05.kt -->
 
 ### OpenTelemetry HTTP exporter
 
 OpenTelemetry HTTP exporter (`OtlpHttpSpanExporter`) is a part of the `opentelemetry-java` SDK 
 (`io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter`) and sends span data to a backend through HTTP.
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
+import java.util.concurrent.TimeUnit
+
+const val apiKey = ""
+const val AUTH_STRING = ""
+
+
+val agent = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
+    llmModel = OpenAIModels.Chat.GPT4o,
+    systemPrompt = "You are a helpful assistant."
+) {
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 install(OpenTelemetry) {
    // Add OpenTelemetry HTTP exporter 
@@ -307,6 +418,7 @@ install(OpenTelemetry) {
    )
 }
 ```
+<!--- KNIT example-opentelemetry-support-06.kt -->
 
 ### OpenTelemetry gRPC exporter
 
@@ -315,6 +427,24 @@ OpenTelemetry gRPC exporter (`OtlpGrpcSpanExporter`) is a part of the `opentelem
 lets you define the host and port of the backend, collector, or endpoint that receives the data. The default port is 
 `4317`.
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
+
+const val apiKey = ""
+
+val agent = AIAgent(
+    executor = simpleOpenAIExecutor(apiKey),
+    llmModel = OpenAIModels.Chat.GPT4o,
+    systemPrompt = "You are a helpful assistant."
+) {
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 install(OpenTelemetry) {
    // Add OpenTelemetry gRPC exporter 
@@ -326,6 +456,7 @@ install(OpenTelemetry) {
    )
 }
 ```
+<!--- KNIT example-opentelemetry-support-07.kt -->
 
 ## Integration with Jaeger
 
@@ -366,47 +497,52 @@ To export telemetry data for use in Jaeger, the example uses `LoggingSpanExporte
 
 Here is the full code sample:
 
-```kotlin
+<!--- INCLUDE
 import ai.koog.agents.core.agent.AIAgent
-import ai.koog.agents.example.ApiKeyService
 import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.agents.utils.use
 import ai.koog.prompt.executor.clients.openai.OpenAIModels
 import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 import kotlinx.coroutines.runBlocking
 
+const val openAIApiKey = "open-ai-api-key"
 
-fun main() = runBlocking {
+-->
+```kotlin
+fun main() {
+    runBlocking {
+        val agent = AIAgent(
+            executor = simpleOpenAIExecutor(openAIApiKey),
+            llmModel = OpenAIModels.Reasoning.GPT4oMini,
+            systemPrompt = "You are a code assistant. Provide concise code examples."
+        ) {
+            install(OpenTelemetry) {
+                // Add a console logger for local debugging
+                addSpanExporter(LoggingSpanExporter.create())
 
-   val agent = AIAgent(
-      executor = simpleOpenAIExecutor(ApiKeyService.openAIApiKey),
-      llmModel = OpenAIModels.Reasoning.GPT4oMini,
-      systemPrompt = "You are a code assistant. Provide concise code examples."
-   ) {
-      install(OpenTelemetry) {
-         // Add a console logger for local debugging
-         addSpanExporter(LoggingSpanExporter.create())
+                // Send traces to OpenTelemetry collector
+                addSpanExporter(
+                    OtlpGrpcSpanExporter.builder()
+                        .setEndpoint("http://localhost:4317")
+                        .build()
+                )
+            }
+        }
 
-         // Send traces to OpenTelemetry collector
-         addSpanExporter(
-            OtlpGrpcSpanExporter.builder()
-               .setEndpoint("http://localhost:4317")
-               .build()
-         )
-      }
-   }
+        agent.use { agent ->
+            println("Running the agent with OpenTelemetry tracing...")
 
-    agent.use { agent ->
-        println("Running the agent with OpenTelemetry tracing...")
+            val result = agent.run("Tell me a joke about programming")
 
-        val result = agent.run("Tell me a joke about programming")
-
-        println("Agent run completed with result: '$result'." +
-                "\nCheck Jaeger UI at http://localhost:16686 to view traces")
+            println("Agent run completed with result: '$result'." +
+                    "\nCheck Jaeger UI at http://localhost:16686 to view traces")
+        }
     }
 }
 ```
+<!--- KNIT example-opentelemetry-support-08.kt -->
 
 ## Troubleshooting
 

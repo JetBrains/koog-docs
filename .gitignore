@@ -72,3 +72,6 @@ site*/
 
 # Gradle
 .gradle
+
+# Generated knit examples (should not be committed)
+src/main/kotlin/example-*.kt

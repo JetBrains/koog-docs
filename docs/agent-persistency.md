@@ -63,7 +63,7 @@ val agent = AIAgent(
 ) {
     install(Persistency) {
         // Use in-memory storage for snapshots
-        storage = InMemoryPersistencyStorageProvider()
+        storage = InMemoryPersistencyStorageProvider("in-memory-storage")
         // Enable automatic persistency
         enableAutomaticPersistency = true
     }
@@ -101,7 +101,7 @@ val agent = AIAgent(
 
 ```kotlin
 install(Persistency) {
-    storage = InMemoryPersistencyStorageProvider()
+    storage = InMemoryPersistencyStorageProvider("in-memory-storage")
 }
 ```
 
@@ -158,22 +158,25 @@ To learn how to create a checkpoint at a specific point in your agent's executio
 <!--- INCLUDE
 import ai.koog.agents.core.agent.context.AIAgentContextBase
 import ai.koog.agents.snapshot.feature.persistency
+import kotlin.reflect.typeOf
 
 const val inputData = "some-input-data"
+val inputType = typeOf<String>()
 -->
 
 ```kotlin
 suspend fun example(context: AIAgentContextBase) {
     // Create a checkpoint with the current state
     val checkpoint = context.persistency().createCheckpoint(
-        agentId = context.id,
         agentContext = context,
         nodeId = "current-node-id",
-        lastInput = inputData
+        lastInput = inputData,
+        lastInputType = inputType,
+        checkpointId = context.id,
     )
 
     // The checkpoint ID can be stored for later use
-    val checkpointId = checkpoint.checkpointId
+    val checkpointId = checkpoint?.checkpointId
 }
 ```
 
@@ -206,10 +209,10 @@ The Agent Persistency feature provides convenient extension functions for workin
 
 <!--- INCLUDE
 import ai.koog.agents.core.agent.context.AIAgentContextBase
+import ai.koog.agents.example.exampleAgentPersistency05.inputData
+import ai.koog.agents.example.exampleAgentPersistency05.inputType
 import ai.koog.agents.snapshot.feature.persistency
 import ai.koog.agents.snapshot.feature.withPersistency
-
-const val inputData = "some-input-data"
 -->
 
 ```kotlin
@@ -220,7 +223,13 @@ suspend fun example(context: AIAgentContextBase) {
     // Or perform an action with the checkpoint feature
     context.withPersistency(context) { ctx ->
         // 'this' is the checkpoint feature
-        createCheckpoint(ctx.id, ctx, "node-id", inputData)
+        createCheckpoint(
+            agentContext = ctx,
+            nodeId = "current-node-id",
+            lastInput = inputData,
+            lastInputType = inputType,
+            checkpointId = ctx.id,
+        )
     }
 }
 ```
@@ -272,15 +281,15 @@ import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.llm.OllamaModels
 
 class MyCustomStorageProvider : PersistencyStorageProvider {
-    override suspend fun getCheckpoints(agentId: String): List<AgentCheckpointData> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getLatestCheckpoint(agentId: String): AgentCheckpointData? {
+    override suspend fun getCheckpoints(): List<AgentCheckpointData> {
         TODO("Not yet implemented")
     }
 
     override suspend fun saveCheckpoint(agentCheckpointData: AgentCheckpointData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLatestCheckpoint(): AgentCheckpointData? {
         TODO("Not yet implemented")
     }
 }
@@ -310,8 +319,9 @@ For advanced control, you can directly set the execution point of an agent:
 import ai.koog.agents.core.agent.context.AIAgentContextBase
 import ai.koog.agents.snapshot.feature.persistency
 import ai.koog.prompt.message.Message.User
+import kotlinx.serialization.json.JsonPrimitive
 
-const val customInput = "custom-input"
+val customInput = JsonPrimitive("custom-input")
 val customMessageHistory = emptyList<User>()
 -->
 
@@ -324,6 +334,7 @@ fun example(context: AIAgentContextBase) {
         input = customInput
     )
 }
+
 ```
 
 <!--- KNIT example-agent-persistency-10.kt -->

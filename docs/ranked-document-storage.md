@@ -42,6 +42,24 @@ To implement a RAG system in Koog, follow the steps below:
 
 This sequence of steps represents a *relevance search* flow that returns the most relevant documents for a given user query. Here is a code sample showing how to implement the entire sequence of steps described above:
 
+<!--- INCLUDE
+import ai.koog.embeddings.local.LLMEmbedder
+import ai.koog.embeddings.local.OllamaEmbeddingModels
+import ai.koog.prompt.executor.ollama.client.OllamaClient
+import ai.koog.rag.base.mostRelevantDocuments
+import ai.koog.rag.vector.EmbeddingBasedDocumentStorage
+import ai.koog.rag.vector.InMemoryVectorStorage
+import ai.koog.rag.vector.JVMTextDocumentEmbedder
+import kotlinx.coroutines.runBlocking
+import java.nio.file.Path
+
+fun main() {
+    runBlocking {
+-->
+<!--- SUFFIX
+    }
+}
+-->
 ```kotlin
 // Create an embedder using Ollama
 val embedder = LLMEmbedder(OllamaClient(), OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
@@ -71,6 +89,8 @@ relevantFiles.forEach { file ->
     // Process the file content as needed
 }
 ```
+<!--- KNIT example-ranked-document-storage-01.kt -->
+
 
 ### Providing relevance search for use by AI agents
 
@@ -78,29 +98,63 @@ Once you have a ranked document storage system, you can use it to provide releva
 
 Here is an example of how to implement the defined RAG system for an AI agent to be able to answer queries by getting information from the document storage: 
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.agent.config.AIAgentConfig
+import ai.koog.embeddings.local.LLMEmbedder
+import ai.koog.embeddings.local.OllamaEmbeddingModels
+import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import ai.koog.prompt.executor.ollama.client.OllamaClient
+import ai.koog.rag.base.mostRelevantDocuments
+import ai.koog.rag.vector.EmbeddingBasedDocumentStorage
+import ai.koog.rag.vector.InMemoryVectorStorage
+import ai.koog.rag.vector.JVMTextDocumentEmbedder
+import kotlin.io.path.pathString
+
+// Create an embedder using Ollama
+val embedder = LLMEmbedder(OllamaClient(), OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
+// You may also use OpenAI embeddings with:
+// val embedder = LLMEmbedder(OpenAILLMClient("API_KEY"), OpenAIModels.Embeddings.TextEmbeddingAda3Large)
+
+// Create a JVM-specific document embedder
+val documentEmbedder = JVMTextDocumentEmbedder(embedder)
+
+// Create a ranked document storage using in-memory vector storage
+val rankedDocumentStorage = EmbeddingBasedDocumentStorage(documentEmbedder, InMemoryVectorStorage())
+
+const val apiKey = "apikey"
+
+-->
 ```kotlin
-fun solveUserRequest(query: String) {
+suspend fun solveUserRequest(query: String) {
     // Retrieve top-5 documents from the document provider
     val relevantDocuments = rankedDocumentStorage.mostRelevantDocuments(query, count = 5)
 
     // Create an AI Agent with the relevant context
     val agentConfig = AIAgentConfig(
-       prompt = prompt("context") {
-          system("You are a helpful assistant. Use the provided context to answer the user's question accurately.")
-          relevantDocuments.forEach { doc ->
-              user("Relevant context: \n" + doc.readText())
-          }
-       },
-       model = OpenAIModels.Chat.GPT4o, // Or a different model of your choice
-       maxAgentIterations = 100,
+        prompt = prompt("context") {
+            system("You are a helpful assistant. Use the provided context to answer the user's question accurately.")
+            user {
+                "Relevant context"
+                attachments {
+                    relevantDocuments.forEach {
+                        file(it.pathString, "text/plain")
+                    }
+                }
+            }
+        },
+        model = OpenAIModels.Chat.GPT4o, // Or a different model of your choice
+        maxAgentIterations = 100,
     )
 
     val agent = AIAgent(
-       agentConfig = agentConfig,
-       ...
+        executor = simpleOpenAIExecutor(apiKey),
+        llmModel = OpenAIModels.Chat.GPT4o
     )
 
-   
+
     // Run the agent to get a response
     val response = agent.run(query)
 
@@ -108,6 +162,8 @@ fun solveUserRequest(query: String) {
     println("Agent response: $response")
 }
 ```
+<!--- KNIT example-ranked-document-storage-02.kt -->
+
 
 ### Providing relevance search as a tool
 
@@ -115,47 +171,84 @@ Instead of directly providing document content as context, you can also implemen
 
 Here is an example of how to implement a relevance search tool:
 
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.tools.ToolRegistry
+import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.agents.core.tools.annotations.Tool
+import ai.koog.agents.core.tools.reflect.asTool
+import ai.koog.embeddings.local.LLMEmbedder
+import ai.koog.embeddings.local.OllamaEmbeddingModels
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+import ai.koog.prompt.executor.ollama.client.OllamaClient
+import ai.koog.rag.base.mostRelevantDocuments
+import ai.koog.rag.vector.EmbeddingBasedDocumentStorage
+import ai.koog.rag.vector.InMemoryVectorStorage
+import ai.koog.rag.vector.JVMTextDocumentEmbedder
+import kotlinx.coroutines.runBlocking
+import java.nio.file.Files
+
+// Create an embedder using Ollama
+val embedder = LLMEmbedder(OllamaClient(), OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
+// You may also use OpenAI embeddings with:
+// val embedder = LLMEmbedder(OpenAILLMClient("API_KEY"), OpenAIModels.Embeddings.TextEmbeddingAda3Large)
+
+// Create a JVM-specific document embedder
+val documentEmbedder = JVMTextDocumentEmbedder(embedder)
+
+// Create a ranked document storage using in-memory vector storage
+val rankedDocumentStorage = EmbeddingBasedDocumentStorage(documentEmbedder, InMemoryVectorStorage())
+
+const val apiKey = "apikey"
+
+-->
 ```kotlin
 @Tool
 @LLMDescription("Search for relevant documents about any topic (if exists). Returns the content of the most relevant documents.")
-fun searchDocuments(
-   @LLMDescription("Request to search relevant documents about")
-   request: String,
-   @LLMDescription("Maximum number of documents")
-   count: Int
+suspend fun searchDocuments(
+    @LLMDescription("Query to search relevant documents about")
+    query: String,
+    @LLMDescription("Maximum number of documents")
+    count: Int
 ): String {
-   val relevantDocuments = documentStorage.mostRelevantDocuments(query, count = count, similarityThreshold = 0.9)
+    val relevantDocuments =
+        rankedDocumentStorage.mostRelevantDocuments(query, count = count, similarityThreshold = 0.9).toList()
 
-   if (relevantDocuments.isEmpty()) {
-      return "No relevant documents found for the query: $query"
-   }
+    if (!relevantDocuments.isEmpty()) {
+        return "No relevant documents found for the query: $query"
+    }
 
-   val result = StringBuilder("Found ${relevantDocuments.size} relevant documents:\n\n")
+    val result = StringBuilder("Found ${relevantDocuments.size} relevant documents:\n\n")
 
-   relevantDocuments.forEachIndexed { index, document ->
-      val content = Files.readString(document)
-      result.append("Document ${index + 1}: ${document.fileName}\n")
-      result.append("Content: $content\n\n")
-   }
+    relevantDocuments.forEachIndexed { index, document ->
+        val content = Files.readString(document)
+        result.append("Document ${index + 1}: ${document.fileName}\n")
+        result.append("Content: $content\n\n")
+    }
 
-   return result.toString()
+    return result.toString()
 }
 
-...
+fun main() {
+    runBlocking {
+        val tools = ToolRegistry {
+            tool(::searchDocuments.asTool())
+        }
 
-val tools = ToolRegistry {
-  tool(::searchDocuments)
-  ...
+        val agent = AIAgent(
+            toolRegistry = tools,
+            executor = simpleOpenAIExecutor(apiKey),
+            llmModel = OpenAIModels.Chat.GPT4o
+        )
+
+        val response = agent.run("How to make a cake?")
+        println("Agent response: $response")
+
+    }
 }
-
-val agent = AIAgent(
-    toolRegistry = tools,
-    ...
-)
-
-val response = agent.run("How to make a cake?")
-println("Agent response: $response")
 ```
+<!--- KNIT example-ranked-document-storage-03.kt -->
 
 With this approach, the agent can decide when to use the search tool based on your query. This is particularly useful for complex queries that may require information from multiple documents or when the agent needs to search for specific details.
 
@@ -169,9 +262,14 @@ For convenience and easier implementation of a RAG system, Koog provides several
 
 A simple in-memory implementation that stores documents and their vector embeddings in memory. Suitable for testing or small-scale applications.
 
+<!--- INCLUDE
+import ai.koog.rag.vector.InMemoryVectorStorage
+import java.nio.file.Path
+-->
 ```kotlin
 val inMemoryStorage = InMemoryVectorStorage<Path>()
 ```
+<!--- KNIT example-ranked-document-storage-04.kt -->
 
 For more information, see the [InMemoryVectorStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-in-memory-vector-storage/index.html) reference.
 
@@ -179,6 +277,12 @@ For more information, see the [InMemoryVectorStorage](https://api.koog.ai/rag/ve
 
 A file-based implementation that stores documents and their vector embeddings on disk. Suitable for persistent storage across application restarts.
 
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
 ```kotlin
 val fileStorage = FileVectorStorage<Document, Path>(
    documentReader = documentProvider,
@@ -186,6 +290,7 @@ val fileStorage = FileVectorStorage<Document, Path>(
    root = rootPath
 )
 ```
+<!--- KNIT example-ranked-document-storage-05.kt -->
 
 For more information, see the [FileVectorStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-file-vector-storage/index.html) reference.
 
@@ -193,9 +298,14 @@ For more information, see the [FileVectorStorage](https://api.koog.ai/rag/vector
 
 A JVM-specific implementation of `FileVectorStorage` that works with `java.nio.file.Path`.
 
+<!--- INCLUDE
+import ai.koog.rag.vector.JVMFileVectorStorage
+import java.nio.file.Path
+-->
 ```kotlin
 val jvmFileStorage = JVMFileVectorStorage(root = Path.of("/path/to/storage"))
 ```
+<!--- KNIT example-ranked-document-storage-06.kt -->
 
 For more information, see the [JVMFileVectorStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-j-v-m-file-vector-storage/index.html) reference.
 
@@ -205,12 +315,19 @@ For more information, see the [JVMFileVectorStorage](https://api.koog.ai/rag/vec
 
 A generic implementation that works with any document type that can be converted to text.
 
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
 ```kotlin
 val textEmbedder = TextDocumentEmbedder<Document, Path>(
    documentReader = documentProvider,
    embedder = embedder
 )
 ```
+<!--- KNIT example-ranked-document-storage-07.kt -->
 
 For more information, see the [TextDocumentEmbedder](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-text-document-embedder/index.html) reference.
 
@@ -218,9 +335,18 @@ For more information, see the [TextDocumentEmbedder](https://api.koog.ai/rag/vec
 
 A JVM-specific implementation that works with `java.nio.file.Path`.
 
+<!--- INCLUDE
+import ai.koog.embeddings.local.LLMEmbedder
+import ai.koog.embeddings.local.OllamaEmbeddingModels
+import ai.koog.prompt.executor.ollama.client.OllamaClient
+import ai.koog.rag.vector.JVMTextDocumentEmbedder
+
+-->
 ```kotlin
+val embedder = LLMEmbedder(OllamaClient(), OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
 val jvmTextEmbedder = JVMTextDocumentEmbedder(embedder = embedder)
 ```
+<!--- KNIT example-ranked-document-storage-08.kt -->
 
 For more information, see the [JVMTextDocumentEmbedder](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-j-v-m-text-document-embedder/index.html) reference.
 
@@ -230,12 +356,22 @@ For more information, see the [JVMTextDocumentEmbedder](https://api.koog.ai/rag/
 
 Combines a document embedder and a vector storage to provide a complete solution for storing and ranking documents.
 
+<!--- INCLUDE
+import ai.koog.agents.example.exampleRankedDocumentStorage02.documentEmbedder
+import ai.koog.rag.vector.EmbeddingBasedDocumentStorage
+import ai.koog.rag.vector.InMemoryVectorStorage
+import java.nio.file.Path
+
+val vectorStorage = InMemoryVectorStorage<Path>()
+
+-->
 ```kotlin
 val embeddingStorage = EmbeddingBasedDocumentStorage(
-   embedder = documentEmbedder,
-   storage = vectorStorage
+    embedder = documentEmbedder,
+    storage = vectorStorage
 )
 ```
+<!--- KNIT example-ranked-document-storage-09.kt -->
 
 For more information, see the [EmbeddingBasedDocumentStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-embedding-based-document-storage/index.html) reference.
 
@@ -243,11 +379,20 @@ For more information, see the [EmbeddingBasedDocumentStorage](https://api.koog.a
 
 An in-memory implementation of `EmbeddingBasedDocumentStorage`.
 
+<!--- INCLUDE
+import ai.koog.agents.example.exampleRankedDocumentStorage03.documentEmbedder
+import ai.koog.rag.vector.InMemoryDocumentEmbeddingStorage
+import java.nio.file.Path
+
+typealias Document = Path
+-->
 ```kotlin
 val inMemoryEmbeddingStorage = InMemoryDocumentEmbeddingStorage<Document>(
-   embedder = documentEmbedder
+    embedder = documentEmbedder
 )
+
 ```
+<!--- KNIT example-ranked-document-storage-10.kt -->
 
 For more information, see the [InMemoryDocumentEmbeddingStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-in-memory-document-embedding-storage/index.html) reference.
 
@@ -255,6 +400,12 @@ For more information, see the [InMemoryDocumentEmbeddingStorage](https://api.koo
 
 A file-based implementation of `EmbeddingBasedDocumentStorage`.
 
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
 ```kotlin
 val fileEmbeddingStorage = FileDocumentEmbeddingStorage<Document, Path>(
    embedder = documentEmbedder,
@@ -263,6 +414,7 @@ val fileEmbeddingStorage = FileDocumentEmbeddingStorage<Document, Path>(
    root = rootPath
 )
 ```
+<!--- KNIT example-ranked-document-storage-11.kt -->
 
 For more information, see the [FileDocumentEmbeddingStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-file-document-embedding-storage/index.html) reference.
 
@@ -270,12 +422,18 @@ For more information, see the [FileDocumentEmbeddingStorage](https://api.koog.ai
 
 A JVM-specific implementation of `FileDocumentEmbeddingStorage`.
 
+<!--- INCLUDE
+import ai.koog.agents.example.exampleRankedDocumentStorage03.documentEmbedder
+import ai.koog.rag.vector.JVMFileDocumentEmbeddingStorage
+import java.nio.file.Path
+-->
 ```kotlin
 val jvmFileEmbeddingStorage = JVMFileDocumentEmbeddingStorage(
    embedder = documentEmbedder,
    root = Path.of("/path/to/storage")
 )
 ```
+<!--- KNIT example-ranked-document-storage-12.kt -->
 
 For more information, see the [JVMFileDocumentEmbeddingStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-j-v-m-file-document-embedding-storage/index.html) reference.
 
@@ -283,12 +441,18 @@ For more information, see the [JVMFileDocumentEmbeddingStorage](https://api.koog
 
 A JVM-specific implementation that combines `JVMTextDocumentEmbedder` and `JVMFileVectorStorage`.
 
+<!--- INCLUDE
+import ai.koog.agents.example.exampleRankedDocumentStorage08.embedder
+import ai.koog.rag.vector.JVMTextFileDocumentEmbeddingStorage
+import java.nio.file.Path
+-->
 ```kotlin
 val jvmTextFileEmbeddingStorage = JVMTextFileDocumentEmbeddingStorage(
    embedder = embedder,
    root = Path.of("/path/to/storage")
 )
 ```
+<!--- KNIT example-ranked-document-storage-13.kt -->
 
 For more information, see the [JVMTextFileDocumentEmbeddingStorage](https://api.koog.ai/rag/vector-storage/ai.koog.rag.vector/-j-v-m-text-file-document-embedding-storage/index.html) reference.
 
@@ -300,6 +464,23 @@ You can extend Koog's vector storage framework by implementing your own custom d
 
 Here's an example of implementing a custom document embedder for PDF documents:
 
+<!--- INCLUDE
+import ai.koog.embeddings.base.Embedder
+import ai.koog.embeddings.base.Vector
+import ai.koog.embeddings.local.LLMEmbedder
+import ai.koog.embeddings.local.OllamaEmbeddingModels
+import ai.koog.prompt.executor.ollama.client.OllamaClient
+import ai.koog.rag.base.RankedDocument
+import ai.koog.rag.base.RankedDocumentStorage
+import ai.koog.rag.base.files.DocumentProvider
+import ai.koog.rag.base.mostRelevantDocuments
+import ai.koog.rag.vector.DocumentEmbedder
+import ai.koog.rag.vector.InMemoryVectorStorage
+import ai.koog.rag.vector.VectorStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.nio.file.Path
+-->
 ```kotlin
 // Define a PDFDocument class
 class PDFDocument(private val path: Path) {
@@ -379,19 +560,23 @@ class PDFVectorStorage(
 }
 
 // Usage example
-val pdfProvider = PDFDocumentProvider()
-val embedder = LLMEmbedder(OllamaClient(), OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
-val pdfEmbedder = PDFDocumentEmbedder(embedder)
-val storage = InMemoryVectorStorage<PDFDocument>()
-val pdfStorage = PDFVectorStorage(pdfProvider, pdfEmbedder, storage)
+suspend fun main() {
+    val pdfProvider = PDFDocumentProvider()
+    val embedder = LLMEmbedder(OllamaClient(), OllamaEmbeddingModels.NOMIC_EMBED_TEXT)
+    val pdfEmbedder = PDFDocumentEmbedder(embedder)
+    val storage = InMemoryVectorStorage<PDFDocument>()
+    val pdfStorage = PDFVectorStorage(pdfProvider, pdfEmbedder, storage)
 
-// Store PDF documents
-val pdfDocument = PDFDocument(Path.of("./documents/sample.pdf"))
-pdfStorage.store(pdfDocument)
+    // Store PDF documents
+    val pdfDocument = PDFDocument(Path.of("./documents/sample.pdf"))
+    pdfStorage.store(pdfDocument)
 
-// Query for relevant PDF documents
-val relevantPDFs = pdfStorage.mostRelevantDocuments("information about climate change", count = 3)
+    // Query for relevant PDF documents
+    val relevantPDFs = pdfStorage.mostRelevantDocuments("information about climate change", count = 3)
+
+}
 ```
+<!--- KNIT example-ranked-document-storage-14.kt -->
 
 ## Implementing custom non-embedding-based RankedDocumentStorage
 
@@ -405,6 +590,15 @@ While embedding-based document ranking is powerful, there are scenarios where yo
 
 Here's an example of implementing a custom `RankedDocumentStorage` that uses a simple keyword-based ranking approach:
 
+<!--- INCLUDE
+import ai.koog.rag.base.DocumentStorage
+import ai.koog.rag.base.RankedDocument
+import ai.koog.rag.base.RankedDocumentStorage
+import ai.koog.rag.base.files.DocumentProvider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.nio.file.Path
+-->
 ```kotlin
 class KeywordBasedDocumentStorage<Document>(
     private val documentProvider: DocumentProvider<Path, Document>,
@@ -464,11 +658,20 @@ class KeywordBasedDocumentStorage<Document>(
     }
 }
 ```
+<!--- KNIT example-ranked-document-storage-15.kt -->
 
 This implementation ranks documents based on the frequency of keywords from the query appearing in the document text. You could extend this approach with more sophisticated algorithms like TF-IDF (Term Frequency-Inverse Document Frequency) or BM25.
 
 Another example is a time-based ranking system that prioritizes recent documents:
 
+<!--- INCLUDE
+import ai.koog.rag.base.DocumentStorage
+import ai.koog.rag.base.RankedDocument
+import ai.koog.rag.base.RankedDocumentStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.lang.System.currentTimeMillis
+-->
 ```kotlin
 class TimeBasedDocumentStorage<Document>(
     private val storage: DocumentStorage<Document>,
@@ -507,6 +710,7 @@ class TimeBasedDocumentStorage<Document>(
     }
 }
 ```
+<!--- KNIT example-ranked-document-storage-16.kt -->
 
 By implementing the `RankedDocumentStorage` interface, you can create custom ranking mechanisms tailored to your specific use case while still leveraging the rest of the RAG infrastructure.
 

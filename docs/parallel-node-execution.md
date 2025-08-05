@@ -25,17 +25,46 @@ Parallel node execution in Koog consists of the methods and data structures desc
 
 To initiate parallel execution of nodes, use the `parallel` method in the following format:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+
+typealias Input = Unit
+typealias Output = String
+
+val strategy = strategy<String, String>("strategy_name") {
+   val firstNode by node<Input, Output>() { "first" }
+   val secondNode by node<Input, Output>() { "second" }
+   val thirdNode by node<Input, Output>() { "third" }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val nodeName by parallel<Input, Output>(
    firstNode, secondNode, thirdNode /* Add more nodes if needed */
 ) {
-   // Merge strategy goes here
-   // For example: selectByMax { it.length }
+   // Merge strategy goes here, for example: 
+   selectByMax { it.length }
 }
 ```
+<!--- KNIT example-parallel-node-execution-01.kt -->
 
 Here is an actual example of running three nodes in parallel and selecting the result with the maximum length:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+
+typealias Input = String
+typealias Output = Int
+
+val strategy = strategy<String, String>("strategy_name") {
+   val nodeCalcTokens by node<Input, Output>() { 1 }
+   val nodeCalcSymbols by node<Input, Output>() { 2 }
+   val nodeCalcWords by node<Input, Output>() { 3 }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val calc by parallel<String, Int>(
    nodeCalcTokens, nodeCalcSymbols, nodeCalcWords,
@@ -43,6 +72,7 @@ val calc by parallel<String, Int>(
    selectByMax { it }
 }
 ```
+<!--- KNIT example-parallel-node-execution-02.kt -->
 
 The code above runs the `nodeCalcTokens`, `nodeCalcSymbols`, and `nodeCalcWords` nodes in parallel and returns the result with the maximum value.
 
@@ -60,6 +90,20 @@ strategies:
 
 Selects a result based on a predicate function:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+
+typealias Input = String
+typealias Output = String
+
+val strategy = strategy<String, String>("strategy_name") {
+   val nodeOpenAI by node<Input, Output>() { "openai" }
+   val nodeAnthropicSonnet by node<Input, Output>() { "sonnet" }
+   val nodeAnthropicOpus by node<Input, Output>() { "opus" }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val nodeSelectJoke by parallel<String, String>(
    nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
@@ -67,6 +111,7 @@ val nodeSelectJoke by parallel<String, String>(
    selectBy { it.contains("programmer") }
 }
 ```
+<!--- KNIT example-parallel-node-execution-03.kt -->
 
 This selects the first joke that contains the word "programmer".
 
@@ -74,6 +119,20 @@ This selects the first joke that contains the word "programmer".
 
 Selects the result with the maximum value based on a comparison function:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+
+typealias Input = String
+typealias Output = String
+
+val strategy = strategy<String, String>("strategy_name") {
+   val nodeOpenAI by node<Input, Output>() { "openai" }
+   val nodeAnthropicSonnet by node<Input, Output>() { "sonnet" }
+   val nodeAnthropicOpus by node<Input, Output>() { "opus" }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val nodeLongestJoke by parallel<String, String>(
    nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
@@ -81,6 +140,7 @@ val nodeLongestJoke by parallel<String, String>(
    selectByMax { it.length }
 }
 ```
+<!--- KNIT example-parallel-node-execution-04.kt -->
 
 This selects the joke with the maximum length.
 
@@ -88,6 +148,26 @@ This selects the joke with the maximum length.
 
 Selects a result based on an index returned by a selection function:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.structure.json.JsonStructuredData
+
+typealias Input = String
+typealias Output = String
+
+data class JokeRating(
+   val bestJokeIndex: Int,
+)
+
+val strategy = strategy<String, String>("strategy_name") {
+   val nodeOpenAI by node<Input, Output>() { "openai" }
+   val nodeAnthropicSonnet by node<Input, Output>() { "sonnet" }
+   val nodeAnthropicOpus by node<Input, Output>() { "opus" }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val nodeBestJoke by parallel<String, String>(
    nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
@@ -106,6 +186,7 @@ val nodeBestJoke by parallel<String, String>(
    }
 }
 ```
+<!--- KNIT example-parallel-node-execution-05.kt -->
 
 This uses another LLM call to determine the index of the best joke.
 
@@ -113,6 +194,20 @@ This uses another LLM call to determine the index of the best joke.
 
 Folds the results into a single value using an operation function:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+
+typealias Input = String
+typealias Output = String
+
+val strategy = strategy<String, String>("strategy_name") {
+   val nodeOpenAI by node<Input, Output>() { "openai" }
+   val nodeAnthropicSonnet by node<Input, Output>() { "sonnet" }
+   val nodeAnthropicOpus by node<Input, Output>() { "opus" }
+-->
+<!--- SUFFIX
+}
+-->
 ```kotlin
 val nodeAllJokes by parallel<String, String>(
    nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
@@ -120,6 +215,7 @@ val nodeAllJokes by parallel<String, String>(
    fold("Jokes:\n") { result, joke -> "$result\n$joke" }
 }
 ```
+<!--- KNIT example-parallel-node-execution-06.kt -->
 
 This combines all jokes into a single string.
 
@@ -127,79 +223,94 @@ This combines all jokes into a single string.
 
 Here is a complete example that uses parallel execution to generate jokes from different LLM models and select the best one:
 
+<!--- INCLUDE
+import ai.koog.agents.core.dsl.builder.strategy
+import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.clients.anthropic.AnthropicModels
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.structure.json.JsonStructuredData
+
+typealias Input = String
+typealias Output = String
+
+data class JokeRating(
+   val bestJokeIndex: Int,
+)
+-->
 ```kotlin
 val strategy = strategy("best-joke") {
-    // Define nodes for different LLM models
-    val nodeOpenAI by node<String, String> { topic ->
-        llm.writeSession {
+   // Define nodes for different LLM models
+   val nodeOpenAI by node<String, String> { topic ->
+      llm.writeSession {
+         model = OpenAIModels.Chat.GPT4o
+         updatePrompt {
+            system("You are a comedian. Generate a funny joke about the given topic.")
+            user("Tell me a joke about $topic.")
+         }
+         val response = requestLLMWithoutTools()
+         response.content
+      }
+   }
+
+   val nodeAnthropicSonnet by node<String, String> { topic ->
+      llm.writeSession {
+         model = AnthropicModels.Sonnet_3_5
+         updatePrompt {
+            system("You are a comedian. Generate a funny joke about the given topic.")
+            user("Tell me a joke about $topic.")
+         }
+         val response = requestLLMWithoutTools()
+         response.content
+      }
+   }
+
+   val nodeAnthropicOpus by node<String, String> { topic ->
+      llm.writeSession {
+         model = AnthropicModels.Opus_3
+         updatePrompt {
+            system("You are a comedian. Generate a funny joke about the given topic.")
+            user("Tell me a joke about $topic.")
+         }
+         val response = requestLLMWithoutTools()
+         response.content
+      }
+   }
+
+   // Execute joke generation in parallel and select the best joke
+   val nodeGenerateBestJoke by parallel(
+      nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
+   ) {
+      selectByIndex { jokes ->
+         // Another LLM (e.g., GPT4o) would find the funniest joke:
+         llm.writeSession {
             model = OpenAIModels.Chat.GPT4o
             updatePrompt {
-                system("You are a comedian. Generate a funny joke about the given topic.")
-                user("Tell me a joke about $topic.")
-            }
-            val response = requestLLMWithoutTools()
-            response.content
-        }
-    }
-
-    val nodeAnthropicSonnet by node<String, String> { topic ->
-        llm.writeSession {
-            model = AnthropicModels.Sonnet_3_5
-            updatePrompt {
-                system("You are a comedian. Generate a funny joke about the given topic.")
-                user("Tell me a joke about $topic.")
-            }
-            val response = requestLLMWithoutTools()
-            response.content
-        }
-    }
-
-    val nodeAnthropicOpus by node<String, String> { topic ->
-        llm.writeSession {
-            model = AnthropicModels.Opus_3
-            updatePrompt {
-                system("You are a comedian. Generate a funny joke about the given topic.")
-                user("Tell me a joke about $topic.")
-            }
-            val response = requestLLMWithoutTools()
-            response.content
-        }
-    }
-
-    // Execute joke generation in parallel and select the best joke
-    val nodeGenerateBestJoke by parallel(
-        nodeOpenAI, nodeAnthropicSonnet, nodeAnthropicOpus,
-    ) {
-        selectByIndex { jokes ->
-            // Another LLM (e.g., GPT4o) would find the funniest joke:
-            llm.writeSession {
-                model = OpenAIModels.Chat.GPT4o
-                updatePrompt {
-                    prompt("best-joke-selector") {
-                        system("You are a comedy critic. Give a critique for the given joke.")
-                        user(
-                            """
+               prompt("best-joke-selector") {
+                  system("You are a comedy critic. Give a critique for the given joke.")
+                  user(
+                     """
                             Here are three jokes about the same topic:
 
                             ${jokes.mapIndexed { index, joke -> "Joke $index:\n$joke" }.joinToString("\n\n")}
 
                             Select the best joke and explain why it's the best.
                             """.trimIndent()
-                        )
-                    }
-                }
-
-                val response = requestLLMStructured(JsonStructuredData.createJsonStructure<JokeWinner>())
-                val bestJoke = response.getOrNull()!!.structure
-                bestJoke.index
+                  )
+               }
             }
-        }
-    }
 
-    // Connect the nodes
-    nodeStart then nodeGenerateBestJoke then nodeFinish
+            val response = requestLLMStructured(JsonStructuredData.createJsonStructure<JokeRating>())
+            val bestJoke = response.getOrNull()!!.structure
+            bestJoke.bestJokeIndex
+         }
+      }
+   }
+
+   // Connect the nodes
+   nodeStart then nodeGenerateBestJoke then nodeFinish
 }
 ```
+<!--- KNIT example-parallel-node-execution-07.kt -->
 
 ## Best practices
 
