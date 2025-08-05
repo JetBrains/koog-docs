@@ -1,0 +1,3369 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../opentelemetry-support/">
+      
+      
+        <link rel="next" href="../examples/">
+      
+      
+      <link rel="icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Testing - Koog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#testing" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      <!--overrides original partial https://github.com/squidfunk/mkdocs-material/blob/master/src/templates/partials/header.html -->
+<!--
+  Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine classes -->
+
+
+
+
+
+<!-- Header -->
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+    <nav
+            class="md-header__inner md-grid"
+            aria-label="Header"
+    >
+
+        <!-- Link to home -->
+        <a
+                href=".."
+                title="Koog"
+                class="md-header__button md-logo"
+                aria-label="Koog"
+                data-md-component="logo"
+        >
+            
+  <img src="../img/favicon.ico" alt="logo">
+
+        </a>
+
+        <!-- Button to open drawer -->
+        <label class="md-header__button md-icon" for="__drawer">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+        </label>
+
+        <!-- Header title -->
+        <div class="md-header__title" data-md-component="header-title">
+            <div class="md-header__ellipsis">
+                <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Koog
+          </span>
+                </div>
+                <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Testing
+            
+          </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color palette toggle -->
+        
+        
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+</form>
+        
+        
+
+        <!-- User preference: color palette -->
+        
+        <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+        
+
+        <!-- Site language selector -->
+        
+
+        <!-- Button to open search modal -->
+        
+        
+
+        <!-- Check if search is actually enabled - see https://t.ly/DT_0V -->
+        
+        <label class="md-header__button md-icon" for="__search">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+
+        <!-- Search interface -->
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+        
+
+        <!-- custom slack icon-link-->
+        <div class="md_header__social">
+            <a
+                href="https://kotlinlang.slack.com/messages/koog-agentic-framework/"
+                target="_blank"
+                title="Koog on Slack"
+                class="md_social-custom"
+            >
+                <div class="md_social-custom__icon md-icon">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+                </div>
+                <div>
+                    Support
+                </div>
+            </a>
+        </div>
+        <!-- end custom slack icon-link-->
+
+        <!-- Repository information -->
+        
+        <div class="md-header__source">
+            <a href="https://github.com/JetBrains/koog" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Koog on GitHub
+  </div>
+</a>
+        </div>
+        
+    </nav>
+
+    <!-- Navigation tabs (sticky) -->
+    
+    
+    
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href=".." class="md-tabs__link">
+          
+  
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://api.koog.ai/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+    
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Koog" class="md-nav__button md-logo" aria-label="Koog" data-md-component="logo">
+      
+  <img src="../img/favicon.ico" alt="logo">
+
+    </a>
+    Koog
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JetBrains/koog" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Koog on GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Documentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Documentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../key-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Key concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../single-run-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Single-run agents
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../complex-workflow-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Complex workflow agents
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prompt API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../built-in-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Built-in tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../annotation-based-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Annotation-based tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../class-based-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Class-based tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Agent events
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_7" id="__nav_1_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Agent strategies
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Agent strategies
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-strategy-graphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom strategy graphs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nodes-and-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pre-defined nodes and components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parallel-node-execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Parallel node execution
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../history-compression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    History compression
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-context-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Context Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model capabilities
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../content-moderation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Content moderation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_12" id="__nav_1_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced usage
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_12">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced usage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structured-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Structured data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Streaming API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-nodes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom nodes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLM sessions and manual history management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_12_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_12_5" id="__nav_1_12_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Subgraphs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_12_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_12_5">
+            <span class="md-nav__icon md-icon"></span>
+            Subgraphs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../subgraphs-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-subgraphs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom subgraphs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embeddings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ranked-document-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ranked document storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_12_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_12_8" id="__nav_1_12_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_12_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_12_8">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tracing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Memory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-persistency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Agent Persistency
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../opentelemetry-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenTelemetry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      Purpose
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-and-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration and initialization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration and initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-test-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting up test dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mocking-llm-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mocking LLM responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mocking-tool-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mocking tool calls
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-testing-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enabling testing mode
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced testing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-graph-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing the graph structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing the graph structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-structure-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic structure testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-node-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing node behavior
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing node behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-node-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic node testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-tool-run-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing tool run nodes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-node-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced node testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-edge-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing edge connections
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing edge connections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-edge-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic edge testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-conditional-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing conditional routing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-edge-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced edge testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-testing-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete testing example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      API reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#faq-and-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      FAQ and troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FAQ and troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-mock-a-specific-tool-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      How do I mock a specific tool response?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-can-i-test-complex-graph-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      How can I test complex graph structures?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-simulate-different-llm-responses-based-on-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      How do I simulate different LLM responses based on input?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mock-executor-always-returns-the-default-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mock executor always returns the default response
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-calls-are-not-being-intercepted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool calls are not being intercepted
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graph-assertions-are-failing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Graph assertions are failing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://api.koog.ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      Purpose
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-and-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration and initialization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration and initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-test-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting up test dependencies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mocking-llm-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mocking LLM responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mocking-tool-calls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mocking tool calls
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-testing-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enabling testing mode
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced testing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-graph-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing the graph structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing the graph structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-structure-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic structure testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-node-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing node behavior
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing node behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-node-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic node testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-tool-run-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing tool run nodes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-node-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced node testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-edge-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing edge connections
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing edge connections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-edge-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic edge testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-conditional-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing conditional routing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-edge-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced edge testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-testing-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete testing example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      API reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#faq-and-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      FAQ and troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FAQ and troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-mock-a-specific-tool-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      How do I mock a specific tool response?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-can-i-test-complex-graph-structures" class="md-nav__link">
+    <span class="md-ellipsis">
+      How can I test complex graph structures?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-do-i-simulate-different-llm-responses-based-on-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      How do I simulate different LLM responses based on input?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mock-executor-always-returns-the-default-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mock executor always returns the default response
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-calls-are-not-being-intercepted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool calls are not being intercepted
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graph-assertions-are-failing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Graph assertions are failing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="testing">Testing</h1>
+<h2 id="overview">Overview</h2>
+<p>The Testing feature provides a comprehensive framework for testing AI agent pipelines, subgraphs, and tool interactions
+in the Koog framework. It enables developers to create controlled test environments with mock LLM (Large
+Language Model) executors, tool registries, and agent environments.</p>
+<h3 id="purpose">Purpose</h3>
+<p>The primary purpose of this feature is to facilitate testing of agent-based AI features by:</p>
+<ul>
+<li>Mocking LLM responses to specific prompts</li>
+<li>Simulating tool calls and their results</li>
+<li>Testing agent pipeline subgraphs and their structures</li>
+<li>Verifying the correct flow of data through agent nodes</li>
+<li>Providing assertions for expected behaviors</li>
+</ul>
+<h2 id="configuration-and-initialization">Configuration and initialization</h2>
+<h3 id="setting-up-test-dependencies">Setting up test dependencies</h3>
+<p>Before setting up a test environment, make sure that you have added the following dependencies:</p>
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// build.gradle.kts</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">   </span><span class="n">testImplementation</span><span class="p">(</span><span class="s">&quot;ai.koog:agents-test:LATEST_VERSION&quot;</span><span class="p">)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">   </span><span class="n">testImplementation</span><span class="p">(</span><span class="n">kotlin</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">))</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-01.kt -->
+<h3 id="mocking-llm-responses">Mocking LLM responses</h3>
+<p>The basic form of testing involves mocking LLM responses to ensure deterministic behavior. You can do this using  <code>MockLLMBuilder</code> and related utilities.</p>
+<!--- INCLUDE
+import ai.koog.agents.core.tools.ToolRegistry
+import ai.koog.agents.testing.tools.getMockExecutor
+import ai.koog.agents.testing.tools.mockLLMAnswer
+
+val toolRegistry = ToolRegistry {}
+
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Create a mock LLM executor</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">val</span><span class="w"> </span><span class="nv">mockLLMApi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getMockExecutor</span><span class="p">(</span><span class="n">toolRegistry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="c1">// Mock a simple text response</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;Hello!&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="c1">// Mock a default response</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;I don&#39;t know how to answer that.&quot;</span><span class="p">).</span><span class="na">asDefaultResponse</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-02.kt -->
+
+<h3 id="mocking-tool-calls">Mocking tool calls</h3>
+<p>You can mock the LLM to call specific tools based on input patterns:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.tools.*
+import ai.koog.agents.ext.tool.AskUser
+import ai.koog.agents.ext.tool.SayToUser
+import ai.koog.agents.testing.tools.getMockExecutor
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+
+public object CreateTool : Tool<CreateTool.Args, CreateTool.Result>() {
+/**
+* Represents the arguments for the [AskUser] tool
+*
+* @property message The message to be used as an argument for the tool's execution.
+*/
+@Serializable
+public data class Args(val message: String) : ToolArgs
+
+    @Serializable
+    public data class Result(val message: String) : ToolResult {
+        override fun toStringDefault() = message
+    }
+
+    override val argsSerializer: KSerializer<Args> = Args.serializer()
+
+    override val descriptor: ToolDescriptor = ToolDescriptor(
+        name = "message",
+        description = "Service tool, used by the agent to talk with user",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "message", description = "Message from the agent", type = ToolParameterType.String
+            )
+        )
+    )
+
+    override suspend fun execute(args: Args): Result {
+        return Result(args.message)
+    }
+}
+
+public object SearchTool : Tool<SearchTool.Args, SearchTool.Result>() {
+/**
+* Represents the arguments for the [AskUser] tool
+*
+* @property message The message to be used as an argument for the tool's execution.
+*/
+@Serializable
+public data class Args(val query: String) : ToolArgs
+
+    @Serializable
+    public data class Result(val message: String) : ToolResult {
+        override fun toStringDefault() = message
+    }
+
+    override val argsSerializer: KSerializer<Args> = Args.serializer()
+
+    override val descriptor: ToolDescriptor = ToolDescriptor(
+        name = "message",
+        description = "Service tool, used by the agent to talk with user",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "message", description = "Message from the agent", type = ToolParameterType.String
+            )
+        )
+    )
+
+    override suspend fun execute(args: Args): Result {
+        return Result(args.query)
+    }
+}
+
+
+public object AnalyzeTool : Tool<AnalyzeTool.Args, AnalyzeTool.Result>() {
+/**
+* Represents the arguments for the [AskUser] tool
+*
+* @property message The message to be used as an argument for the tool's execution.
+*/
+@Serializable
+public data class Args(val message: String) : ToolArgs
+
+    @Serializable
+    public data class Result(val message: String) : ToolResult {
+        override fun toStringDefault() = message
+    }
+
+    override val argsSerializer: KSerializer<Args> = Args.serializer()
+
+    override val descriptor: ToolDescriptor = ToolDescriptor(
+        name = "message",
+        description = "Service tool, used by the agent to talk with user",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "message", description = "Message from the agent", type = ToolParameterType.String
+            )
+        )
+    )
+
+    override suspend fun execute(args: Args): Result {
+        return Result(args.message)
+    }
+}
+
+typealias PositiveToneTool = SayToUser
+typealias NegativeToneTool = SayToUser
+
+val mockLLMApi = getMockExecutor {
+-->
+<!--- SUFFIX
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Mock a tool call response</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">mockLLMToolCall</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">))</span><span class="w"> </span><span class="n">onRequestEquals</span><span class="w"> </span><span class="s">&quot;Solve task&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">// Mock tool behavior - simplest form without lambda</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">mockTool</span><span class="p">(</span><span class="n">PositiveToneTool</span><span class="p">)</span><span class="w"> </span><span class="n">alwaysReturns</span><span class="w"> </span><span class="s">&quot;The text has a positive tone.&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1">// Using lambda when you need to perform extra actions</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">mockTool</span><span class="p">(</span><span class="n">NegativeToneTool</span><span class="p">)</span><span class="w"> </span><span class="n">alwaysTells</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="c1">// Perform some extra action</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Negative tone tool called&quot;</span><span class="p">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="c1">// Return the result</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="s">&quot;The text has a negative tone.&quot;</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1">// Mock tool behavior based on specific arguments</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">mockTool</span><span class="p">(</span><span class="n">AnalyzeTool</span><span class="p">)</span><span class="w"> </span><span class="n">returns</span><span class="w"> </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Result</span><span class="p">(</span><span class="s">&quot;Detailed analysis&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onArguments</span><span class="w"> </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;analyze deeply&quot;</span><span class="p">)</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="c1">// Mock tool behavior with conditional argument matching</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">mockTool</span><span class="p">(</span><span class="n">SearchTool</span><span class="p">)</span><span class="w"> </span><span class="n">returns</span><span class="w"> </span><span class="n">SearchTool</span><span class="p">.</span><span class="na">Result</span><span class="p">(</span><span class="s">&quot;Found results&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onArgumentsMatching</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">-&gt;</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">  </span><span class="n">args</span><span class="p">.</span><span class="na">query</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;important&quot;</span><span class="p">)</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-03.kt -->
+
+<p>The examples above demonstrate different ways to mock tools, from simple to more complex ones:</p>
+<ol>
+<li><code>alwaysReturns</code>: the simplest form, directly returns a value without a lambda.</li>
+<li><code>alwaysTells</code>: uses a lambda when you need to perform additional actions.</li>
+<li><code>returns...onArguments</code>: returns specific results for exact argument matches.</li>
+<li><code>returns...onArgumentsMatching</code>: returns results based on custom argument conditions.</li>
+</ol>
+<h3 id="enabling-testing-mode">Enabling testing mode</h3>
+<p>To enable the testing mode on an agent, use the <code>withTesting()</code> function within the AIAgent constructor block:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.testing.feature.withTesting
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+// Create the agent with testing enabled
+fun main() {
+-->
+<!--- SUFFIX
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// Create the agent with testing enabled</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">AIAgent</span><span class="p">(</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">executor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mockLLMApi</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">toolRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toolRegistry</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">llmModel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">llmModel</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="c1">// Enable testing mode</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="n">withTesting</span><span class="p">()</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-04.kt -->
+
+<h2 id="advanced-testing">Advanced testing</h2>
+<h3 id="testing-the-graph-structure">Testing the graph structure</h3>
+<p>Before testing the detailed node behavior and edge connections, it is important to verify the overall structure of your agent's graph. This includes checking that all required nodes exist and are properly connected in the expected subgraphs.</p>
+<p>The Testing feature provides a comprehensive way to test your agent's graph structure. This approach is particularly valuable for complex agents with multiple subgraphs and interconnected nodes.</p>
+<h4 id="basic-structure-testing">Basic structure testing</h4>
+<p>Start by validating the fundamental structure of your agent's graph:</p>
+<!--- INCLUDE
+
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.tools.ToolResult
+import ai.koog.agents.example.exampleCustomNodes11.ToolArgs
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+-->
+<!--- SUFFIX
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">AIAgent</span><span class="p">(</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="c1">// Constructor arguments</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="n">executor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mockLLMApi</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="n">toolRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toolRegistry</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">llmModel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">llmModel</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="n">testGraph</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">firstSubgraph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertSubgraphByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;first&quot;</span><span class="p">)</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">secondSubgraph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertSubgraphByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;second&quot;</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="c1">// Assert subgraph connections</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">        </span><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">            </span><span class="n">startNode</span><span class="p">()</span><span class="w"> </span><span class="n">alwaysGoesTo</span><span class="w"> </span><span class="n">firstSubgraph</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">            </span><span class="n">firstSubgraph</span><span class="w"> </span><span class="n">alwaysGoesTo</span><span class="w"> </span><span class="n">secondSubgraph</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">            </span><span class="n">secondSubgraph</span><span class="w"> </span><span class="n">alwaysGoesTo</span><span class="w"> </span><span class="n">finishNode</span><span class="p">()</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">        </span><span class="c1">// Verify the first subgraph</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">        </span><span class="n">verifySubgraph</span><span class="p">(</span><span class="n">firstSubgraph</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startNode</span><span class="p">()</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">finishNode</span><span class="p">()</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">            </span><span class="c1">// Assert nodes by name</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">askLLM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">Message</span><span class="p">.</span><span class="na">Response</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;callLLM&quot;</span><span class="p">)</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">callTool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="n">ToolArgs</span><span class="p">,</span><span class="w"> </span><span class="n">ToolResult</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;executeTool&quot;</span><span class="p">)</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">            </span><span class="c1">// Assert node reachability</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">            </span><span class="n">assertReachable</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">askLLM</span><span class="p">)</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">            </span><span class="n">assertReachable</span><span class="p">(</span><span class="n">askLLM</span><span class="p">,</span><span class="w"> </span><span class="n">callTool</span><span class="p">)</span>
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-32"><a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-05.kt -->
+
+<h3 id="testing-node-behavior">Testing node behavior</h3>
+<p>Node behavior testing lets you verify that nodes in your agent's graph produce the expected outputs for the given inputs. 
+This is crucial for ensuring that your agent's logic works correctly under different scenarios.</p>
+<h4 id="basic-node-testing">Basic node testing</h4>
+<p>Start with simple input and output validations for individual nodes:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.example.exampleTesting03.CreateTool
+import ai.koog.agents.testing.feature.assistantMessage
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolCallMessage
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val askLLM = assertNodeByName<String, Message.Response>("callLLM")
+
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">assertNodes</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="c1">// Test basic text responses</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">assistantMessage</span><span class="p">(</span><span class="s">&quot;Hello!&quot;</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="c1">// Test tool call responses</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="s">&quot;Solve task&quot;</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">))</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-06.kt -->
+
+<p>The example above shows how to test the following behavior:
+1. When the LLM node receives <code>Hello</code> as the input, it responds with a simple text message.
+2. When it receives <code>Solve task</code>, it responds with a tool call.</p>
+<h4 id="testing-tool-run-nodes">Testing tool run nodes</h4>
+<p>You can also test nodes that run tools:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.environment.ReceivedToolResult
+import ai.koog.agents.core.tools.*
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.ext.tool.AskUser
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolCallMessage
+import ai.koog.agents.testing.feature.toolResult
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+
+object SolveTool : SimpleTool<SolveTool.Args>() {
+    @Serializable
+    data class Args(val message: String) : ToolArgs
+
+    @Serializable
+    data class Result(val message: String) : ToolResult {
+        override fun toStringDefault() = message
+    }
+
+    override val argsSerializer: KSerializer<Args> = Args.serializer()
+
+    override val descriptor: ToolDescriptor = ToolDescriptor(
+        name = "message",
+        description = "Service tool, used by the agent to talk with user",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "message", description = "Message from the agent", type = ToolParameterType.String
+            )
+        )
+    )
+
+    override suspend fun doExecute(args: Args): String {
+        return args.message
+    }
+}
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
+
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">assertNodes</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="c1">// Test tool runs with specific arguments</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">        </span><span class="n">SolveTool</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">        </span><span class="n">SolveTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">)</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span><span class="n">SolveTool</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;solved&quot;</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-07.kt -->
+
+<p>This verifies that when the tool execution node receives a specific tool call signature, it produces the expected tool result.</p>
+<h4 id="advanced-node-testing">Advanced node testing</h4>
+<p>For more complex scenarios, you can test nodes with structured inputs and outputs:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.tools.*
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.ext.tool.AskUser
+import ai.koog.agents.testing.feature.assistantMessage
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolCallMessage
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+
+object AnalyzeTool : Tool<AnalyzeTool.Args, AnalyzeTool.Result>() {
+
+    @Serializable
+    data class Args(val query: String, val depth: Int) : ToolArgs
+
+    @Serializable
+    data class Result(val message: String) : ToolResult {
+        override fun toStringDefault() = message
+    }
+
+    override val argsSerializer: KSerializer<Args> = Args.serializer()
+
+    override val descriptor: ToolDescriptor = ToolDescriptor(
+        name = "message",
+        description = "Service tool, used by the agent to talk with user",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "message", description = "Message from the agent", type = ToolParameterType.String
+            )
+        )
+    )
+
+    override suspend fun execute(args: Args): Result {
+        return Result(args.query)
+    }
+}
+
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val askLLM = assertNodeByName<String, Message.Response>("callLLM")
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">assertNodes</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="c1">// Test with different inputs to the same node</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="s">&quot;Simple query&quot;</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">assistantMessage</span><span class="p">(</span><span class="s">&quot;Simple response&quot;</span><span class="p">)</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="c1">// Test with complex parameters</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="s">&quot;Complex query with parameters&quot;</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;parameters&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="p">)</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-08.kt -->
+
+<p>You can also test complex tool call scenarios with detailed result structures:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.environment.ReceivedToolResult
+import ai.koog.agents.core.tools.*
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolCallMessage
+import ai.koog.agents.testing.feature.toolResult
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+
+object AnalyzeTool : Tool<AnalyzeTool.Args, AnalyzeTool.Result>() {
+    @Serializable
+    data class Args(val query: String, val depth: Int) : ToolArgs
+
+    @Serializable
+    data class Result(val analysis: String, val confidence: Double, val metadata: Map<String, String> = emptyMap()) :
+        ToolResult {
+        override fun toStringDefault() = serializer().toString()
+    }
+
+    override val argsSerializer: KSerializer<Args> = Args.serializer()
+
+    override val descriptor: ToolDescriptor = ToolDescriptor(
+        name = "message",
+        description = "Service tool, used by the agent to talk with user",
+        requiredParameters = listOf(
+            ToolParameterDescriptor(
+                name = "message", description = "Message from the agent", type = ToolParameterType.String
+            )
+        )
+    )
+
+    override suspend fun execute(args: Args): Result {
+        return Result(
+            args.query, 0.95,
+            mapOf("source" to "mock", "timestamp" to "2023-06-15")
+        )
+    }
+}
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">assertNodes</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="c1">// Test a complex tool call with a structured result</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;complex&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span><span class="n">AnalyzeTool</span><span class="p">,</span><span class="w"> </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Result</span><span class="p">(</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">        </span><span class="n">analysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Detailed analysis&quot;</span><span class="p">,</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="n">confidence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.95</span><span class="p">,</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="n">metadata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapOf</span><span class="p">(</span><span class="s">&quot;source&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="s">&quot;database&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;timestamp&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="s">&quot;2023-06-15&quot;</span><span class="p">)</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="p">))</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-09.kt -->
+
+<p>These advanced tests help ensure that your nodes handle complex data structures correctly, which is essential for sophisticated agent behaviors.</p>
+<h3 id="testing-edge-connections">Testing edge connections</h3>
+<p>Edge connections testing allows you to verify that your agent's graph correctly routes outputs from one node to the appropriate next node. This ensures that your agent follows the intended workflow paths based on different outputs.</p>
+<h4 id="basic-edge-testing">Basic edge testing</h4>
+<p>Start with simple edge connection tests:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.environment.ReceivedToolResult
+import ai.koog.agents.core.tools.*
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.example.exampleTesting03.CreateTool
+import ai.koog.agents.testing.feature.assistantMessage
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolCallMessage
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
+                val askLLM = assertNodeByName<String, Message.Response>("callLLM")
+                val giveFeedback = assertNodeByName<String, Message.Response>("giveFeedback")
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="c1">// Test text message routing</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">assistantMessage</span><span class="p">(</span><span class="s">&quot;Hello!&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">giveFeedback</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="c1">// Test tool call routing</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">))</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">callTool</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-10.kt -->
+
+<p>This example verifies the following behavior:
+1. When the LLM node outputs a simple text message, the flow is directed to the <code>giveFeedback</code> node.
+2. When it outputs a tool call, the flow is directed to the <code>callTool</code> node.</p>
+<h4 id="testing-conditional-routing">Testing conditional routing</h4>
+<p>You can test a more complex routing logic based on the content of outputs:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.environment.ReceivedToolResult
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.testing.feature.assistantMessage
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val askLLM = assertNodeByName<String, Message.Response>("callLLM")
+                val askForInfo = assertNodeByName<String, ReceivedToolResult>("askForInfo")
+                val processRequest = assertNodeByName<String, Message.Response>("processRequest")
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="c1">// Different text responses can route to different nodes</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">assistantMessage</span><span class="p">(</span><span class="s">&quot;Need more information&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">askForInfo</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">assistantMessage</span><span class="p">(</span><span class="s">&quot;Ready to proceed&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">processRequest</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-11.kt -->
+
+<h4 id="advanced-edge-testing">Advanced edge testing</h4>
+<p>For sophisticated agents, you can test conditional routing based on structured data in tool results:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.environment.ReceivedToolResult
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.example.exampleTesting09.AnalyzeTool
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolResult
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
+                val processResult = assertNodeByName<String, Message.Response>("processResult")
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="c1">// Test routing based on tool result content</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Result</span><span class="p">(</span><span class="n">analysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Needs more processing&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">confidence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">processResult</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-12.kt -->
+
+<p>You can also test complex decision paths based on different result properties:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.core.environment.ReceivedToolResult
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.example.exampleTesting09.AnalyzeTool
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.agents.testing.feature.toolResult
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+import ai.koog.prompt.message.Message
+
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+        testGraph<String, String>("test") {
+            assertNodes {
+                val callTool = assertNodeByName<Message.Tool.Call, ReceivedToolResult>("executeTool")
+                val finish = assertNodeByName<String, Message.Response>("finish")
+                val verifyResult = assertNodeByName<String, Message.Response>("verifyResult")
+-->
+<!--- SUFFIX
+            }
+        }
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="c1">// Route to different nodes based on confidence level</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Result</span><span class="p">(</span><span class="n">analysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Complete&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">confidence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.9</span><span class="p">)</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">finish</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">        </span><span class="n">AnalyzeTool</span><span class="p">.</span><span class="na">Result</span><span class="p">(</span><span class="n">analysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Uncertain&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">confidence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.3</span><span class="p">)</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">verifyResult</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-13.kt -->
+
+<p>These advanced edge tests help ensure that your agent makes the correct decisions based on the content and structure of node outputs, which is essential for creating intelligent, context-aware workflows.</p>
+<h2 id="complete-testing-example">Complete testing example</h2>
+<p>Here is a user story that demonstrates a complete testing scenario:</p>
+<p>You are developing a tone analysis agent that analyzes the tone of the text and provides feedback. The agent uses tools for detecting positive, negative, and neutral tones.</p>
+<p>Here is how you can test this agent:</p>
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nd">@Test</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kd">fun</span><span class="w"> </span><span class="nf">testToneAgent</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runTest</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="c1">// Create a list to track tool calls</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nv">toolCalls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mutableListOf</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">()</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nv">result</span><span class="p">:</span><span class="w"> </span><span class="kt">String?</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="c1">// Create a tool registry</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">toolRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ToolRegistry</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">        </span><span class="c1">// A special tool, required with this type of agent</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">        </span><span class="n">tool</span><span class="p">(</span><span class="n">SayToUser</span><span class="p">)</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">        </span><span class="n">with</span><span class="p">(</span><span class="n">ToneTools</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">            </span><span class="n">tools</span><span class="p">()</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">    </span><span class="c1">// Create an event handler</span>
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">eventHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EventHandler</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="w">        </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">tool</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">-&gt;</span>
+</span><span id="__span-13-20"><a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;[DEBUG_LOG] Tool called: tool </span><span class="si">${</span><span class="n">tool</span><span class="p">.</span><span class="na">name</span><span class="si">}</span><span class="s">, args </span><span class="si">$</span><span class="n">args</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span id="__span-13-21"><a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="w">            </span><span class="n">toolCalls</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">tool</span><span class="p">.</span><span class="na">name</span><span class="p">)</span>
+</span><span id="__span-13-22"><a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-23"><a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>
+</span><span id="__span-13-24"><a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="w">        </span><span class="n">handleError</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-25"><a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;[DEBUG_LOG] An error occurred: </span><span class="si">${</span><span class="nb">it</span><span class="p">.</span><span class="na">message</span><span class="si">}</span><span class="s">\n</span><span class="si">${</span><span class="nb">it</span><span class="p">.</span><span class="na">stackTraceToString</span><span class="p">()</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span id="__span-13-26"><a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="w">            </span><span class="kc">true</span>
+</span><span id="__span-13-27"><a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-28"><a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a>
+</span><span id="__span-13-29"><a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a><span class="w">        </span><span class="n">handleResult</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-30"><a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;[DEBUG_LOG] Result: </span><span class="si">$</span><span class="n">it</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span id="__span-13-31"><a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a><span class="w">            </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">it</span>
+</span><span id="__span-13-32"><a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-33"><a id="__codelineno-13-33" name="__codelineno-13-33" href="#__codelineno-13-33"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-34"><a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a>
+</span><span id="__span-13-35"><a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">positiveText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;I love this product!&quot;</span>
+</span><span id="__span-13-36"><a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">negativeText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Awful service, hate the app.&quot;</span>
+</span><span id="__span-13-37"><a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">defaultText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;I don&#39;t know how to answer this question.&quot;</span>
+</span><span id="__span-13-38"><a id="__codelineno-13-38" name="__codelineno-13-38" href="#__codelineno-13-38"></a>
+</span><span id="__span-13-39"><a id="__codelineno-13-39" name="__codelineno-13-39" href="#__codelineno-13-39"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">positiveResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;The text has a positive tone.&quot;</span>
+</span><span id="__span-13-40"><a id="__codelineno-13-40" name="__codelineno-13-40" href="#__codelineno-13-40"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">negativeResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;The text has a negative tone.&quot;</span>
+</span><span id="__span-13-41"><a id="__codelineno-13-41" name="__codelineno-13-41" href="#__codelineno-13-41"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">neutralResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;The text has a neutral tone.&quot;</span>
+</span><span id="__span-13-42"><a id="__codelineno-13-42" name="__codelineno-13-42" href="#__codelineno-13-42"></a>
+</span><span id="__span-13-43"><a id="__codelineno-13-43" name="__codelineno-13-43" href="#__codelineno-13-43"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">mockLLMApi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getMockExecutor</span><span class="p">(</span><span class="n">toolRegistry</span><span class="p">,</span><span class="w"> </span><span class="n">eventHandler</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-44"><a id="__codelineno-13-44" name="__codelineno-13-44" href="#__codelineno-13-44"></a><span class="w">        </span><span class="c1">// Set up LLM responses for different input texts</span>
+</span><span id="__span-13-45"><a id="__codelineno-13-45" name="__codelineno-13-45" href="#__codelineno-13-45"></a><span class="w">        </span><span class="n">mockLLMToolCall</span><span class="p">(</span><span class="n">NeutralToneTool</span><span class="p">,</span><span class="w"> </span><span class="n">ToneTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="n">defaultText</span><span class="p">))</span><span class="w"> </span><span class="n">onRequestEquals</span><span class="w"> </span><span class="n">defaultText</span>
+</span><span id="__span-13-46"><a id="__codelineno-13-46" name="__codelineno-13-46" href="#__codelineno-13-46"></a><span class="w">        </span><span class="n">mockLLMToolCall</span><span class="p">(</span><span class="n">PositiveToneTool</span><span class="p">,</span><span class="w"> </span><span class="n">ToneTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="n">positiveText</span><span class="p">))</span><span class="w"> </span><span class="n">onRequestEquals</span><span class="w"> </span><span class="n">positiveText</span>
+</span><span id="__span-13-47"><a id="__codelineno-13-47" name="__codelineno-13-47" href="#__codelineno-13-47"></a><span class="w">        </span><span class="n">mockLLMToolCall</span><span class="p">(</span><span class="n">NegativeToneTool</span><span class="p">,</span><span class="w"> </span><span class="n">ToneTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="n">negativeText</span><span class="p">))</span><span class="w"> </span><span class="n">onRequestEquals</span><span class="w"> </span><span class="n">negativeText</span>
+</span><span id="__span-13-48"><a id="__codelineno-13-48" name="__codelineno-13-48" href="#__codelineno-13-48"></a>
+</span><span id="__span-13-49"><a id="__codelineno-13-49" name="__codelineno-13-49" href="#__codelineno-13-49"></a><span class="w">        </span><span class="c1">// Mock the behavior where the LLM responds with just tool responses when the tools return results</span>
+</span><span id="__span-13-50"><a id="__codelineno-13-50" name="__codelineno-13-50" href="#__codelineno-13-50"></a><span class="w">        </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="n">positiveResponse</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="n">positiveResponse</span>
+</span><span id="__span-13-51"><a id="__codelineno-13-51" name="__codelineno-13-51" href="#__codelineno-13-51"></a><span class="w">        </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="n">negativeResponse</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="n">negativeResponse</span>
+</span><span id="__span-13-52"><a id="__codelineno-13-52" name="__codelineno-13-52" href="#__codelineno-13-52"></a><span class="w">        </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="n">neutralResponse</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="n">neutralResponse</span>
+</span><span id="__span-13-53"><a id="__codelineno-13-53" name="__codelineno-13-53" href="#__codelineno-13-53"></a>
+</span><span id="__span-13-54"><a id="__codelineno-13-54" name="__codelineno-13-54" href="#__codelineno-13-54"></a><span class="w">        </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="n">defaultText</span><span class="p">).</span><span class="na">asDefaultResponse</span>
+</span><span id="__span-13-55"><a id="__codelineno-13-55" name="__codelineno-13-55" href="#__codelineno-13-55"></a>
+</span><span id="__span-13-56"><a id="__codelineno-13-56" name="__codelineno-13-56" href="#__codelineno-13-56"></a><span class="w">        </span><span class="c1">// Tool mocks</span>
+</span><span id="__span-13-57"><a id="__codelineno-13-57" name="__codelineno-13-57" href="#__codelineno-13-57"></a><span class="w">        </span><span class="n">mockTool</span><span class="p">(</span><span class="n">PositiveToneTool</span><span class="p">)</span><span class="w"> </span><span class="n">alwaysTells</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-58"><a id="__codelineno-13-58" name="__codelineno-13-58" href="#__codelineno-13-58"></a><span class="w">            </span><span class="n">toolCalls</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;Positive tone tool called&quot;</span>
+</span><span id="__span-13-59"><a id="__codelineno-13-59" name="__codelineno-13-59" href="#__codelineno-13-59"></a><span class="w">            </span><span class="n">positiveResponse</span>
+</span><span id="__span-13-60"><a id="__codelineno-13-60" name="__codelineno-13-60" href="#__codelineno-13-60"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-61"><a id="__codelineno-13-61" name="__codelineno-13-61" href="#__codelineno-13-61"></a><span class="w">        </span><span class="n">mockTool</span><span class="p">(</span><span class="n">NegativeToneTool</span><span class="p">)</span><span class="w"> </span><span class="n">alwaysTells</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-62"><a id="__codelineno-13-62" name="__codelineno-13-62" href="#__codelineno-13-62"></a><span class="w">            </span><span class="n">toolCalls</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;Negative tone tool called&quot;</span>
+</span><span id="__span-13-63"><a id="__codelineno-13-63" name="__codelineno-13-63" href="#__codelineno-13-63"></a><span class="w">            </span><span class="n">negativeResponse</span>
+</span><span id="__span-13-64"><a id="__codelineno-13-64" name="__codelineno-13-64" href="#__codelineno-13-64"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-65"><a id="__codelineno-13-65" name="__codelineno-13-65" href="#__codelineno-13-65"></a><span class="w">        </span><span class="n">mockTool</span><span class="p">(</span><span class="n">NeutralToneTool</span><span class="p">)</span><span class="w"> </span><span class="n">alwaysTells</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-66"><a id="__codelineno-13-66" name="__codelineno-13-66" href="#__codelineno-13-66"></a><span class="w">            </span><span class="n">toolCalls</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;Neutral tone tool called&quot;</span>
+</span><span id="__span-13-67"><a id="__codelineno-13-67" name="__codelineno-13-67" href="#__codelineno-13-67"></a><span class="w">            </span><span class="n">neutralResponse</span>
+</span><span id="__span-13-68"><a id="__codelineno-13-68" name="__codelineno-13-68" href="#__codelineno-13-68"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-13-69"><a id="__codelineno-13-69" name="__codelineno-13-69" href="#__codelineno-13-69"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-70"><a id="__codelineno-13-70" name="__codelineno-13-70" href="#__codelineno-13-70"></a>
+</span><span id="__span-13-71"><a id="__codelineno-13-71" name="__codelineno-13-71" href="#__codelineno-13-71"></a><span class="w">    </span><span class="c1">// Create a strategy</span>
+</span><span id="__span-13-72"><a id="__codelineno-13-72" name="__codelineno-13-72" href="#__codelineno-13-72"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toneStrategy</span><span class="p">(</span><span class="s">&quot;tone_analysis&quot;</span><span class="p">)</span>
+</span><span id="__span-13-73"><a id="__codelineno-13-73" name="__codelineno-13-73" href="#__codelineno-13-73"></a>
+</span><span id="__span-13-74"><a id="__codelineno-13-74" name="__codelineno-13-74" href="#__codelineno-13-74"></a><span class="w">    </span><span class="c1">// Create an agent configuration</span>
+</span><span id="__span-13-75"><a id="__codelineno-13-75" name="__codelineno-13-75" href="#__codelineno-13-75"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">agentConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AIAgentConfig</span><span class="p">(</span>
+</span><span id="__span-13-76"><a id="__codelineno-13-76" name="__codelineno-13-76" href="#__codelineno-13-76"></a><span class="w">        </span><span class="n">prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prompt</span><span class="p">(</span><span class="s">&quot;test-agent&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-77"><a id="__codelineno-13-77" name="__codelineno-13-77" href="#__codelineno-13-77"></a><span class="w">            </span><span class="n">system</span><span class="p">(</span>
+</span><span id="__span-13-78"><a id="__codelineno-13-78" name="__codelineno-13-78" href="#__codelineno-13-78"></a><span class="w">                </span><span class="s">&quot;&quot;&quot;</span>
+</span><span id="__span-13-79"><a id="__codelineno-13-79" name="__codelineno-13-79" href="#__codelineno-13-79"></a><span class="s">                You are an question answering agent with access to the tone analysis tools.</span>
+</span><span id="__span-13-80"><a id="__codelineno-13-80" name="__codelineno-13-80" href="#__codelineno-13-80"></a><span class="s">                You need to answer 1 question with the best of your ability.</span>
+</span><span id="__span-13-81"><a id="__codelineno-13-81" name="__codelineno-13-81" href="#__codelineno-13-81"></a><span class="s">                Be as concise as possible in your answers.</span>
+</span><span id="__span-13-82"><a id="__codelineno-13-82" name="__codelineno-13-82" href="#__codelineno-13-82"></a><span class="s">                DO NOT ANSWER ANY QUESTIONS THAT ARE BESIDES PERFORMING TONE ANALYSIS!</span>
+</span><span id="__span-13-83"><a id="__codelineno-13-83" name="__codelineno-13-83" href="#__codelineno-13-83"></a><span class="s">                DO NOT HALLUCINATE!</span>
+</span><span id="__span-13-84"><a id="__codelineno-13-84" name="__codelineno-13-84" href="#__codelineno-13-84"></a><span class="s">            &quot;&quot;&quot;</span><span class="p">.</span><span class="na">trimIndent</span><span class="p">()</span>
+</span><span id="__span-13-85"><a id="__codelineno-13-85" name="__codelineno-13-85" href="#__codelineno-13-85"></a><span class="w">            </span><span class="p">)</span>
+</span><span id="__span-13-86"><a id="__codelineno-13-86" name="__codelineno-13-86" href="#__codelineno-13-86"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-13-87"><a id="__codelineno-13-87" name="__codelineno-13-87" href="#__codelineno-13-87"></a><span class="w">        </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mockk</span><span class="o">&lt;</span><span class="n">LLModel</span><span class="o">&gt;</span><span class="p">(</span><span class="n">relaxed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">),</span>
+</span><span id="__span-13-88"><a id="__codelineno-13-88" name="__codelineno-13-88" href="#__codelineno-13-88"></a><span class="w">        </span><span class="n">maxAgentIterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>
+</span><span id="__span-13-89"><a id="__codelineno-13-89" name="__codelineno-13-89" href="#__codelineno-13-89"></a><span class="w">    </span><span class="p">)</span>
+</span><span id="__span-13-90"><a id="__codelineno-13-90" name="__codelineno-13-90" href="#__codelineno-13-90"></a>
+</span><span id="__span-13-91"><a id="__codelineno-13-91" name="__codelineno-13-91" href="#__codelineno-13-91"></a><span class="w">    </span><span class="c1">// Create an agent with testing enabled</span>
+</span><span id="__span-13-92"><a id="__codelineno-13-92" name="__codelineno-13-92" href="#__codelineno-13-92"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">agent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AIAgent</span><span class="p">(</span>
+</span><span id="__span-13-93"><a id="__codelineno-13-93" name="__codelineno-13-93" href="#__codelineno-13-93"></a><span class="w">        </span><span class="n">promptExecutor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mockLLMApi</span><span class="p">,</span>
+</span><span id="__span-13-94"><a id="__codelineno-13-94" name="__codelineno-13-94" href="#__codelineno-13-94"></a><span class="w">        </span><span class="n">toolRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toolRegistry</span><span class="p">,</span>
+</span><span id="__span-13-95"><a id="__codelineno-13-95" name="__codelineno-13-95" href="#__codelineno-13-95"></a><span class="w">        </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strategy</span><span class="p">,</span>
+</span><span id="__span-13-96"><a id="__codelineno-13-96" name="__codelineno-13-96" href="#__codelineno-13-96"></a><span class="w">        </span><span class="n">eventHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eventHandler</span><span class="p">,</span>
+</span><span id="__span-13-97"><a id="__codelineno-13-97" name="__codelineno-13-97" href="#__codelineno-13-97"></a><span class="w">        </span><span class="n">agentConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">agentConfig</span><span class="p">,</span>
+</span><span id="__span-13-98"><a id="__codelineno-13-98" name="__codelineno-13-98" href="#__codelineno-13-98"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-99"><a id="__codelineno-13-99" name="__codelineno-13-99" href="#__codelineno-13-99"></a><span class="w">        </span><span class="n">withTesting</span><span class="p">()</span>
+</span><span id="__span-13-100"><a id="__codelineno-13-100" name="__codelineno-13-100" href="#__codelineno-13-100"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-101"><a id="__codelineno-13-101" name="__codelineno-13-101" href="#__codelineno-13-101"></a>
+</span><span id="__span-13-102"><a id="__codelineno-13-102" name="__codelineno-13-102" href="#__codelineno-13-102"></a><span class="w">    </span><span class="c1">// Test the positive text</span>
+</span><span id="__span-13-103"><a id="__codelineno-13-103" name="__codelineno-13-103" href="#__codelineno-13-103"></a><span class="w">    </span><span class="n">agent</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">positiveText</span><span class="p">)</span>
+</span><span id="__span-13-104"><a id="__codelineno-13-104" name="__codelineno-13-104" href="#__codelineno-13-104"></a><span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">&quot;The text has a positive tone.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Positive tone result should match&quot;</span><span class="p">)</span>
+</span><span id="__span-13-105"><a id="__codelineno-13-105" name="__codelineno-13-105" href="#__codelineno-13-105"></a><span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">toolCalls</span><span class="p">.</span><span class="na">size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;One tool is expected to be called&quot;</span><span class="p">)</span>
+</span><span id="__span-13-106"><a id="__codelineno-13-106" name="__codelineno-13-106" href="#__codelineno-13-106"></a>
+</span><span id="__span-13-107"><a id="__codelineno-13-107" name="__codelineno-13-107" href="#__codelineno-13-107"></a><span class="w">    </span><span class="c1">// Test the negative text</span>
+</span><span id="__span-13-108"><a id="__codelineno-13-108" name="__codelineno-13-108" href="#__codelineno-13-108"></a><span class="w">    </span><span class="n">agent</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">negativeText</span><span class="p">)</span>
+</span><span id="__span-13-109"><a id="__codelineno-13-109" name="__codelineno-13-109" href="#__codelineno-13-109"></a><span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">&quot;The text has a negative tone.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Negative tone result should match&quot;</span><span class="p">)</span>
+</span><span id="__span-13-110"><a id="__codelineno-13-110" name="__codelineno-13-110" href="#__codelineno-13-110"></a><span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">toolCalls</span><span class="p">.</span><span class="na">size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Two tools are expected to be called&quot;</span><span class="p">)</span>
+</span><span id="__span-13-111"><a id="__codelineno-13-111" name="__codelineno-13-111" href="#__codelineno-13-111"></a>
+</span><span id="__span-13-112"><a id="__codelineno-13-112" name="__codelineno-13-112" href="#__codelineno-13-112"></a><span class="w">    </span><span class="c1">//Test the neutral text</span>
+</span><span id="__span-13-113"><a id="__codelineno-13-113" name="__codelineno-13-113" href="#__codelineno-13-113"></a><span class="w">    </span><span class="n">agent</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">defaultText</span><span class="p">)</span>
+</span><span id="__span-13-114"><a id="__codelineno-13-114" name="__codelineno-13-114" href="#__codelineno-13-114"></a><span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">&quot;The text has a neutral tone.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Neutral tone result should match&quot;</span><span class="p">)</span>
+</span><span id="__span-13-115"><a id="__codelineno-13-115" name="__codelineno-13-115" href="#__codelineno-13-115"></a><span class="w">    </span><span class="n">assertEquals</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">toolCalls</span><span class="p">.</span><span class="na">size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Three tools are expected to be called&quot;</span><span class="p">)</span>
+</span><span id="__span-13-116"><a id="__codelineno-13-116" name="__codelineno-13-116" href="#__codelineno-13-116"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-14.kt -->
+
+<p>For more complex agents with multiple subgraphs, you can also test the graph structure:</p>
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nd">@Test</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kd">fun</span><span class="w"> </span><span class="nf">testMultiSubgraphAgentStructure</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runTest</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strategy</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">firstSubgraph</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">subgraph</span><span class="p">(</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">            </span><span class="s">&quot;first&quot;</span><span class="p">,</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">            </span><span class="n">tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">listOf</span><span class="p">(</span><span class="n">DummyTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">SolveTool</span><span class="p">)</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">callLLM</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMRequest</span><span class="p">(</span><span class="n">allowToolCalls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">executeTool</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeExecuteTool</span><span class="p">()</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">sendToolResult</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">nodeLLMSendToolResult</span><span class="p">()</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">giveFeedback</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">node</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-&gt;</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">                </span><span class="n">llm</span><span class="p">.</span><span class="na">writeSession</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">                    </span><span class="n">updatePrompt</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">                        </span><span class="n">user</span><span class="p">(</span><span class="s">&quot;Call tools! Don&#39;t chat!&quot;</span><span class="p">)</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">                    </span><span class="p">}</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="w">                </span><span class="p">}</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="w">                </span><span class="n">input</span>
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>
+</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeStart</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">callLLM</span><span class="p">)</span>
+</span><span id="__span-14-21"><a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">callLLM</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">executeTool</span><span class="w"> </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-14-22"><a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">callLLM</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">giveFeedback</span><span class="w"> </span><span class="n">onAssistantMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-14-23"><a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">giveFeedback</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">giveFeedback</span><span class="w"> </span><span class="n">onAssistantMessage</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-14-24"><a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">giveFeedback</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">executeTool</span><span class="w"> </span><span class="n">onToolCall</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-14-25"><a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">executeTool</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">content</span><span class="w"> </span><span class="p">})</span>
+</span><span id="__span-14-26"><a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-14-27"><a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a>
+</span><span id="__span-14-28"><a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">secondSubgraph</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">subgraph</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;second&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-29"><a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a><span class="w">            </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeStart</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="p">)</span>
+</span><span id="__span-14-30"><a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-14-31"><a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a>
+</span><span id="__span-14-32"><a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span><span class="n">nodeStart</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">firstSubgraph</span><span class="p">)</span>
+</span><span id="__span-14-33"><a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span><span class="n">firstSubgraph</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">secondSubgraph</span><span class="p">)</span>
+</span><span id="__span-14-34"><a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="w">        </span><span class="n">edge</span><span class="p">(</span><span class="n">secondSubgraph</span><span class="w"> </span><span class="n">forwardTo</span><span class="w"> </span><span class="n">nodeFinish</span><span class="p">)</span>
+</span><span id="__span-14-35"><a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-36"><a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a>
+</span><span id="__span-14-37"><a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">toolRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ToolRegistry</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-38"><a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a><span class="w">        </span><span class="n">tool</span><span class="p">(</span><span class="n">DummyTool</span><span class="p">)</span>
+</span><span id="__span-14-39"><a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a><span class="w">        </span><span class="n">tool</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">)</span>
+</span><span id="__span-14-40"><a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a><span class="w">        </span><span class="n">tool</span><span class="p">(</span><span class="n">SolveTool</span><span class="p">)</span>
+</span><span id="__span-14-41"><a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-42"><a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a>
+</span><span id="__span-14-43"><a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">mockLLMApi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getMockExecutor</span><span class="p">(</span><span class="n">toolRegistry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-44"><a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a><span class="w">        </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;Hello!&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
+</span><span id="__span-14-45"><a id="__codelineno-14-45" name="__codelineno-14-45" href="#__codelineno-14-45"></a><span class="w">        </span><span class="n">mockLLMToolCall</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">))</span><span class="w"> </span><span class="n">onRequestEquals</span><span class="w"> </span><span class="s">&quot;Solve task&quot;</span>
+</span><span id="__span-14-46"><a id="__codelineno-14-46" name="__codelineno-14-46" href="#__codelineno-14-46"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-47"><a id="__codelineno-14-47" name="__codelineno-14-47" href="#__codelineno-14-47"></a>
+</span><span id="__span-14-48"><a id="__codelineno-14-48" name="__codelineno-14-48" href="#__codelineno-14-48"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">basePrompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prompt</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-14-49"><a id="__codelineno-14-49" name="__codelineno-14-49" href="#__codelineno-14-49"></a>
+</span><span id="__span-14-50"><a id="__codelineno-14-50" name="__codelineno-14-50" href="#__codelineno-14-50"></a><span class="w">    </span><span class="n">AIAgent</span><span class="p">(</span>
+</span><span id="__span-14-51"><a id="__codelineno-14-51" name="__codelineno-14-51" href="#__codelineno-14-51"></a><span class="w">        </span><span class="n">toolRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toolRegistry</span><span class="p">,</span>
+</span><span id="__span-14-52"><a id="__codelineno-14-52" name="__codelineno-14-52" href="#__codelineno-14-52"></a><span class="w">        </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strategy</span><span class="p">,</span>
+</span><span id="__span-14-53"><a id="__codelineno-14-53" name="__codelineno-14-53" href="#__codelineno-14-53"></a><span class="w">        </span><span class="n">eventHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EventHandler</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-14-54"><a id="__codelineno-14-54" name="__codelineno-14-54" href="#__codelineno-14-54"></a><span class="w">        </span><span class="n">agentConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AIAgentConfig</span><span class="p">(</span><span class="n">prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">basePrompt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpenAIModels</span><span class="p">.</span><span class="na">Chat</span><span class="p">.</span><span class="na">GPT4o</span><span class="p">,</span><span class="w"> </span><span class="n">maxAgentIterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">),</span>
+</span><span id="__span-14-55"><a id="__codelineno-14-55" name="__codelineno-14-55" href="#__codelineno-14-55"></a><span class="w">        </span><span class="n">promptExecutor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mockLLMApi</span><span class="p">,</span>
+</span><span id="__span-14-56"><a id="__codelineno-14-56" name="__codelineno-14-56" href="#__codelineno-14-56"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-57"><a id="__codelineno-14-57" name="__codelineno-14-57" href="#__codelineno-14-57"></a><span class="w">        </span><span class="n">testGraph</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-58"><a id="__codelineno-14-58" name="__codelineno-14-58" href="#__codelineno-14-58"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">firstSubgraph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertSubgraphByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;first&quot;</span><span class="p">)</span>
+</span><span id="__span-14-59"><a id="__codelineno-14-59" name="__codelineno-14-59" href="#__codelineno-14-59"></a><span class="w">            </span><span class="kd">val</span><span class="w"> </span><span class="nv">secondSubgraph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertSubgraphByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;second&quot;</span><span class="p">)</span>
+</span><span id="__span-14-60"><a id="__codelineno-14-60" name="__codelineno-14-60" href="#__codelineno-14-60"></a>
+</span><span id="__span-14-61"><a id="__codelineno-14-61" name="__codelineno-14-61" href="#__codelineno-14-61"></a><span class="w">            </span><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-62"><a id="__codelineno-14-62" name="__codelineno-14-62" href="#__codelineno-14-62"></a><span class="w">                </span><span class="n">startNode</span><span class="p">()</span><span class="w"> </span><span class="n">alwaysGoesTo</span><span class="w"> </span><span class="n">firstSubgraph</span>
+</span><span id="__span-14-63"><a id="__codelineno-14-63" name="__codelineno-14-63" href="#__codelineno-14-63"></a><span class="w">                </span><span class="n">firstSubgraph</span><span class="w"> </span><span class="n">alwaysGoesTo</span><span class="w"> </span><span class="n">secondSubgraph</span>
+</span><span id="__span-14-64"><a id="__codelineno-14-64" name="__codelineno-14-64" href="#__codelineno-14-64"></a><span class="w">                </span><span class="n">secondSubgraph</span><span class="w"> </span><span class="n">alwaysGoesTo</span><span class="w"> </span><span class="n">finishNode</span><span class="p">()</span>
+</span><span id="__span-14-65"><a id="__codelineno-14-65" name="__codelineno-14-65" href="#__codelineno-14-65"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-14-66"><a id="__codelineno-14-66" name="__codelineno-14-66" href="#__codelineno-14-66"></a>
+</span><span id="__span-14-67"><a id="__codelineno-14-67" name="__codelineno-14-67" href="#__codelineno-14-67"></a><span class="w">            </span><span class="n">verifySubgraph</span><span class="p">(</span><span class="n">firstSubgraph</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-68"><a id="__codelineno-14-68" name="__codelineno-14-68" href="#__codelineno-14-68"></a><span class="w">                </span><span class="kd">val</span><span class="w"> </span><span class="nv">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startNode</span><span class="p">()</span>
+</span><span id="__span-14-69"><a id="__codelineno-14-69" name="__codelineno-14-69" href="#__codelineno-14-69"></a><span class="w">                </span><span class="kd">val</span><span class="w"> </span><span class="nv">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">finishNode</span><span class="p">()</span>
+</span><span id="__span-14-70"><a id="__codelineno-14-70" name="__codelineno-14-70" href="#__codelineno-14-70"></a>
+</span><span id="__span-14-71"><a id="__codelineno-14-71" name="__codelineno-14-71" href="#__codelineno-14-71"></a><span class="w">                </span><span class="kd">val</span><span class="w"> </span><span class="nv">askLLM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">Message</span><span class="p">.</span><span class="na">Response</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;callLLM&quot;</span><span class="p">)</span>
+</span><span id="__span-14-72"><a id="__codelineno-14-72" name="__codelineno-14-72" href="#__codelineno-14-72"></a><span class="w">                </span><span class="kd">val</span><span class="w"> </span><span class="nv">callTool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="n">Message</span><span class="p">.</span><span class="na">Tool</span><span class="p">.</span><span class="na">Call</span><span class="p">,</span><span class="w"> </span><span class="n">ReceivedToolResult</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;executeTool&quot;</span><span class="p">)</span>
+</span><span id="__span-14-73"><a id="__codelineno-14-73" name="__codelineno-14-73" href="#__codelineno-14-73"></a><span class="w">                </span><span class="kd">val</span><span class="w"> </span><span class="nv">giveFeedback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="kt">Any?</span><span class="p">,</span><span class="w"> </span><span class="kt">Any?</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;giveFeedback&quot;</span><span class="p">)</span>
+</span><span id="__span-14-74"><a id="__codelineno-14-74" name="__codelineno-14-74" href="#__codelineno-14-74"></a>
+</span><span id="__span-14-75"><a id="__codelineno-14-75" name="__codelineno-14-75" href="#__codelineno-14-75"></a><span class="w">                </span><span class="n">assertReachable</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">askLLM</span><span class="p">)</span>
+</span><span id="__span-14-76"><a id="__codelineno-14-76" name="__codelineno-14-76" href="#__codelineno-14-76"></a><span class="w">                </span><span class="n">assertReachable</span><span class="p">(</span><span class="n">askLLM</span><span class="p">,</span><span class="w"> </span><span class="n">callTool</span><span class="p">)</span>
+</span><span id="__span-14-77"><a id="__codelineno-14-77" name="__codelineno-14-77" href="#__codelineno-14-77"></a>
+</span><span id="__span-14-78"><a id="__codelineno-14-78" name="__codelineno-14-78" href="#__codelineno-14-78"></a><span class="w">                </span><span class="n">assertNodes</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-79"><a id="__codelineno-14-79" name="__codelineno-14-79" href="#__codelineno-14-79"></a><span class="w">                    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">Message</span><span class="p">.</span><span class="na">Assistant</span><span class="p">(</span><span class="s">&quot;Hello!&quot;</span><span class="p">)</span>
+</span><span id="__span-14-80"><a id="__codelineno-14-80" name="__codelineno-14-80" href="#__codelineno-14-80"></a><span class="w">                    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="s">&quot;Solve task&quot;</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">))</span>
+</span><span id="__span-14-81"><a id="__codelineno-14-81" name="__codelineno-14-81" href="#__codelineno-14-81"></a>
+</span><span id="__span-14-82"><a id="__codelineno-14-82" name="__codelineno-14-82" href="#__codelineno-14-82"></a><span class="w">                    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="n">toolCallSignature</span><span class="p">(</span>
+</span><span id="__span-14-83"><a id="__codelineno-14-83" name="__codelineno-14-83" href="#__codelineno-14-83"></a><span class="w">                        </span><span class="n">SolveTool</span><span class="p">,</span>
+</span><span id="__span-14-84"><a id="__codelineno-14-84" name="__codelineno-14-84" href="#__codelineno-14-84"></a><span class="w">                        </span><span class="n">SolveTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">)</span>
+</span><span id="__span-14-85"><a id="__codelineno-14-85" name="__codelineno-14-85" href="#__codelineno-14-85"></a><span class="w">                    </span><span class="p">)</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span><span class="n">SolveTool</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;solved&quot;</span><span class="p">)</span>
+</span><span id="__span-14-86"><a id="__codelineno-14-86" name="__codelineno-14-86" href="#__codelineno-14-86"></a>
+</span><span id="__span-14-87"><a id="__codelineno-14-87" name="__codelineno-14-87" href="#__codelineno-14-87"></a><span class="w">                    </span><span class="n">callTool</span><span class="w"> </span><span class="n">withInput</span><span class="w"> </span><span class="n">toolCallSignature</span><span class="p">(</span>
+</span><span id="__span-14-88"><a id="__codelineno-14-88" name="__codelineno-14-88" href="#__codelineno-14-88"></a><span class="w">                        </span><span class="n">CreateTool</span><span class="p">,</span>
+</span><span id="__span-14-89"><a id="__codelineno-14-89" name="__codelineno-14-89" href="#__codelineno-14-89"></a><span class="w">                        </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">)</span>
+</span><span id="__span-14-90"><a id="__codelineno-14-90" name="__codelineno-14-90" href="#__codelineno-14-90"></a><span class="w">                    </span><span class="p">)</span><span class="w"> </span><span class="n">outputs</span><span class="w"> </span><span class="n">toolResult</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;created&quot;</span><span class="p">)</span>
+</span><span id="__span-14-91"><a id="__codelineno-14-91" name="__codelineno-14-91" href="#__codelineno-14-91"></a><span class="w">                </span><span class="p">}</span>
+</span><span id="__span-14-92"><a id="__codelineno-14-92" name="__codelineno-14-92" href="#__codelineno-14-92"></a>
+</span><span id="__span-14-93"><a id="__codelineno-14-93" name="__codelineno-14-93" href="#__codelineno-14-93"></a><span class="w">                </span><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-94"><a id="__codelineno-14-94" name="__codelineno-14-94" href="#__codelineno-14-94"></a><span class="w">                    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">Message</span><span class="p">.</span><span class="na">Assistant</span><span class="p">(</span><span class="s">&quot;Hello!&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">giveFeedback</span>
+</span><span id="__span-14-95"><a id="__codelineno-14-95" name="__codelineno-14-95" href="#__codelineno-14-95"></a><span class="w">                    </span><span class="n">askLLM</span><span class="w"> </span><span class="n">withOutput</span><span class="w"> </span><span class="n">toolCallMessage</span><span class="p">(</span><span class="n">CreateTool</span><span class="p">,</span><span class="w"> </span><span class="n">CreateTool</span><span class="p">.</span><span class="na">Args</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">))</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">callTool</span>
+</span><span id="__span-14-96"><a id="__codelineno-14-96" name="__codelineno-14-96" href="#__codelineno-14-96"></a><span class="w">                </span><span class="p">}</span>
+</span><span id="__span-14-97"><a id="__codelineno-14-97" name="__codelineno-14-97" href="#__codelineno-14-97"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-14-98"><a id="__codelineno-14-98" name="__codelineno-14-98" href="#__codelineno-14-98"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-14-99"><a id="__codelineno-14-99" name="__codelineno-14-99" href="#__codelineno-14-99"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-100"><a id="__codelineno-14-100" name="__codelineno-14-100" href="#__codelineno-14-100"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-15.kt -->
+
+<h2 id="api-reference">API reference</h2>
+<p>For a complete API reference related to the Testing feature, see the reference documentation for the <a href="https://api.koog.ai/agents/agents-test/index.html">agents-test</a> module.</p>
+<h2 id="faq-and-troubleshooting">FAQ and troubleshooting</h2>
+<h4 id="how-do-i-mock-a-specific-tool-response">How do I mock a specific tool response?</h4>
+<p>Use the <code>mockTool</code> method in <code>MockLLMBuilder</code>:</p>
+<!--- INCLUDE
+/*
+-->
+<!--- SUFFIX
+*/
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kd">val</span><span class="w"> </span><span class="nv">mockExecutor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getMockExecutor</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="n">mockTool</span><span class="p">(</span><span class="n">myTool</span><span class="p">)</span><span class="w"> </span><span class="n">alwaysReturns</span><span class="w"> </span><span class="n">myResult</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="c1">// Or with conditions</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="n">mockTool</span><span class="p">(</span><span class="n">myTool</span><span class="p">)</span><span class="w"> </span><span class="n">returns</span><span class="w"> </span><span class="n">myResult</span><span class="w"> </span><span class="n">onArguments</span><span class="w"> </span><span class="n">myArgs</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-16.kt -->
+
+<h4 id="how-can-i-test-complex-graph-structures">How can I test complex graph structures?</h4>
+<p>Use the subgraph assertions, <code>verifySubgraph</code>, and node references:</p>
+<!--- INCLUDE
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.agents.example.exampleTesting02.mockLLMApi
+import ai.koog.agents.example.exampleTesting02.toolRegistry
+import ai.koog.agents.testing.feature.testGraph
+import ai.koog.prompt.executor.clients.openai.OpenAIModels
+
+
+val llmModel = OpenAIModels.Chat.GPT4o
+
+fun main() {
+    AIAgent(
+        // Constructor arguments
+        executor = mockLLMApi,
+        toolRegistry = toolRegistry,
+        llmModel = llmModel
+    ) {
+-->
+<!--- SUFFIX
+    }
+}
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">testGraph</span><span class="o">&lt;</span><span class="kt">Unit</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">mySubgraph</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertSubgraphByName</span><span class="o">&lt;</span><span class="kt">Unit</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;mySubgraph&quot;</span><span class="p">)</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="n">verifySubgraph</span><span class="p">(</span><span class="n">mySubgraph</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">        </span><span class="c1">// Get references to nodes</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="kt">Unit</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;nodeA&quot;</span><span class="p">)</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">        </span><span class="kd">val</span><span class="w"> </span><span class="nv">nodeB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">assertNodeByName</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;nodeB&quot;</span><span class="p">)</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">        </span><span class="c1">// Assert reachability</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">        </span><span class="n">assertReachable</span><span class="p">(</span><span class="n">nodeA</span><span class="p">,</span><span class="w"> </span><span class="n">nodeB</span><span class="p">)</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">        </span><span class="c1">// Assert edge connections</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">        </span><span class="n">assertEdges</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="w">            </span><span class="n">nodeA</span><span class="p">.</span><span class="na">withOutput</span><span class="p">(</span><span class="s">&quot;result&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">goesTo</span><span class="w"> </span><span class="n">nodeB</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-17.kt -->
+
+<h4 id="how-do-i-simulate-different-llm-responses-based-on-input">How do I simulate different LLM responses based on input?</h4>
+<p>Use pattern matching methods:</p>
+<!--- INCLUDE
+import ai.koog.agents.testing.tools.getMockExecutor
+import ai.koog.agents.testing.tools.mockLLMAnswer
+
+val executor = 
+-->
+<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">getMockExecutor</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">    </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;Response A&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="s">&quot;topic A&quot;</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;Response B&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestContains</span><span class="w"> </span><span class="s">&quot;topic B&quot;</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;Exact response&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onRequestEquals</span><span class="w"> </span><span class="s">&quot;exact question&quot;</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span><span class="n">mockLLMAnswer</span><span class="p">(</span><span class="s">&quot;Conditional response&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">onCondition</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;keyword&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<!--- KNIT example-testing-18.kt -->
+
+<h3 id="troubleshooting">Troubleshooting</h3>
+<h4 id="mock-executor-always-returns-the-default-response">Mock executor always returns the default response</h4>
+<p>Check that your pattern matching is correct. Patterns are case-sensitive and must match exactly as
+specified.</p>
+<h4 id="tool-calls-are-not-being-intercepted">Tool calls are not being intercepted</h4>
+<p>Ensure that:</p>
+<ol>
+<li>The tool registry is properly set up.</li>
+<li>The tool names match exactly.</li>
+<li>The tool actions are configured correctly.</li>
+</ol>
+<h4 id="graph-assertions-are-failing">Graph assertions are failing</h4>
+<ol>
+<li>Verify that node names are correct.</li>
+<li>Check that the graph structure matches your expectations.</li>
+<li>Use the <code>startNode()</code> and <code>finishNode()</code> methods to get the correct entry and exit points.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2000-2025 JetBrains s.r.o.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://kotlinlang.slack.com/messages/koog-agentic-framework/" target="_blank" rel="noopener" title="Koog on Slack" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.expand", "navigation.tabs", "navigation.tabs.sticky", "navigation.instant"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
+      
+    
+  </body>
+</html>
