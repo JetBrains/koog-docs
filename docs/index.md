@@ -39,12 +39,7 @@ The LLM providers and platforms whose LLMs you can use to power your agent capab
 
 # Installation
 
-To use the Koog framework, you need to include all necessary dependencies in your build configuration.
-The required package is hosted in the following Maven repository:
-
-```
-https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public
-```
+To use Koog, you need to include all necessary dependencies in your build configuration.
 
 ## Gradle
 
